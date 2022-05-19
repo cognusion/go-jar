@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{.ErrorMessage}}</title>
+<META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+{{ if .RedirectSeconds }}
+<meta http-equiv="Refresh"
+	content="{{ .RedirectSeconds }}; URL={{ .RedirectURL }}">
+{{end}}
+</head>
+<body>
+	<p>An error occurred: {{.ErrorCode}}</p>
+	<p style="margin-bottom: 30px">{{.ErrorMessage}}</p>	
+</body>
+</html>

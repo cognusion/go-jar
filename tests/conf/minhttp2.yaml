@@ -1,0 +1,20 @@
+debug: true
+
+listen: :8081
+
+debugrequests: true
+debugresponses: true
+debugtimings: true
+
+maxconnections: 1
+
+tls:
+  enabled: true
+  httpredirects: true
+  http2: true
+
+paths:
+  -
+    Path: /
+    Name: catchall
+    Finisher: Test

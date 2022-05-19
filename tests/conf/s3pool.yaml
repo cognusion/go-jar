@@ -1,0 +1,13 @@
+ec2: true
+
+paths:
+  -
+    Path: /spa
+    StripPrefix: /spa
+    Pool: spa
+
+pools:
+  spa:
+    Name: spa
+    Members:
+      - s3://jarspa/

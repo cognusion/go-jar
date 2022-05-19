@@ -1,0 +1,17 @@
+debug: true
+
+listen: :8081
+
+debugrequests: true
+debugresponses: true
+debugtimings: true
+
+maxconnections: 1
+
+versionrequired: v1
+
+paths:
+  -
+    Path: /
+    Name: catchall
+    Finisher: Test

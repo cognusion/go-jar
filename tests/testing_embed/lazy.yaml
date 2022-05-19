@@ -1,0 +1,48 @@
+#debugrequests: true
+#debugresponses: true
+debugtimings: true
+
+#accesslog: logs/access.log
+#errorlog: logs/error.log
+
+pools:
+  default:
+    Name: default
+    Buffered: true
+    BufferedFails: 2
+    HealthCheckUri: /
+    Members:
+      - http://127.0.0.1:8081/
+      - http://127.0.0.1:8082/
+
+paths:
+  -
+    Path: /admin/restart
+    Absolute: true
+    Allow: 127.0.0.1/16
+    Finisher: Restart
+  -
+    Path: /admin/stack
+    Absolute: true
+    Allow: 127.0.0.1
+    Finisher: Stack
+  -
+    Path: /admin/update
+    Absolute: true
+    Allow: 127.0.0.1
+    Finisher: Update
+  -
+    Path: /admin/healthcheck
+    Absolute: true
+    Allow: 127.0.0.1
+    Finisher: HealthCheck
+    RateLimit: 1
+  -
+    Path: /
+    Handlers:
+      - LazyLogger
+    Finisher: DoneZO
+
+Recoverer:
+  logstacktraces: true
+

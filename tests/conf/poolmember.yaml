@@ -1,0 +1,46 @@
+debug: true
+
+listen: :8081
+
+debugrequests: true
+debugresponses: true
+debugtimings: true
+
+maxconnections: 1
+
+paths:
+  -
+    Path: /admin/pool/{poolname}/add/{b64memberurl}
+    Allow: 127.0.0.1,10.0.0.0/8
+    Finisher: PoolMemberAdder
+  -
+    Path: /admin/pool/{poolname}/lose/{b64memberurl}
+    Allow: 127.0.0.1,10.0.0.0/8
+    Finisher: PoolMemberLoser
+  -
+    Path: /admin/pool/{poolname}/list
+    Allow: 127.0.0.1,10.0.0.0/8
+    Finisher: PoolMemberLister
+  -
+    Path: /admin/pool/list
+    Allow: 127.0.0.1,10.0.0.0/8
+    Finisher: PoolLister
+  -
+    Path: /spa
+    Pool: spa
+  -
+    Path: /
+    Name: catchall
+    Finisher: Test
+
+pools:
+  authdev:
+    Name: authdev
+    HealthCheckUri: /api/healthcheck
+    Members:
+      - http://127.0.0.1:8080/
+  spa:
+    Name: spa
+    Members:
+      - s3://jarspa/
+
