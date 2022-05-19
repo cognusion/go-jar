@@ -10,7 +10,7 @@
 ## <a name="pkg-overview">Overview</a>
 Package jar is a readily-embeddable feature-rich proxy-focused AWS-aware
 distributed-oriented resiliency-enabling URL-driven superlative-laced
-***elatic application link***. At its core, JAR is "just" a load-balancing
+***elastic application link***. At its core, JAR is "just" a load-balancing
 proxy taking cues from HAProxy (resiliency, zero-drop restarts, performance)
 and Apache HTTPD (virtualize everything) while leveraging over 20 years
 of systems engineering experience to provide robust features with exceptional
@@ -775,7 +775,7 @@ AuthoritativeDomainsHandler declines to handle requests that are not listed in "
 
 
 
-## <a name="Bootstrap">func</a> [Bootstrap](https://github.com/cognusion/go-jar/tree/master/a_common.go?s=6343:6359#L236)
+## <a name="Bootstrap">func</a> [Bootstrap](https://github.com/cognusion/go-jar/tree/master/a_common.go?s=6344:6360#L236)
 ``` go
 func Bootstrap()
 ```
@@ -786,7 +786,7 @@ Bootstrap doesn't return unless the server exits
 
 
 
-## <a name="BootstrapChan">func</a> [BootstrapChan](https://github.com/cognusion/go-jar/tree/master/a_common.go?s=4350:4390#L143)
+## <a name="BootstrapChan">func</a> [BootstrapChan](https://github.com/cognusion/go-jar/tree/master/a_common.go?s=4351:4391#L143)
 ``` go
 func BootstrapChan(closer chan struct{})
 ```
@@ -813,7 +813,7 @@ BuildPaths unmarshalls the paths config, creates handler chains, and updates the
 
 
 
-## <a name="ChanBootstrap">func</a> [ChanBootstrap](https://github.com/cognusion/go-jar/tree/master/a_common.go?s=5395:5426#L186)
+## <a name="ChanBootstrap">func</a> [ChanBootstrap](https://github.com/cognusion/go-jar/tree/master/a_common.go?s=5396:5427#L186)
 ``` go
 func ChanBootstrap() chan error
 ```

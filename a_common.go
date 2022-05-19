@@ -1,6 +1,6 @@
 // Package jar is a readily-embeddable feature-rich proxy-focused AWS-aware
 // distributed-oriented resiliency-enabling URL-driven superlative-laced
-// ***elatic application link***. At its core, JAR is "just" a load-balancing
+// ***elastic application link***. At its core, JAR is "just" a load-balancing
 // proxy taking cues from HAProxy (resiliency, zero-drop restarts, performance)
 // and Apache HTTPD (virtualize everything) while leveraging over 20 years
 // of systems engineering experience to provide robust features with exceptional
