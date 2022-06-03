@@ -101,7 +101,6 @@ func AuthoritativeDomainsHandler(next http.Handler) http.Handler {
 }
 
 // URLCaptureHandler is an unchainable handler that captures the Hostname of the Pool Member servicing a request
-// TODO: Make header name configurable. Yikes!
 func URLCaptureHandler(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		// Timings

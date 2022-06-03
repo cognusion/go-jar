@@ -43,8 +43,8 @@ github.com/cognusion/go-health v1.1.0 h1:Yl7cQRVXW7CsnTDCm9buRkaE7ElgP2UgDPtWp48
 github.com/cognusion/go-health v1.1.0/go.mod h1:dpQ6TlLO5oC0CBwh4dz1BvkMA1cx6F7JjafZuyHONvU=
 github.com/cognusion/go-nagios-checks v0.0.0-20190904125444-02e4e9610d38 h1:3UH6zuCYjcR3tFZXhBvj+e4kNxvKiVagDBY0pX7qTRI=
 github.com/cognusion/go-nagios-checks v0.0.0-20190904125444-02e4e9610d38/go.mod h1:lPv+tPnX2fn5PuuFaGpp6X7ldxyOVqUN0j9V2lb3ZBc=
-github.com/cognusion/go-prw v1.0.0 h1:HQ/Rjns3zPTXloNfZcORSgY2hIvMAOHMQbKX0/ilaSc=
-github.com/cognusion/go-prw v1.0.0/go.mod h1:Ry++zxWDY2VYtdj/JIG73fum8caCCE+Pehn7eFnX31g=
+github.com/cognusion/go-prw v1.1.1 h1:0LFK2iasQsV7U/3HLvgV6LMupp/SzQaxpLa6D3vm228=
+github.com/cognusion/go-prw v1.1.1/go.mod h1:Ry++zxWDY2VYtdj/JIG73fum8caCCE+Pehn7eFnX31g=
 github.com/cognusion/go-sequence v1.0.0 h1:hpYqaF9RFu5ey6DYlBfayvGItjcTF0oxKlsbYAQUoBs=
 github.com/cognusion/go-sequence v1.0.0/go.mod h1:oBFtYW6Aj5v9FvCvx2BF6uK14FrVs/eu/lEek/zOFLk=
 github.com/cognusion/go-timings v1.0.0 h1:BIJH9nj46an/bp3L6FCXeeRwTDeKNxu7uSE8xdO2V8w=

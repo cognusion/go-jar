@@ -23,6 +23,7 @@ import (
 const (
 	httpPool poolType = iota + 10
 	s3Pool
+	wsPool
 )
 
 type poolType int
@@ -355,6 +356,9 @@ func (p *Pool) Materialize() (http.Handler, error) {
 		case "s3":
 			p.poolTypeID = s3Pool
 			p.poolMaterializer = p.materializeS3
+		case "ws":
+			p.poolTypeID = wsPool
+			p.poolMaterializer = p.materializeHTTP
 		default:
 			// Um... no supported scheme?
 			ErrorOut.Printf("FATAL: Materialization of Pool failed, Member scheme was %s", memberURL.Scheme)
