@@ -310,6 +310,13 @@ func bootstrap() (done bool, servers []*http.Server) {
 		DocsOut.Printf("SlowRequestMax: %s\n\n", SlowRequests.String())
 	}
 
+	// Let's get Zulip out of the way
+	if Conf.GetString(ConfigZulipBaseURL) != "" {
+		DocsOut.Printf("Zulip.URL: %s\nZulip.Username: %s\nZulip.Token: %s\nZulip.RetryCount: %d\nZulip.RetryInterval: %s\n", Conf.GetString(ConfigZulipBaseURL), Conf.GetString(ConfigZulipUsername), Conf.GetString(ConfigZulipToken), Conf.GetInt(ConfigZulipRetryCount), Conf.GetDuration(ConfigZulipRetryInterval).String())
+		ZulipClient = newZulipClient(Conf.GetString(ConfigZulipBaseURL), Conf.GetString(ConfigZulipUsername), Conf.GetString(ConfigZulipToken))
+		ZulipClient.SetRetries(Conf.GetInt(ConfigZulipRetryCount), Conf.GetDuration(ConfigZulipRetryInterval))
+	}
+
 	// r is our router. Long live r.
 	r := mux.NewRouter()
 
