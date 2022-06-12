@@ -1,14 +1,12 @@
 # Features
 
-## Working / Advanced WIP
+## HTTP2 & TLS
 
-### TLS
-
-TLS listening with configurable options is fully supported. See [Configuration Docs](Configuration.md) for supported configuration options. Additionally, HTTP-to-HTTPS redirects can optionally be handled automatically.
+TLS listening with configurable options is fully supported. See [Configuration Docs](Configuration.md) for supported configuration options. HTTP-to-HTTPS redirects can optionally be handled automatically.
 
 JAR TLS configurations have been tested by SSLlabs and meet or exceed current ratings in all criteria against current TLS configurations with HAproxy.
 
-### Graceful Restarts
+## Graceful Restarts
 
 Restarts are supersafe. A new instance is started up, and if it fails (e.g. chokes on a config problem) the old instance never relinquishes the listener and keeps running. If the new instance starts successfully, the handover of the listener socket is coordinated, the old instance continues to run until all existing requests are finished, but all new requests run through the new instance.
 
@@ -32,7 +30,7 @@ Below is an example of a graceful restart that had a fairly long-running request
 [DEBUG] 2018/05/31 00:27:12 health.go:47: Rate: 1.8478/second Goros: 27 (2 / 0.00) Requests: 124
 ```
 
-### Configuration
+## Configuration
 
 See [Configuration.md](Configuration.md) for supported configuration options.
 
@@ -42,30 +40,30 @@ See [Configuration.md](Configuration.md) for supported configuration options.
 * Front-loaded validation of *most* options to aid **Graceful Restarts**
 * Intelligent (and safe) defaults
 
-#### Configuration Monitoring
+### Configuration Monitoring
 
-In concert with **Graceful Restarts**, the configuration file can be watched for changes, triggering a graceful restart to absorb the changes
+In concert with **Graceful Restarts**, the configuration file (real or virtual) can be watched for changes, triggering a graceful restart to absorb the changes.
 
-### Workers
+## Workers
 
 Elastic pool of Workers hanging around, easily accessible (*AddWork(&WorkType{})*), waiting to do Work (and interface type) on behalf of Handlers/Finishers.
 
 * Healthchecking Pool members (Per-Pool Lifeguard)
 * API requests
+* Emitters to API services (e.g. external logging services)
   
 See the [Writing Handlers and Finishers docs](WritingHandlersAndFinishers.md) and/or the [worker docs](../workers/Readme.md) for more info.
 
-### Paths and Pools
+## Paths and Pools
 
 The heart of JAR are Paths- filters and options that describe containers for traffic, and Pools- options that describe containers for destinations.
 
-#### Path
+### Path
 
 * Prefix or absolute URI
 * Host-based filter
 * HTTP method filter
 * HTTP request header filter
-* Browser/version filter
 * Per-source rate-limiting
 * Allow/Deny by IP address/range
 * HTTP Basic Auth (vs file)
@@ -78,7 +76,7 @@ The heart of JAR are Paths- filters and options that describe containers for tra
 * Pre-proxy URI replacement
 * Timeout
 
-#### Pool
+### Pool
 
 * Dynamic membership
 * Request buffering/retrying
@@ -88,17 +86,17 @@ The heart of JAR are Paths- filters and options that describe containers for tra
 * Healthchecks and membership management
 * EC2 awareness/affinity
 
-### AWS awareness (Ongoing)
+## AWS awareness (Ongoing)
 
 See the [AWS docs](Aws.md) for more information.
 
-### Self-updating
+## Self-updating
 
 Can be told, via an API endpoint, to download and replace the existing binary, and optionally trigger a **Graceful Restart** to start a new instance running on it.
 
 Unscheduled but achievable future work includes binary patching, and code-signing/verification.
 
-### Injectable Handlers and Finishers
+## Injectable Handlers and Finishers
 
 See the [Writing Handlers and Finishers docs](WritingHandlersAndFinishers.md) for more information and examples. Ordered lists of middleware, called Handlers, or request completers, called Finishers, are trivial to author and inject into JAR, exposing their existence and configuration to the config system.
 Highlights include:
@@ -108,17 +106,17 @@ Highlights include:
 * CORS
 * Browser/Device Detection
 * Configurable response headers
-* Map tile token verification
 * JWT verification
 * Rate limiting
 * Content compression for configured MIME-types
 * Flexible (and pluggable) error wrapping
+* Caching
 * "Admin" Finishers
   * Healthchecks
   * Triggered self-updates
   * Triggered restarts
 
-### First-Class Metrics
+## First-Class Metrics
 
 Any executable code can hook into the Metrics registry (see *WritingHandlersAndFinishers.md* for more information) to create:
 
@@ -156,19 +154,19 @@ These are automatically integrated into the *metrics* section of the **healthche
  }
 ```
 
-### First-Class Healthchecks
+## First-Class Healthchecks
 
 Keeping track of how things are operating is critical, as is reporting those states.
 
-### Custom error pages
+## Custom error pages
 
 Local template (precompiled at runtime for speed) ~~or subrequested out to a service (deprecated)~~.
 
-### Timeouts and tunables
+## Timeouts and tunables
 
 Global **timeout** (overridable per-Path) to kill long-running requests/responses.
 
-### Low resource usage
+## Low resource usage
 
 Using metrics and benchmarks, care is taken to ensure heap allocations and time spent are kept as low as possible.
 
