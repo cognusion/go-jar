@@ -50,6 +50,7 @@ require (
 	github.com/cognusion/go-health v1.1.0
 	github.com/cognusion/go-prw v1.1.1
 	github.com/cognusion/go-sequence v1.0.0
+	github.com/cognusion/go-zulipsend v1.0.0
 	github.com/cognusion/srvdisco v0.0.0-20180516035551-b4507d3e8282
 	github.com/spf13/pflag v1.0.3
 	go.uber.org/atomic v1.9.0

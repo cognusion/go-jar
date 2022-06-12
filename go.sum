@@ -49,6 +49,8 @@ github.com/cognusion/go-sequence v1.0.0 h1:hpYqaF9RFu5ey6DYlBfayvGItjcTF0oxKlsbY
 github.com/cognusion/go-sequence v1.0.0/go.mod h1:oBFtYW6Aj5v9FvCvx2BF6uK14FrVs/eu/lEek/zOFLk=
 github.com/cognusion/go-timings v1.0.0 h1:BIJH9nj46an/bp3L6FCXeeRwTDeKNxu7uSE8xdO2V8w=
 github.com/cognusion/go-timings v1.0.0/go.mod h1:M2IjK6Sr6/YTlm3Jws1wL7NUdn+28XVEkTac529GlbY=
+github.com/cognusion/go-zulipsend v1.0.0 h1:MtRMtQFNbyqw+KC+f6jn+R3WVLfQ2EHfBfDjINjFQKI=
+github.com/cognusion/go-zulipsend v1.0.0/go.mod h1:QaQwnmbLN7Ol1IrVXv2mEgH57SNsdQJHUzKFAskoNII=
 github.com/cognusion/grace v0.0.0-20190209210431-75fe9244da10 h1:Mla1DkztbNV/rO3SJfnGTf8IKMZpzUSUhj+7G6EK6R0=
 github.com/cognusion/grace v0.0.0-20190209210431-75fe9244da10/go.mod h1:9Q6C0L9gJeCiQxyFrQpkN4zl353jtMI+bQGOmOvZnYs=
 github.com/cognusion/oxy v1.1.0 h1:jdMXkNt7q//jCQhVd3d4pYpl74fw/T3GCnHDym6c76E=
