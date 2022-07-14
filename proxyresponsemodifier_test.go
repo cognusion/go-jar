@@ -7,7 +7,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 	"github.com/vulcand/oxy/forward"
 
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -35,7 +35,7 @@ func TestProxyResponseModifier(t *testing.T) {
 			w := http.Response{
 				StatusCode: http.StatusOK,
 				Status:     http.StatusText(http.StatusOK),
-				Body:       ioutil.NopCloser(bytes.NewBufferString("OK")),
+				Body:       io.NopCloser(bytes.NewBufferString("OK")),
 				Header:     make(map[string][]string),
 			}
 			w.Header["Crap1"] = []string{"to delete"}
@@ -97,7 +97,7 @@ func TestProxyResponseModifierChain(t *testing.T) {
 			w := http.Response{
 				StatusCode: http.StatusOK,
 				Status:     http.StatusText(http.StatusOK),
-				Body:       ioutil.NopCloser(bytes.NewBufferString("OK")),
+				Body:       io.NopCloser(bytes.NewBufferString("OK")),
 				Header:     make(map[string][]string),
 			}
 			w.Header["Crap1"] = []string{"to delete"}
@@ -166,7 +166,7 @@ func TestProxyResponseModifierChainError(t *testing.T) {
 			w := http.Response{
 				StatusCode: http.StatusOK,
 				Status:     http.StatusText(http.StatusOK),
-				Body:       ioutil.NopCloser(bytes.NewBufferString("OK")),
+				Body:       io.NopCloser(bytes.NewBufferString("OK")),
 				Header:     make(map[string][]string),
 			}
 			w.Header["Crap1"] = []string{"to delete"}

@@ -6,7 +6,7 @@ import (
 	"github.com/justinas/alice"
 	. "github.com/smartystreets/goconvey/convey"
 
-	"io/ioutil"
+	"io"
 	"log"
 	"math/rand"
 	"net/http"
@@ -19,7 +19,7 @@ import (
 func init() {
 	//DebugOut = log.New(os.Stderr, "[DEBUG] ", OutFormat)
 	//ErrorOut = log.New(os.Stderr, "[ERROR] ", OutFormat)
-	ErrorOut = log.New(ioutil.Discard, "", 0) // Silence error output, explicitly
+	ErrorOut = log.New(io.Discard, "", 0) // Silence error output, explicitly
 }
 
 func HandlersInit() {
@@ -725,7 +725,7 @@ func TestBodyByteLimit(t *testing.T) {
 	}
 
 	rd := strings.NewReader(randString(5 + 1))
-	rc := ioutil.NopCloser(rd)
+	rc := io.NopCloser(rd)
 	req.Body = rc
 
 	bl := NewBodyByteLimit(5)
@@ -763,7 +763,7 @@ func TestBodyByteLimitMega(t *testing.T) {
 	}
 
 	rd := strings.NewReader(randString(1024 * 1024))
-	rc := ioutil.NopCloser(rd)
+	rc := io.NopCloser(rd)
 	req.Body = rc
 
 	bl := NewBodyByteLimit(5)
@@ -791,7 +791,7 @@ func TestBodyByteLimitOk(t *testing.T) {
 
 	rdString := randString(5)
 	rd := strings.NewReader(rdString)
-	rc := ioutil.NopCloser(rd)
+	rc := io.NopCloser(rd)
 	req.Body = rc
 
 	bl := NewBodyByteLimit(5)

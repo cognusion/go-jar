@@ -14,7 +14,6 @@ import (
 
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -23,9 +22,9 @@ import (
 
 var (
 	// DebugOut is a log.Logger for debug messages
-	DebugOut = log.New(ioutil.Discard, "", 0)
+	DebugOut = log.New(io.Discard, "", 0)
 	// TimingOut is a log.Logger for timing-related debug messages. DEPRECATED
-	TimingOut = log.New(ioutil.Discard, "[TIMING] ", 0)
+	TimingOut = log.New(io.Discard, "[TIMING] ", 0)
 
 	bofcACL = "bucket-owner-full-control"
 )

@@ -1,14 +1,14 @@
 package funcregistry
 
 import (
-	"io/ioutil"
+	"io"
 	"log"
 	"sync"
 )
 
 var (
 	// DebugOut is a log.Logger for debug messages
-	DebugOut = log.New(ioutil.Discard, "", 0)
+	DebugOut = log.New(io.Discard, "", 0)
 )
 
 // FuncRegistry is an aggregation of func()s that should be called during an orderly shutdown/restart.

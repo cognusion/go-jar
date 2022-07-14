@@ -484,6 +484,8 @@ const (
     ConfigS3StreamProxyFormFileField     = ConfigKey("s3proxy.filefield")
     ConfigS3StreamProxyBadFileExtensions = ConfigKey("s3proxy.badfileexts")
     ConfigS3StreamProxyWrapSuccess       = ConfigKey("s3proxy.wrapsuccess")
+    ConfigS3StreamProxyZulipStream       = ConfigKey("s3proxy.zulipstream")
+    ConfigS3StreamProxyZulipTopic        = ConfigKey("s3proxy.zuliptopic")
 )
 ```
 Constants for configuration key strings
@@ -659,19 +661,19 @@ var (
     // OutFormat is a log.Logger format used by default
     OutFormat = log.Ldate | log.Ltime | log.Lshortfile
     // DebugOut is a log.Logger for debug messages
-    DebugOut = log.New(ioutil.Discard, "[DEBUG] ", 0)
+    DebugOut = log.New(io.Discard, "[DEBUG] ", 0)
     // TimingOut is a log.Logger for timing-related debug messages. DEPRECATED
-    TimingOut = log.New(ioutil.Discard, "[TIMING] ", 0)
+    TimingOut = log.New(io.Discard, "[TIMING] ", 0)
     // ErrorOut is a log.Logger for error messages
     ErrorOut = log.New(os.Stderr, "", OutFormat)
     // AccessOut is a log.Logger for access logging. PLEASE DO NOT USE THIS DIRECTLY
     AccessOut = log.New(os.Stdout, "", 0)
     // CommonOut is a log.Logger for Apache "common log format" logging. PLEASE DO NOT USE THIS DIRECTLY
-    CommonOut = log.New(ioutil.Discard, "", 0)
+    CommonOut = log.New(io.Discard, "", 0)
     // DocsOut is a log.Logger for documentation output
-    DocsOut = log.New(ioutil.Discard, "", 0)
+    DocsOut = log.New(io.Discard, "", 0)
     // SlowOut is a log.Logger for slow request information
-    SlowOut = log.New(ioutil.Discard, "", 0)
+    SlowOut = log.New(io.Discard, "", 0)
 
     // RequestTimer is a function to allow Durations to be added to the Timer Metric
     RequestTimer func(time.Duration)
@@ -768,7 +770,7 @@ ZulipClient is a global Zulip client to use for messaging, or nil if not
 
 
 
-## <a name="AccessLogHandler">func</a> [AccessLogHandler](https://github.com/cognusion/go-jar/tree/master/log.go?s=8854:8907#L284)
+## <a name="AccessLogHandler">func</a> [AccessLogHandler](https://github.com/cognusion/go-jar/tree/master/log.go?s=8817:8870#L283)
 ``` go
 func AccessLogHandler(next http.Handler) http.Handler
 ```
@@ -978,7 +980,7 @@ Forbidden is a Finisher that returns 403 for the requested Path
 
 
 
-## <a name="GetErrorLog">func</a> [GetErrorLog](https://github.com/cognusion/go-jar/tree/master/log.go?s=3621:3706#L111)
+## <a name="GetErrorLog">func</a> [GetErrorLog](https://github.com/cognusion/go-jar/tree/master/log.go?s=3584:3669#L110)
 ``` go
 func GetErrorLog(filename, prefix string, format, size, backups, age int) *log.Logger
 ```
@@ -986,7 +988,7 @@ GetErrorLog gets an error-type log
 
 
 
-## <a name="GetLog">func</a> [GetLog](https://github.com/cognusion/go-jar/tree/master/log.go?s=3183:3263#L99)
+## <a name="GetLog">func</a> [GetLog](https://github.com/cognusion/go-jar/tree/master/log.go?s=3150:3230#L98)
 ``` go
 func GetLog(filename, prefix string, format, size, backups, age int) *log.Logger
 ```
@@ -994,7 +996,7 @@ GetLog gets a standard-type log
 
 
 
-## <a name="GetLogOrDiscard">func</a> [GetLogOrDiscard](https://github.com/cognusion/go-jar/tree/master/log.go?s=3410:3499#L105)
+## <a name="GetLogOrDiscard">func</a> [GetLogOrDiscard](https://github.com/cognusion/go-jar/tree/master/log.go?s=3377:3466#L104)
 ``` go
 func GetLogOrDiscard(filename, prefix string, format, size, backups, age int) *log.Logger
 ```
@@ -1084,7 +1086,7 @@ LoadConfig read the config file and returns a config object or an error
 
 
 
-## <a name="LogInit">func</a> [LogInit](https://github.com/cognusion/go-jar/tree/master/log.go?s=1777:1797#L63)
+## <a name="LogInit">func</a> [LogInit](https://github.com/cognusion/go-jar/tree/master/log.go?s=1744:1764#L62)
 ``` go
 func LogInit() error
 ```
@@ -1244,7 +1246,7 @@ RouteIDInspectionHandler checks the Query params for a ROUTEID and shoves it int
 
 
 
-## <a name="S3StreamProxyFinisher">func</a> [S3StreamProxyFinisher](https://github.com/cognusion/go-jar/tree/master/s3proxy.go?s=1696:1762#L73)
+## <a name="S3StreamProxyFinisher">func</a> [S3StreamProxyFinisher](https://github.com/cognusion/go-jar/tree/master/s3proxy.go?s=1841:1907#L75)
 ``` go
 func S3StreamProxyFinisher(w http.ResponseWriter, r *http.Request)
 ```
@@ -1411,7 +1413,7 @@ returning boolean
 
 
 
-## <a name="AccessLog">type</a> [AccessLog](https://github.com/cognusion/go-jar/tree/master/log.go?s=4872:5432#L158)
+## <a name="AccessLog">type</a> [AccessLog](https://github.com/cognusion/go-jar/tree/master/log.go?s=4835:5395#L157)
 ``` go
 type AccessLog interface {
     // CommonLogFormat will return the contents as a CLF-compatible string. If combined is set, a "combined" CLF is included (adds referer and user-agent)
@@ -2152,7 +2154,7 @@ Work executes the HealthCheck and returns HealthCheckResult or HealthCheckError
 
 
 
-## <a name="JSONAccessLog">type</a> [JSONAccessLog](https://github.com/cognusion/go-jar/tree/master/log.go?s=5502:6231#L170)
+## <a name="JSONAccessLog">type</a> [JSONAccessLog](https://github.com/cognusion/go-jar/tree/master/log.go?s=5465:6194#L169)
 ``` go
 type JSONAccessLog struct {
     Timestamp     string `json:"timestamp"`
@@ -2187,7 +2189,7 @@ JSONAccessLog is an AccessLog uberstruct for JSONifying log data
 
 
 
-### <a name="JSONAccessLog.CommonLogFormat">func</a> (\*JSONAccessLog) [CommonLogFormat](https://github.com/cognusion/go-jar/tree/master/log.go?s=6384:6445#L192)
+### <a name="JSONAccessLog.CommonLogFormat">func</a> (\*JSONAccessLog) [CommonLogFormat](https://github.com/cognusion/go-jar/tree/master/log.go?s=6347:6408#L191)
 ``` go
 func (a *JSONAccessLog) CommonLogFormat(combined bool) string
 ```
@@ -2196,7 +2198,7 @@ CommonLogFormat will return the contents as a CLF-compatible string. If combined
 
 
 
-### <a name="JSONAccessLog.RequestFiller">func</a> (\*JSONAccessLog) [RequestFiller](https://github.com/cognusion/go-jar/tree/master/log.go?s=7961:8015#L252)
+### <a name="JSONAccessLog.RequestFiller">func</a> (\*JSONAccessLog) [RequestFiller](https://github.com/cognusion/go-jar/tree/master/log.go?s=7924:7978#L251)
 ``` go
 func (a *JSONAccessLog) RequestFiller(r *http.Request)
 ```
@@ -2205,7 +2207,7 @@ RequestFiller adds request information to the AccessLog entry
 
 
 
-### <a name="JSONAccessLog.Reset">func</a> (\*JSONAccessLog) [Reset](https://github.com/cognusion/go-jar/tree/master/log.go?s=7107:7138#L219)
+### <a name="JSONAccessLog.Reset">func</a> (\*JSONAccessLog) [Reset](https://github.com/cognusion/go-jar/tree/master/log.go?s=7070:7101#L218)
 ``` go
 func (a *JSONAccessLog) Reset()
 ```
@@ -2214,7 +2216,7 @@ Reset will empty out the contents of the access log
 
 
 
-### <a name="JSONAccessLog.ResponseFiller">func</a> (\*JSONAccessLog) [ResponseFiller](https://github.com/cognusion/go-jar/tree/master/log.go?s=7519:7638#L241)
+### <a name="JSONAccessLog.ResponseFiller">func</a> (\*JSONAccessLog) [ResponseFiller](https://github.com/cognusion/go-jar/tree/master/log.go?s=7482:7601#L240)
 ``` go
 func (a *JSONAccessLog) ResponseFiller(endtime time.Time, duration time.Duration, responseCode int, responseLength int)
 ```
@@ -2223,7 +2225,7 @@ ResponseFiller adds response information to the AccessLog entry
 
 
 
-## <a name="Member">type</a> [Member](https://github.com/cognusion/go-jar/tree/master/pool.go?s=4580:4685#L135)
+## <a name="Member">type</a> [Member](https://github.com/cognusion/go-jar/tree/master/pool.go?s=4573:4678#L135)
 ``` go
 type Member struct {
     URL     *url.URL
@@ -2512,7 +2514,7 @@ Handler is a middleware that replaces the Request path
 
 
 
-## <a name="Pool">type</a> [Pool](https://github.com/cognusion/go-jar/tree/master/pool.go?s=4733:5723#L143)
+## <a name="Pool">type</a> [Pool](https://github.com/cognusion/go-jar/tree/master/pool.go?s=4726:5716#L143)
 ``` go
 type Pool struct {
     Config *PoolConfig
@@ -2544,7 +2546,7 @@ Pool is a list of like-minded destinations
 
 
 
-### <a name="Pool.GetMember">func</a> (\*Pool) [GetMember](https://github.com/cognusion/go-jar/tree/master/pool.go?s=6387:6431#L188)
+### <a name="Pool.GetMember">func</a> (\*Pool) [GetMember](https://github.com/cognusion/go-jar/tree/master/pool.go?s=6380:6424#L188)
 ``` go
 func (p *Pool) GetMember(u *url.URL) *Member
 ```
@@ -2553,7 +2555,7 @@ GetMember interacts with an internal cache, returning a Member from the cache or
 
 
 
-### <a name="Pool.GetPool">func</a> (\*Pool) [GetPool](https://github.com/cognusion/go-jar/tree/master/pool.go?s=5981:6027#L176)
+### <a name="Pool.GetPool">func</a> (\*Pool) [GetPool](https://github.com/cognusion/go-jar/tree/master/pool.go?s=5974:6020#L176)
 ``` go
 func (p *Pool) GetPool() (http.Handler, error)
 ```
@@ -2563,7 +2565,7 @@ materialized, it does that.
 
 
 
-### <a name="Pool.IsMaterialized">func</a> (\*Pool) [IsMaterialized](https://github.com/cognusion/go-jar/tree/master/pool.go?s=5807:5843#L170)
+### <a name="Pool.IsMaterialized">func</a> (\*Pool) [IsMaterialized](https://github.com/cognusion/go-jar/tree/master/pool.go?s=5800:5836#L170)
 ``` go
 func (p *Pool) IsMaterialized() bool
 ```
@@ -2572,7 +2574,7 @@ IsMaterialized return boolean on whether the pool has been materialized or not
 
 
 
-### <a name="Pool.Materialize">func</a> (\*Pool) [Materialize](https://github.com/cognusion/go-jar/tree/master/pool.go?s=11560:11610#L334)
+### <a name="Pool.Materialize">func</a> (\*Pool) [Materialize](https://github.com/cognusion/go-jar/tree/master/pool.go?s=11553:11603#L334)
 ``` go
 func (p *Pool) Materialize() (http.Handler, error)
 ```

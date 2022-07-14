@@ -29,13 +29,13 @@
 ``` go
 var (
     // DebugOut is a log.Logger for debug messages
-    DebugOut = log.New(ioutil.Discard, "", 0)
+    DebugOut = log.New(io.Discard, "", 0)
 )
 ```
 
 
 
-## <a name="FuncRegistry">type</a> [FuncRegistry](https://github.com/cognusion/go-jar/tree/master/funcregistry/funcr.go?s=329:451#L16)
+## <a name="FuncRegistry">type</a> [FuncRegistry](https://github.com/cognusion/go-jar/tree/master/funcregistry/funcr.go?s=318:440#L16)
 ``` go
 type FuncRegistry struct {
     // contains filtered or unexported fields
@@ -51,7 +51,7 @@ Examples include context.CancelFuncs, resource closing, etc.
 
 
 
-### <a name="NewFuncRegistry">func</a> [NewFuncRegistry](https://github.com/cognusion/go-jar/tree/master/funcregistry/funcr.go?s=503:552#L25)
+### <a name="NewFuncRegistry">func</a> [NewFuncRegistry](https://github.com/cognusion/go-jar/tree/master/funcregistry/funcr.go?s=492:541#L25)
 ``` go
 func NewFuncRegistry(callOnce bool) *FuncRegistry
 ```
@@ -61,7 +61,7 @@ NewFuncRegistry returns an initialized Stopper
 
 
 
-### <a name="FuncRegistry.Add">func</a> (\*FuncRegistry) [Add](https://github.com/cognusion/go-jar/tree/master/funcregistry/funcr.go?s=1001:1037#L45)
+### <a name="FuncRegistry.Add">func</a> (\*FuncRegistry) [Add](https://github.com/cognusion/go-jar/tree/master/funcregistry/funcr.go?s=990:1026#L45)
 ``` go
 func (s *FuncRegistry) Add(f func())
 ```
@@ -70,7 +70,7 @@ Add will append f to the list of funcs to call, if Call() is called
 
 
 
-### <a name="FuncRegistry.AddOnce">func</a> (\*FuncRegistry) [AddOnce](https://github.com/cognusion/go-jar/tree/master/funcregistry/funcr.go?s=1286:1326#L55)
+### <a name="FuncRegistry.AddOnce">func</a> (\*FuncRegistry) [AddOnce](https://github.com/cognusion/go-jar/tree/master/funcregistry/funcr.go?s=1275:1315#L55)
 ``` go
 func (s *FuncRegistry) AddOnce(f func())
 ```
@@ -80,7 +80,7 @@ but will only be called once, regardless of the number of Call()s.
 
 
 
-### <a name="FuncRegistry.Call">func</a> (\*FuncRegistry) [Call](https://github.com/cognusion/go-jar/tree/master/funcregistry/funcr.go?s=1619:1648#L66)
+### <a name="FuncRegistry.Call">func</a> (\*FuncRegistry) [Call](https://github.com/cognusion/go-jar/tree/master/funcregistry/funcr.go?s=1608:1637#L66)
 ``` go
 func (s *FuncRegistry) Call()
 ```
@@ -91,7 +91,7 @@ but is safe to call multiple times, regardless.
 
 
 
-### <a name="FuncRegistry.Close">func</a> (\*FuncRegistry) [Close](https://github.com/cognusion/go-jar/tree/master/funcregistry/funcr.go?s=767:797#L35)
+### <a name="FuncRegistry.Close">func</a> (\*FuncRegistry) [Close](https://github.com/cognusion/go-jar/tree/master/funcregistry/funcr.go?s=756:786#L35)
 ``` go
 func (s *FuncRegistry) Close()
 ```

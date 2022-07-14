@@ -5,7 +5,7 @@ package watcher
 import (
 	"github.com/fsnotify/fsnotify"
 
-	"io/ioutil"
+	"io"
 	"log"
 	"strings"
 	"sync"
@@ -15,9 +15,9 @@ import (
 
 var (
 	// DebugOut is a log.Logger for debug messages
-	DebugOut = log.New(ioutil.Discard, "[DEBUG] ", 0)
+	DebugOut = log.New(io.Discard, "[DEBUG] ", 0)
 	// ErrorOut is a log.Logger for error messages
-	ErrorOut = log.New(ioutil.Discard, "", 0)
+	ErrorOut = log.New(io.Discard, "", 0)
 )
 
 // WatchHandlerFunc takes an fsnotify.Event to add on. A WatchHandlerFunc can assume it will not be called more than once while running

@@ -11,12 +11,14 @@ import (
 
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"io"
+
 	//"log"
 	"math"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+
 	//"os"
 	"testing"
 	"time"
@@ -25,7 +27,7 @@ import (
 func init() {
 	//DebugOut = log.New(os.Stderr, "[DEBUG] ", OutFormat)
 	//ErrorOut = log.New(os.Stderr, "[ERROR] ", OutFormat)
-	//ErrorOut = log.New(ioutil.Discard, "", 0) // Silence error output, explicitly
+	//ErrorOut = log.New(io.Discard, "", 0) // Silence error output, explicitly
 	//obfuscator.ErrorOut = ErrorOut
 	//obfuscator.DebugOut = DebugOut
 }
@@ -52,7 +54,7 @@ func TestPoolStripPrefix(t *testing.T) {
 			w := http.Response{
 				StatusCode: http.StatusOK,
 				Status:     http.StatusText(http.StatusOK),
-				Body:       ioutil.NopCloser(bytes.NewBufferString("OK")),
+				Body:       io.NopCloser(bytes.NewBufferString("OK")),
 			}
 			return &w, nil
 		}
@@ -89,7 +91,7 @@ func TestPoolForwardHostHeader(t *testing.T) {
 			w := http.Response{
 				StatusCode: http.StatusOK,
 				Status:     http.StatusText(http.StatusOK),
-				Body:       ioutil.NopCloser(bytes.NewBufferString("OK")),
+				Body:       io.NopCloser(bytes.NewBufferString("OK")),
 			}
 			return &w, nil
 		}
@@ -127,7 +129,7 @@ func TestPoolForwardHostHeaderNope(t *testing.T) {
 			w := http.Response{
 				StatusCode: http.StatusOK,
 				Status:     http.StatusText(http.StatusOK),
-				Body:       ioutil.NopCloser(bytes.NewBufferString("OK")),
+				Body:       io.NopCloser(bytes.NewBufferString("OK")),
 			}
 			return &w, nil
 		}
@@ -164,7 +166,7 @@ func TestPoolReplacePath(t *testing.T) {
 			w := http.Response{
 				StatusCode: http.StatusOK,
 				Status:     http.StatusText(http.StatusOK),
-				Body:       ioutil.NopCloser(bytes.NewBufferString("OK")),
+				Body:       io.NopCloser(bytes.NewBufferString("OK")),
 			}
 			return &w, nil
 		}
@@ -201,7 +203,7 @@ func TestPoolReplacePathNope(t *testing.T) {
 			w := http.Response{
 				StatusCode: http.StatusOK,
 				Status:     http.StatusText(http.StatusOK),
-				Body:       ioutil.NopCloser(bytes.NewBufferString("OK")),
+				Body:       io.NopCloser(bytes.NewBufferString("OK")),
 			}
 			return &w, nil
 		}
@@ -371,7 +373,7 @@ func TestPoolRoundRobinFailWell(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 
 	logrusLogger := logrus.New()
-	logrusLogger.Out = ioutil.Discard
+	logrusLogger.Out = io.Discard
 
 	Convey("When a two-member roundrobin is created with a buffer, and one \"crashes\", the failover is proper", t, func(c C) {
 
@@ -425,7 +427,7 @@ func TestPoolRoundRobinSticky(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 
 	logrusLogger := logrus.New()
-	logrusLogger.Out = ioutil.Discard
+	logrusLogger.Out = io.Discard
 
 	cookieName := "STICKYCOOKIE"
 
@@ -488,7 +490,7 @@ func TestPoolRoundRobinStickyFailReissue(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 
 	logrusLogger := logrus.New()
-	logrusLogger.Out = ioutil.Discard
+	logrusLogger.Out = io.Discard
 
 	cookieName := "STICKYCOOKIE"
 
@@ -555,7 +557,7 @@ func TestPoolRoundRobinStickyObfuscator(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 
 	logrusLogger := logrus.New()
-	logrusLogger.Out = ioutil.Discard
+	logrusLogger.Out = io.Discard
 
 	cookieName := "STICKYCOOKIE"
 
@@ -623,7 +625,7 @@ func TestPoolRoundRobinStickyObfuscatorOptions(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 
 	logrusLogger := logrus.New()
-	logrusLogger.Out = ioutil.Discard
+	logrusLogger.Out = io.Discard
 
 	cookieName := "STICKYCOOKIE"
 
@@ -718,7 +720,7 @@ func TestPoolRoundRobinStickyObfuscatorOptionsDefault(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 
 	logrusLogger := logrus.New()
-	logrusLogger.Out = ioutil.Discard
+	logrusLogger.Out = io.Discard
 
 	cookieName := "STICKYCOOKIE"
 
@@ -813,7 +815,7 @@ func TestPoolRoundRobinStickyObfuscatorFailReissue(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 
 	logrusLogger := logrus.New()
-	logrusLogger.Out = ioutil.Discard
+	logrusLogger.Out = io.Discard
 
 	cookieName := "STICKYCOOKIE"
 
@@ -885,7 +887,7 @@ func TestPoolRoundRobinStickyObfuscatorExpireReissue(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 
 	logrusLogger := logrus.New()
-	logrusLogger.Out = ioutil.Discard
+	logrusLogger.Out = io.Discard
 
 	cookieName := "STICKYCOOKIE"
 

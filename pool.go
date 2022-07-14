@@ -10,7 +10,7 @@ import (
 
 	"encoding/base64"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net"
 	"net/http"
 	"net/url"
@@ -428,7 +428,7 @@ func (p *Pool) materializeHTTP() (http.Handler, error) {
 	)
 
 	logrusLogger := logrus.New()
-	logrusLogger.Out = ioutil.Discard
+	logrusLogger.Out = io.Discard
 
 	if Conf.GetBool(ConfigDebug) {
 		hook := loggerHook{

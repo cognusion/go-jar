@@ -4,7 +4,7 @@ import (
 	"github.com/gorilla/mux"
 	. "github.com/smartystreets/goconvey/convey"
 
-	//"io/ioutil"
+	//"io"
 	//"log"
 	"net/http"
 	"net/http/httptest"
@@ -16,7 +16,7 @@ import (
 func init() {
 	//DebugOut = log.New(os.Stderr, "[DEBUG] ", OutFormat)
 	//ErrorOut = log.New(os.Stderr, "[ERROR] ", OutFormat)
-	//ErrorOut = log.New(ioutil.Discard, "", 0) // Silence error output, explicitly
+	//ErrorOut = log.New(io.Discard, "", 0) // Silence error output, explicitly
 
 }
 

@@ -3,7 +3,7 @@ package workers
 import (
 	"github.com/rcrowley/go-metrics"
 
-	"io/ioutil"
+	"io"
 	"log"
 	"math"
 	"sync/atomic"
@@ -12,9 +12,9 @@ import (
 
 var (
 	// DebugOut is a log.Logger for debug messages
-	DebugOut = log.New(ioutil.Discard, "[DEBUG] ", 0)
+	DebugOut = log.New(io.Discard, "[DEBUG] ", 0)
 	// ErrorOut is a log.Logger for error messages
-	ErrorOut = log.New(ioutil.Discard, "", 0)
+	ErrorOut = log.New(io.Discard, "", 0)
 )
 
 // WorkerPool is an overly-complicated mechanation to allow arbitrary work to be accomplished by an arbitrary worker,

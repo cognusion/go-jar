@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -22,19 +21,19 @@ var (
 	// OutFormat is a log.Logger format used by default
 	OutFormat = log.Ldate | log.Ltime | log.Lshortfile
 	// DebugOut is a log.Logger for debug messages
-	DebugOut = log.New(ioutil.Discard, "[DEBUG] ", 0)
+	DebugOut = log.New(io.Discard, "[DEBUG] ", 0)
 	// TimingOut is a log.Logger for timing-related debug messages. DEPRECATED
-	TimingOut = log.New(ioutil.Discard, "[TIMING] ", 0)
+	TimingOut = log.New(io.Discard, "[TIMING] ", 0)
 	// ErrorOut is a log.Logger for error messages
 	ErrorOut = log.New(os.Stderr, "", OutFormat)
 	// AccessOut is a log.Logger for access logging. PLEASE DO NOT USE THIS DIRECTLY
 	AccessOut = log.New(os.Stdout, "", 0)
 	// CommonOut is a log.Logger for Apache "common log format" logging. PLEASE DO NOT USE THIS DIRECTLY
-	CommonOut = log.New(ioutil.Discard, "", 0)
+	CommonOut = log.New(io.Discard, "", 0)
 	// DocsOut is a log.Logger for documentation output
-	DocsOut = log.New(ioutil.Discard, "", 0)
+	DocsOut = log.New(io.Discard, "", 0)
 	// SlowOut is a log.Logger for slow request information
-	SlowOut = log.New(ioutil.Discard, "", 0)
+	SlowOut = log.New(io.Discard, "", 0)
 
 	// RequestTimer is a function to allow Durations to be added to the Timer Metric
 	RequestTimer func(time.Duration)
@@ -104,7 +103,7 @@ func GetLog(filename, prefix string, format, size, backups, age int) *log.Logger
 // GetLogOrDiscard gets a standard-type log, or discards the output
 func GetLogOrDiscard(filename, prefix string, format, size, backups, age int) *log.Logger {
 
-	return getLog(filename, prefix, format, size, backups, age, ioutil.Discard)
+	return getLog(filename, prefix, format, size, backups, age, io.Discard)
 }
 
 // GetErrorLog gets an error-type log

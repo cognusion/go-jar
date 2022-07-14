@@ -37,9 +37,9 @@
 ``` go
 var (
     // DebugOut is a log.Logger for debug messages
-    DebugOut = log.New(ioutil.Discard, "[DEBUG] ", 0)
+    DebugOut = log.New(io.Discard, "[DEBUG] ", 0)
     // ErrorOut is a log.Logger for error messages
-    ErrorOut = log.New(ioutil.Discard, "", 0)
+    ErrorOut = log.New(io.Discard, "", 0)
 )
 ```
 
@@ -124,7 +124,7 @@ Do forks off a Workerloop that listens for Work, quits, or kills
 
 
 
-## <a name="WorkerPool">type</a> [WorkerPool](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=740:1414#L24)
+## <a name="WorkerPool">type</a> [WorkerPool](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=725:1399#L24)
 ``` go
 type WorkerPool struct {
     // WorkChan is where the work goes
@@ -149,7 +149,7 @@ an appropriate size. If that hasn't turned you off yet, carry on.
 
 
 
-### <a name="NewWorkerPool">func</a> [NewWorkerPool](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=1890:1991#L52)
+### <a name="NewWorkerPool">func</a> [NewWorkerPool](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=1875:1976#L52)
 ``` go
 func NewWorkerPool(WorkChan chan Work, initialSize int, autoAdjustInterval time.Duration) *WorkerPool
 ```
@@ -162,7 +162,7 @@ and usage is key to this. It is recommended that the buffer size be around antic
 
 
 
-### <a name="WorkerPool.AddWorkers">func</a> (\*WorkerPool) [AddWorkers](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=6126:6171#L219)
+### <a name="WorkerPool.AddWorkers">func</a> (\*WorkerPool) [AddWorkers](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=6111:6156#L219)
 ``` go
 func (p *WorkerPool) AddWorkers(number int64)
 ```
@@ -171,7 +171,7 @@ AddWorkers adds the specified number of workers
 
 
 
-### <a name="WorkerPool.CheckAndAdjust">func</a> (\*WorkerPool) [CheckAndAdjust](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=3653:3690#L131)
+### <a name="WorkerPool.CheckAndAdjust">func</a> (\*WorkerPool) [CheckAndAdjust](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=3638:3675#L131)
 ``` go
 func (p *WorkerPool) CheckAndAdjust()
 ```
@@ -181,7 +181,7 @@ While a resize process is running, subsequent processors will silently exit
 
 
 
-### <a name="WorkerPool.Max">func</a> (\*WorkerPool) [Max](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=3409:3442#L125)
+### <a name="WorkerPool.Max">func</a> (\*WorkerPool) [Max](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=3394:3427#L125)
 ``` go
 func (p *WorkerPool) Max(max int)
 ```
@@ -190,7 +190,7 @@ Max sets the maximum number of workers
 
 
 
-### <a name="WorkerPool.Min">func</a> (\*WorkerPool) [Min](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=3285:3318#L120)
+### <a name="WorkerPool.Min">func</a> (\*WorkerPool) [Min](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=3270:3303#L120)
 ``` go
 func (p *WorkerPool) Min(min int)
 ```
@@ -199,7 +199,7 @@ Min sets the minimum number of workers
 
 
 
-### <a name="WorkerPool.RemoveWorkers">func</a> (\*WorkerPool) [RemoveWorkers](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=6486:6534#L233)
+### <a name="WorkerPool.RemoveWorkers">func</a> (\*WorkerPool) [RemoveWorkers](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=6471:6519#L233)
 ``` go
 func (p *WorkerPool) RemoveWorkers(number int64)
 ```
@@ -208,7 +208,7 @@ RemoveWorkers removes the specified number of workers, or the number running.
 
 
 
-### <a name="WorkerPool.Size">func</a> (\*WorkerPool) [Size](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=6933:6966#L249)
+### <a name="WorkerPool.Size">func</a> (\*WorkerPool) [Size](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=6918:6951#L249)
 ``` go
 func (p *WorkerPool) Size() int64
 ```
@@ -217,7 +217,7 @@ Size returns the eventually-consistent number of workers in the pool
 
 
 
-### <a name="WorkerPool.Work">func</a> (\*WorkerPool) [Work](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=3182:3213#L115)
+### <a name="WorkerPool.Work">func</a> (\*WorkerPool) [Work](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=3167:3198#L115)
 ``` go
 func (p *WorkerPool) Work() int
 ```

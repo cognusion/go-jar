@@ -4,7 +4,7 @@ import (
 	//pr "github.com/cognusion/go-jar/presponsewriter"
 
 	//"encoding/json"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -13,7 +13,7 @@ import (
 
 func Benchmark_AccessLogHandler(b *testing.B) {
 	oa := AccessOut
-	AccessOut = log.New(ioutil.Discard, "", 0)
+	AccessOut = log.New(io.Discard, "", 0)
 
 	req, err := http.NewRequest("GET", "/", nil)
 	if err != nil {
