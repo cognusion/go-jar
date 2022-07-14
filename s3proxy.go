@@ -24,6 +24,8 @@ const (
 	ConfigS3StreamProxyFormFileField     = ConfigKey("s3proxy.filefield")
 	ConfigS3StreamProxyBadFileExtensions = ConfigKey("s3proxy.badfileexts")
 	ConfigS3StreamProxyWrapSuccess       = ConfigKey("s3proxy.wrapsuccess")
+	ConfigS3StreamProxyZulipStream       = ConfigKey("s3proxy.zulipstream")
+	ConfigS3StreamProxyZulipTopic        = ConfigKey("s3proxy.zuliptopic")
 )
 
 const (
@@ -74,6 +76,7 @@ func S3StreamProxyFinisher(w http.ResponseWriter, r *http.Request) {
 	var (
 		pathOptions PathOptions
 		badExts     []string
+		zw          ZulipWork
 	)
 
 	if popts := r.Context().Value(PathOptionsKey); popts != nil {
@@ -104,6 +107,17 @@ func S3StreamProxyFinisher(w http.ResponseWriter, r *http.Request) {
 
 	svc := s3manager.NewUploader(Ec2Session.AWS)
 
+	if pathOptions.GetString(ConfigS3StreamProxyZulipStream) != "" && ZulipClient != nil {
+		DebugOut.Print(ErrRequestError{r, fmt.Sprintf("S3StreamProxy using Zulip %s %s\n", pathOptions.GetString(ConfigS3StreamProxyZulipStream), pathOptions.GetString(ConfigS3StreamProxyZulipTopic))}.String())
+		zw = ZulipWork{
+			Client:  ZulipClient,
+			Stream:  pathOptions.GetString(ConfigS3StreamProxyZulipStream),
+			Topic:   pathOptions.GetString(ConfigS3StreamProxyZulipTopic),
+			Message: ErrRequestError{r, "An error occurred during the upload"}.String(),
+		}
+		defer AddWork(&zw)
+	}
+
 	for {
 		p, err := mr.NextPart()
 		if err == io.EOF {
@@ -112,6 +126,7 @@ func S3StreamProxyFinisher(w http.ResponseWriter, r *http.Request) {
 		}
 		if err != nil {
 			ErrorOut.Println(ErrRequestError{r, fmt.Sprintf("Error in S3StreamProxy reading multipart body: '%v'", err)})
+			zw.Message = ErrRequestError{r, fmt.Sprintf("Error in S3StreamProxy reading multipart body: '%v'", err)}.String()
 			http.Error(w, ErrRequestError{r, "There was an error reading data"}.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -133,6 +148,7 @@ func S3StreamProxyFinisher(w http.ResponseWriter, r *http.Request) {
 			if isBadFileMaybe(fn, badExts) {
 				p.Close()
 				ErrorOut.Println(ErrRequestError{r, fmt.Sprintf("S3StreamProxy is rejecting file '%s' from %s to %s", fn, from, to)})
+				zw.Message = ErrRequestError{r, fmt.Sprintf("S3StreamProxy is rejecting file '%s' from %s to %s", fn, from, to)}.String()
 				http.Error(w, ErrRequestError{r, "The submitted file has been rejected"}.Error(), http.StatusBadRequest)
 				return
 			}
@@ -156,10 +172,16 @@ func S3StreamProxyFinisher(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				p.Close()
 				ErrorOut.Println(ErrRequestError{r, fmt.Sprintf("Error in S3StreamProxy uploading file '%s' from %s: %v", basefn, from, err)})
+				zw.Message = ErrRequestError{r, fmt.Sprintf("Error in S3StreamProxy uploading file '%s' from %s: %v", basefn, from, err)}.String()
 				http.Error(w, ErrRequestError{r, "There was an error uploading data"}.Error(), http.StatusInternalServerError)
 				return
 			}
 			// Win
+			if to == "0" {
+				zw.Message = fmt.Sprintf("A file from %s was uploaded to:\n```quote\ns3://%s/%s\n```\n", from, bucket, basefn)
+			} else {
+				zw.Message = fmt.Sprintf("A file from %s to %s was uploaded to:\n```quote\ns3://%s/%s\n```\n", from, to, bucket, basefn)
+			}
 		}
 		p.Close()
 	}
