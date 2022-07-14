@@ -1,10 +1,10 @@
 package jar
 
 import (
-	"github.com/cognusion/go-jar/utils"
 	"github.com/cognusion/go-jar/workers"
 
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -411,7 +411,7 @@ func (h *HealthCheckWork) Work() interface{} {
 			Remove:      h.Remove,
 		}
 	}
-	_, err = utils.ReadAll(res.Body)
+	_, err = io.ReadAll(res.Body)
 	res.Body.Close()
 	if err != nil {
 		return HealthCheckError{

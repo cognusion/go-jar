@@ -1,13 +1,12 @@
 package jar
 
 import (
-	"github.com/cognusion/go-jar/utils"
 	"github.com/cognusion/go-prw"
-
 	"github.com/cognusion/go-timings"
 
 	"fmt"
 	"html/template"
+	"io"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -261,7 +260,7 @@ func HandleRemoteWrapper(code int, r *http.Request, rw *prw.PluggableResponseWri
 		resp := resp.(*http.Response)
 		defer resp.Body.Close()
 
-		rbody, err := utils.ReadAll(resp.Body)
+		rbody, err := io.ReadAll(resp.Body)
 		if err != nil {
 			ErrorOut.Println(ErrRequestError{r, fmt.Sprintf("Error in RemoteErrorHandler during response body read. Demurring: %s\n", err)})
 		} else {

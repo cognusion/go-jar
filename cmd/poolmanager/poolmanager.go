@@ -1,7 +1,8 @@
 package main
 
 import (
-	"github.com/cognusion/go-jar/utils"
+	"io"
+
 	"github.com/cognusion/srvdisco"
 	"github.com/spf13/pflag"
 
@@ -63,7 +64,7 @@ func get(url string) error {
 	}
 
 	defer resp.Body.Close()
-	body, err := utils.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}

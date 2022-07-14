@@ -1,8 +1,6 @@
 package jar
 
 import (
-	"github.com/cognusion/go-jar/utils"
-
 	"github.com/justinas/alice"
 	. "github.com/smartystreets/goconvey/convey"
 
@@ -798,7 +796,7 @@ func TestBodyByteLimitOk(t *testing.T) {
 
 	Convey("When a request is made, and there a body byte limit, and the body is exactly max size, the request passes through fine", t, func() {
 		testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			b, err := utils.ReadAll(r.Body)
+			b, err := io.ReadAll(r.Body)
 			defer r.Body.Close()
 			So(err, ShouldBeNil)
 			So(string(b), ShouldEqual, rdString)

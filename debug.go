@@ -3,7 +3,6 @@ package jar
 import (
 	"github.com/cognusion/go-jar/obfuscator"
 	"github.com/cognusion/go-jar/recyclablebuffer"
-	"github.com/cognusion/go-jar/utils"
 
 	"github.com/cognusion/go-timings"
 	"github.com/cognusion/oxy/roundrobin"
@@ -11,6 +10,7 @@ import (
 
 	"encoding/base64"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"sort"
@@ -31,7 +31,7 @@ var (
 			)
 
 			if r.Body != nil {
-				body, err = utils.ReadAll(r.Body)
+				body, err = io.ReadAll(r.Body)
 				r.Body.Close()
 			}
 			w := http.Response{}

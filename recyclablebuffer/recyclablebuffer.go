@@ -3,8 +3,6 @@
 package recyclablebuffer
 
 import (
-	"github.com/cognusion/go-jar/utils"
-
 	"bytes"
 	"errors"
 	"io"
@@ -31,7 +29,7 @@ func NewRecyclableBuffer(home *sync.Pool, bytes []byte) *RecyclableBuffer {
 
 // Close puts itself back in the Pool it came from. This should absolutely **never** be
 // called more than once per RecyclableBuffer life.
-// Implements ``io.Closer`` (also ``io.ReadCloser`` and ``io.WriteCloser``)
+// Implements “io.Closer“ (also “io.ReadCloser“ and “io.WriteCloser“)
 func (r *RecyclableBuffer) Close() error {
 	r.home.Put(r)
 	return nil
@@ -39,7 +37,7 @@ func (r *RecyclableBuffer) Close() error {
 
 // ResetFromReader performs a Reset() using the contents of the supplied Reader as the new content
 func (r *RecyclableBuffer) ResetFromReader(reader io.Reader) {
-	b, _ := utils.ReadAll(reader)
+	b, _ := io.ReadAll(reader)
 	r.Reset(b)
 }
 
@@ -48,7 +46,7 @@ func (r *RecyclableBuffer) ResetFromReader(reader io.Reader) {
 // may continue to be used, understanding the contents will be limited
 func (r *RecyclableBuffer) ResetFromLimitedReader(reader io.Reader, max int64) error {
 	lr := io.LimitReader(reader, max+1)
-	b, _ := utils.ReadAll(lr)
+	b, _ := io.ReadAll(lr)
 	if int64(len(b)) > max {
 		r.Reset(b[0:max])
 		return ErrTooLarge
@@ -59,26 +57,26 @@ func (r *RecyclableBuffer) ResetFromLimitedReader(reader io.Reader, max int64) e
 
 // Bytes returns the contents of the buffer, and sets the seek pointer back to the beginning
 func (r *RecyclableBuffer) Bytes() []byte {
-	b, _ := utils.ReadAll(&r.Reader)
+	b, _ := io.ReadAll(&r.Reader)
 	r.Seek(0, 0) // reset the seeker
 	return b
 }
 
 // String returns the contents of the buffer as a string, and sets the seek pointer back to the beginning
 func (r *RecyclableBuffer) String() string {
-	b, _ := utils.ReadAll(&r.Reader)
+	b, _ := io.ReadAll(&r.Reader)
 	r.Seek(0, 0) // reset the seeker
 	return string(b)
 }
 
-// Error returns the contents of the buffer as a string. Implements ``error``
+// Error returns the contents of the buffer as a string. Implements “error“
 func (r *RecyclableBuffer) Error() string {
 	return r.String()
 }
 
-// Writer adds the bytes the written to the buffer. Implements ``io.Writer``
+// Writer adds the bytes the written to the buffer. Implements “io.Writer“
 func (r *RecyclableBuffer) Write(p []byte) (n int, err error) {
-	b, err := utils.ReadAll(&r.Reader)
+	b, err := io.ReadAll(&r.Reader)
 	if err != nil {
 		return 0, err
 	}
