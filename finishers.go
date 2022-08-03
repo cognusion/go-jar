@@ -1,6 +1,7 @@
 package jar
 
 import (
+	"github.com/glenn-brown/golang-pkg-pcre/src/pkg/pcre"
 	"github.com/gorilla/mux"
 
 	"encoding/base64"
@@ -99,6 +100,7 @@ func Forbidden(w http.ResponseWriter, r *http.Request) {
 type Redirect struct {
 	URL  string
 	Code int
+	PCRE *pcre.Regexp
 }
 
 // Finisher is a ... Finisher for the instantiated Redirect
@@ -106,6 +108,16 @@ func (rd *Redirect) Finisher(w http.ResponseWriter, r *http.Request) {
 	u := rd.URL
 	if rd.Code < 300 || rd.Code >= 400 {
 		rd.Code = http.StatusMovedPermanently
+	}
+	if rd.PCRE != nil && rd.PCRE.Groups() > 0 {
+		// there are submatch groups to care about
+		m := rd.PCRE.MatcherString(r.URL.String(), 0) // create a matcher
+		for i := 0; i < rd.PCRE.Groups(); i++ {
+			if g := m.GroupString(i + 1); g != "" {
+				s := fmt.Sprintf("$%d", i+1) // $1 $2 $3 etc
+				u = strings.Replace(u, s, g, 1)
+			}
+		}
 	}
 	u = strings.Replace(u, "%1", r.URL.RequestURI(), -1)
 	http.Redirect(w, r, u, rd.Code)

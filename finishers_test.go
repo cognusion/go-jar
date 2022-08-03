@@ -1,6 +1,7 @@
 package jar
 
 import (
+	"github.com/glenn-brown/golang-pkg-pcre/src/pkg/pcre"
 	. "github.com/smartystreets/goconvey/convey"
 
 	"io"
@@ -118,6 +119,36 @@ func TestFinisherRedirect(t *testing.T) {
 		handler.ServeHTTP(rr, req)
 
 		So(rr.Code, ShouldEqual, http.StatusMovedPermanently)
+		So(rr.Header().Get("Location"), ShouldEqual, "http://somewhere.com/")
+	})
+}
+
+func TestFinisherRedirectPCRE(t *testing.T) {
+
+	req, err := http.NewRequest("GET", "http://elsewhere.com/files.html", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	//req.Host = "elsewhere.com"
+
+	Convey("When a request is made, and the Redirect finisher is used with MovedPermanently, the request is redirected thusly", t, func() {
+
+		rr := httptest.NewRecorder()
+
+		re, rerr := pcre.Compile("(else)where", pcre.CASELESS)
+		So(rerr, ShouldBeNil)
+
+		red := Redirect{
+			URL:  "http://somewhere$1.com%1",
+			Code: http.StatusMovedPermanently,
+			PCRE: &re,
+		}
+		handler := http.HandlerFunc(red.Finisher)
+
+		handler.ServeHTTP(rr, req)
+
+		So(rr.Code, ShouldEqual, http.StatusMovedPermanently)
+		So(rr.Header().Get("Location"), ShouldEqual, "http://somewhereelse.com/files.html")
 	})
 }
 

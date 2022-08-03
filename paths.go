@@ -1,6 +1,7 @@
 package jar
 
 import (
+	"github.com/glenn-brown/golang-pkg-pcre/src/pkg/pcre"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 	"github.com/spf13/cast"
@@ -60,6 +61,8 @@ type Path struct {
 	Redirect string
 	// RedirectCode is an optional code to send as the redirect status
 	RedirectCode int
+	// RedirectPCRE is a Perl-Compatible Regular Expression with grouping to apply to the Hostname, replacing $1,$2, etc. in ``Redirect``
+	RedirectPCRE string
 	// ReplacePath is used to replace the requested path with the target path
 	ReplacePath string
 	// StripPrefix is used to replace the requested path with one sans prefix
@@ -515,8 +518,28 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 	case path.Redirect != "":
 		// path will be redirected
 		DebugOut.Printf("\tAdding Redirect %s\n", path.Redirect)
-		DocsOut.Printf("Redirect (%d) to '%s'\n\n", path.RedirectCode, path.Redirect)
-		p := Redirect{path.Redirect, path.RedirectCode}
+		// Test the PCRE
+		re, rerr := pcre.Compile(path.RedirectPCRE, pcre.CASELESS)
+		if rerr != nil {
+			DebugOut.Printf("\t\tFailed: %s\n", rerr)
+			return 0, ErrConfigurationError{rerr.String()}
+		}
+		if re.Groups() < 1 {
+			return 0, ErrConfigurationError{"RedirectPCRE has no groups"}
+		}
+		gcount := 0
+		for i := 0; i < re.Groups(); i++ {
+			s := fmt.Sprintf("$%d", i+1) // $1 $2 $3 etc
+			if strings.Contains(path.Redirect, s) {
+				gcount++
+			}
+		}
+		if gcount != re.Groups() {
+			return 0, ErrConfigurationError{fmt.Sprintf("RedirectPCRE has %d groups, but Redirect has %d", re.Groups(), gcount)}
+		}
+
+		DocsOut.Printf("Redirect (%d) to '%s' with PCRE '%s'\n\n", path.RedirectCode, path.Redirect, path.RedirectPCRE)
+		p := Redirect{URL: path.Redirect, Code: path.RedirectCode, PCRE: &re}
 		pathHandler = hchain.ThenFunc(p.Finisher)
 
 	case path.ErrorMessage != "":
