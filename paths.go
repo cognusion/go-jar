@@ -518,28 +518,34 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 	case path.Redirect != "":
 		// path will be redirected
 		DebugOut.Printf("\tAdding Redirect %s\n", path.Redirect)
-		// Test the PCRE
-		re, rerr := pcre.Compile(path.RedirectPCRE, pcre.CASELESS)
-		if rerr != nil {
-			DebugOut.Printf("\t\tFailed: %s\n", rerr)
-			return 0, ErrConfigurationError{rerr.String()}
-		}
-		if re.Groups() < 1 {
-			return 0, ErrConfigurationError{"RedirectPCRE has no groups"}
-		}
-		gcount := 0
-		for i := 0; i < re.Groups(); i++ {
-			s := fmt.Sprintf("$%d", i+1) // $1 $2 $3 etc
-			if strings.Contains(path.Redirect, s) {
-				gcount++
+
+		p := Redirect{URL: path.Redirect, Code: path.RedirectCode, PCRE: nil}
+
+		if path.RedirectPCRE != "" {
+			// Test the PCRE
+			re, rerr := pcre.Compile(path.RedirectPCRE, pcre.CASELESS)
+			if rerr != nil {
+				DebugOut.Printf("\t\tFailed: %s\n", rerr)
+				return 0, ErrConfigurationError{rerr.String()}
 			}
-		}
-		if gcount != re.Groups() {
-			return 0, ErrConfigurationError{fmt.Sprintf("RedirectPCRE has %d groups, but Redirect has %d", re.Groups(), gcount)}
+			if re.Groups() < 1 {
+				return 0, ErrConfigurationError{"RedirectPCRE has no groups"}
+			}
+			gcount := 0
+			for i := 0; i < re.Groups(); i++ {
+				s := fmt.Sprintf("$%d", i+1) // $1 $2 $3 etc
+				if strings.Contains(path.Redirect, s) {
+					gcount++
+				}
+			}
+			if gcount != re.Groups() {
+				return 0, ErrConfigurationError{fmt.Sprintf("RedirectPCRE has %d groups, but Redirect has %d", re.Groups(), gcount)}
+			}
+
+			p = Redirect{URL: path.Redirect, Code: path.RedirectCode, PCRE: &re}
 		}
 
 		DocsOut.Printf("Redirect (%d) to '%s' with PCRE '%s'\n\n", path.RedirectCode, path.Redirect, path.RedirectPCRE)
-		p := Redirect{URL: path.Redirect, Code: path.RedirectCode, PCRE: &re}
 		pathHandler = hchain.ThenFunc(p.Finisher)
 
 	case path.ErrorMessage != "":
