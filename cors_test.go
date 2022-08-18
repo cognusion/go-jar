@@ -12,8 +12,6 @@ import (
 )
 
 func init() {
-	//DebugOut = log.New(os.Stderr, "[DEBUG] ", OutFormat)
-	//ErrorOut = log.New(os.Stderr, "[ERROR] ", OutFormat)
 	ErrorOut = log.New(io.Discard, "", 0) // Silence error output, explicitly
 }
 

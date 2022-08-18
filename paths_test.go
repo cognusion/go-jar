@@ -4,21 +4,10 @@ import (
 	"github.com/gorilla/mux"
 	. "github.com/smartystreets/goconvey/convey"
 
-	//"io"
-	//"log"
 	"net/http"
 	"net/http/httptest"
-
-	//"os"
 	"testing"
 )
-
-func init() {
-	//DebugOut = log.New(os.Stderr, "[DEBUG] ", OutFormat)
-	//ErrorOut = log.New(os.Stderr, "[ERROR] ", OutFormat)
-	//ErrorOut = log.New(io.Discard, "", 0) // Silence error output, explicitly
-
-}
 
 func TestPathStripPrefix(t *testing.T) {
 

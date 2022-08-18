@@ -1,16 +1,12 @@
 package jar
 
+/*
 import (
 //. "github.com/smartystreets/goconvey/convey"
 
 //"testing"
 )
-
-func init() {
-	//DebugOut = log.New(os.Stderr, "[DEBUG] ", OutFormat)
-	//TimingOut = log.New(os.Stderr, "[TIMING] ", OutFormat)
-	//ErrorOut = log.New(os.Stderr, "[ERROR] ", OutFormat)
-}
+*/
 
 /* Commenting out LDAP-specific tests. May revisit.
 func TestNewLdapSourceFromUrlGoodTests(t *testing.T) {

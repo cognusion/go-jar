@@ -11,23 +11,13 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-
-	//"log"
 	"math"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
-
-	//"os"
 	"testing"
 	"time"
 )
-
-func init() {
-	//DebugOut = log.New(os.Stderr, "[DEBUG] ", OutFormat)
-	//ErrorOut = log.New(os.Stderr, "[ERROR] ", OutFormat)
-	//ErrorOut = log.New(io.Discard, "", 0) // Silence error output, explicitly
-}
 
 func TestPoolStripPrefix(t *testing.T) {
 

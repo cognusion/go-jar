@@ -3,16 +3,8 @@ package jar
 import (
 	. "github.com/smartystreets/goconvey/convey"
 
-	//"log"
-	//"os"
 	"testing"
 )
-
-func init() {
-	//DebugOut = log.New(os.Stderr, "[DEBUG] ", OutFormat)
-	//ErrorOut = log.New(os.Stderr, "[ERROR] ", OutFormat)
-
-}
 
 func TestBootstrapConfigMin(t *testing.T) {
 

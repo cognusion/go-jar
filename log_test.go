@@ -1,9 +1,6 @@
 package jar
 
 import (
-	//pr "github.com/cognusion/go-jar/presponsewriter"
-
-	//"encoding/json"
 	"io"
 	"log"
 	"net/http"

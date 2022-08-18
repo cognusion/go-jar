@@ -4,19 +4,12 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 
 	"html/template"
-	//"log"
 	"net/http"
 	"net/http/httptest"
-
-	//"os"
 	"testing"
 )
 
 func init() {
-	//DebugOut = log.New(os.Stderr, "[DEBUG] ", OutFormat)
-	//TimingOut = log.New(os.Stderr, "[TIMING] ", OutFormat)
-	//ErrorOut = log.New(os.Stderr, "[ERROR] ", OutFormat)
-
 	// Set up errorhandler
 	// TODO: Mock something for this :(
 	templ := "tests/errorhandler/errors.tmpl"
