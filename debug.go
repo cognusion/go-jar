@@ -1,12 +1,11 @@
 package jar
 
 import (
-	"github.com/cognusion/go-jar/obfuscator"
 	"github.com/cognusion/go-jar/recyclablebuffer"
 
 	"github.com/cognusion/go-timings"
-	"github.com/cognusion/oxy/roundrobin"
 	"github.com/vulcand/oxy/forward"
+	"github.com/vulcand/oxy/roundrobin/stickycookie"
 
 	"encoding/base64"
 	"fmt"
@@ -112,16 +111,20 @@ func TestFinisher(w http.ResponseWriter, r *http.Request) {
 			if sskey := Conf.GetString(ConfigKeysStickyCookie); sskey != "" {
 				var (
 					clearKey []byte
-					ao       roundrobin.Obfuscator
+					ao       stickycookie.CookieValue
 				)
 
 				if clearKey, err = base64.StdEncoding.DecodeString(sskey); err == nil {
 					if cookielife := Conf.GetDuration(ConfigStickyCookieAESTTL); cookielife > 0 {
-						if ao, err = obfuscator.NewAesObfuscatorWithExpiration(clearKey, cookielife); err == nil {
-							w.Write([]byte(ao.Normalize(rid.Value)))
+						if ao, err = stickycookie.NewAESValue(clearKey, cookielife); err == nil {
+							if aoV, aoErr := ao.FindURL(rid.Value, nil); aoErr == nil {
+								w.Write([]byte(aoV.String()))
+							}
 						}
-					} else if ao, err = obfuscator.NewAesObfuscator(clearKey); err == nil {
-						w.Write([]byte(ao.Normalize(rid.Value)))
+					} else if ao, err = stickycookie.NewAESValue(clearKey, time.Duration(0)); err == nil {
+						if aoV, aoErr := ao.FindURL(rid.Value, nil); aoErr == nil {
+							w.Write([]byte(aoV.String()))
+						}
 					}
 				}
 			}

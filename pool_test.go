@@ -1,13 +1,12 @@
 package jar
 
 import (
-	"github.com/cognusion/oxy/roundrobin"
 	"github.com/sirupsen/logrus"
 	. "github.com/smartystreets/goconvey/convey"
 	"github.com/vulcand/oxy/buffer"
 	"github.com/vulcand/oxy/forward"
-
-	"github.com/cognusion/go-jar/obfuscator"
+	"github.com/vulcand/oxy/roundrobin"
+	"github.com/vulcand/oxy/roundrobin/stickycookie"
 
 	"bytes"
 	"fmt"
@@ -28,8 +27,6 @@ func init() {
 	//DebugOut = log.New(os.Stderr, "[DEBUG] ", OutFormat)
 	//ErrorOut = log.New(os.Stderr, "[ERROR] ", OutFormat)
 	//ErrorOut = log.New(io.Discard, "", 0) // Silence error output, explicitly
-	//obfuscator.ErrorOut = ErrorOut
-	//obfuscator.DebugOut = DebugOut
 }
 
 func TestPoolStripPrefix(t *testing.T) {
@@ -553,7 +550,7 @@ func TestPoolRoundRobinStickyFailReissue(t *testing.T) {
 	})
 }
 
-func TestPoolRoundRobinStickyObfuscator(t *testing.T) {
+func TestPoolRoundRobinStickyCookie(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 
 	logrusLogger := logrus.New()
@@ -561,7 +558,7 @@ func TestPoolRoundRobinStickyObfuscator(t *testing.T) {
 
 	cookieName := "STICKYCOOKIE"
 
-	Convey("When a two-member roundrobin is created with a buffer and using an obfuscator, and requests are pinned to one instance, they stay that way", t, func(c C) {
+	Convey("When a two-member roundrobin is created with a buffer and using a sticky cookie, and requests are pinned to one instance, they stay that way", t, func(c C) {
 
 		rr := httptest.NewRecorder()
 
@@ -590,17 +587,17 @@ func TestPoolRoundRobinStickyObfuscator(t *testing.T) {
 		fwd, err := forward.New()
 		So(err, ShouldBeNil)
 
-		ao, err := setupObfuscator([]byte("1234567890abcdef"), 0)
+		ao, err := setupStickyCookie([]byte("1234567890abcdef"), 0)
 		So(err, ShouldBeNil)
 
-		cookieValue := ao.Obfuscate(twoServer.URL)
+		cookieValue := ao.Get(twoURL)
 		sc := http.Cookie{
 			Name:  cookieName,
 			Value: cookieValue,
 		}
 		req.AddCookie(&sc)
 
-		sticky := roundrobin.EnableStickySession(roundrobin.NewStickySessionWithOptions(cookieName, roundrobin.CookieOptions{Obfuscator: ao}))
+		sticky := roundrobin.EnableStickySession(roundrobin.NewStickySession(cookieName).SetCookieValue(ao))
 
 		lb, err := roundrobin.New(fwd, sticky)
 		So(err, ShouldBeNil)
@@ -621,7 +618,7 @@ func TestPoolRoundRobinStickyObfuscator(t *testing.T) {
 	})
 }
 
-func TestPoolRoundRobinStickyObfuscatorOptions(t *testing.T) {
+func TestPoolRoundRobinStickyCookieOptions(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 
 	logrusLogger := logrus.New()
@@ -629,7 +626,7 @@ func TestPoolRoundRobinStickyObfuscatorOptions(t *testing.T) {
 
 	cookieName := "STICKYCOOKIE"
 
-	Convey("When a two-member roundrobin is created with a buffer and using an obfuscator and with HTTPOnly and Secure set, requests pin to one instance, they stay that way, and the cookies are correct", t, func(c C) {
+	Convey("When a two-member roundrobin is created with a buffer and using a sticky cookie and with HTTPOnly and Secure set, requests pin to one instance, they stay that way, and the cookies are correct", t, func(c C) {
 
 		rr := httptest.NewRecorder()
 
@@ -658,19 +655,10 @@ func TestPoolRoundRobinStickyObfuscatorOptions(t *testing.T) {
 		fwd, err := forward.New()
 		So(err, ShouldBeNil)
 
-		ao, err := setupObfuscator([]byte("1234567890abcdef"), 0)
+		ao, err := setupStickyCookie([]byte("1234567890abcdef"), 0)
 		So(err, ShouldBeNil)
 
-		/*
-			cookieValue := ao.Obfuscate(twoServer.URL)
-				sc := http.Cookie{
-					Name:  cookieName,
-					Value: cookieValue,
-				}
-				req.AddCookie(&sc)
-		*/
-
-		sticky := roundrobin.EnableStickySession(roundrobin.NewStickySessionWithOptions(cookieName, roundrobin.CookieOptions{HTTPOnly: true, Secure: true, Obfuscator: ao}))
+		sticky := roundrobin.EnableStickySession(roundrobin.NewStickySessionWithOptions(cookieName, roundrobin.CookieOptions{HTTPOnly: true, Secure: true}).SetCookieValue(ao))
 
 		lb, err := roundrobin.New(fwd, sticky)
 		So(err, ShouldBeNil)
@@ -716,7 +704,7 @@ func TestPoolRoundRobinStickyObfuscatorOptions(t *testing.T) {
 	})
 }
 
-func TestPoolRoundRobinStickyObfuscatorOptionsDefault(t *testing.T) {
+func TestPoolRoundRobinStickyCookieOptionsDefault(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 
 	logrusLogger := logrus.New()
@@ -724,7 +712,7 @@ func TestPoolRoundRobinStickyObfuscatorOptionsDefault(t *testing.T) {
 
 	cookieName := "STICKYCOOKIE"
 
-	Convey("When a two-member roundrobin is created with a buffer and using an obfuscator and with HTTPOnly and Secure defaulting (false), requests pin to one instance, they stay that way, and the cookies are correct", t, func(c C) {
+	Convey("When a two-member roundrobin is created with a buffer and using a sticky cookie and with HTTPOnly and Secure defaulting (false), requests pin to one instance, they stay that way, and the cookies are correct", t, func(c C) {
 
 		rr := httptest.NewRecorder()
 
@@ -753,19 +741,10 @@ func TestPoolRoundRobinStickyObfuscatorOptionsDefault(t *testing.T) {
 		fwd, err := forward.New()
 		So(err, ShouldBeNil)
 
-		ao, err := setupObfuscator([]byte("1234567890abcdef"), 0)
+		ao, err := setupStickyCookie([]byte("1234567890abcdef"), 0)
 		So(err, ShouldBeNil)
 
-		/*
-			cookieValue := ao.Obfuscate(twoServer.URL)
-				sc := http.Cookie{
-					Name:  cookieName,
-					Value: cookieValue,
-				}
-				req.AddCookie(&sc)
-		*/
-
-		sticky := roundrobin.EnableStickySession(roundrobin.NewStickySessionWithOptions(cookieName, roundrobin.CookieOptions{Obfuscator: ao}))
+		sticky := roundrobin.EnableStickySession(roundrobin.NewStickySession(cookieName).SetCookieValue(ao))
 
 		lb, err := roundrobin.New(fwd, sticky)
 		So(err, ShouldBeNil)
@@ -811,7 +790,7 @@ func TestPoolRoundRobinStickyObfuscatorOptionsDefault(t *testing.T) {
 	})
 }
 
-func TestPoolRoundRobinStickyObfuscatorFailReissue(t *testing.T) {
+func TestPoolRoundRobinStickyCookieFailReissue(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 
 	logrusLogger := logrus.New()
@@ -819,7 +798,7 @@ func TestPoolRoundRobinStickyObfuscatorFailReissue(t *testing.T) {
 
 	cookieName := "STICKYCOOKIE"
 
-	Convey("When a two-member roundrobin is created with a buffer and using an obfuscator, and requests are pinned to one instance, but that instance fails, they get bounced over with a new cookie", t, func(c C) {
+	Convey("When a two-member roundrobin is created with a buffer and using a sticky cookie, and requests are pinned to one instance, but that instance fails, they get bounced over with a new cookie", t, func(c C) {
 
 		rr := httptest.NewRecorder()
 
@@ -840,7 +819,7 @@ func TestPoolRoundRobinStickyObfuscatorFailReissue(t *testing.T) {
 		})
 		twoServer := httptest.NewServer(two)
 		//defer twoServer.Close()
-		//twoURL, err := url.Parse(twoServer.URL)
+		twoURL, err := url.Parse(twoServer.URL)
 		So(err, ShouldBeNil)
 		// explicit close now
 		twoServer.Close()
@@ -848,17 +827,17 @@ func TestPoolRoundRobinStickyObfuscatorFailReissue(t *testing.T) {
 		fwd, err := forward.New()
 		So(err, ShouldBeNil)
 
-		ao, err := setupObfuscator([]byte("1234567890abcdef"), 0)
+		ao, err := setupStickyCookie([]byte("1234567890abcdef"), 0)
 		So(err, ShouldBeNil)
 
-		cookieValue := ao.Obfuscate(twoServer.URL)
+		cookieValue := ao.Get(twoURL)
 		sc := http.Cookie{
 			Name:  cookieName,
 			Value: cookieValue,
 		}
 		req.AddCookie(&sc)
 
-		sticky := roundrobin.EnableStickySession(roundrobin.NewStickySessionWithOptions(cookieName, roundrobin.CookieOptions{Obfuscator: ao}))
+		sticky := roundrobin.EnableStickySession(roundrobin.NewStickySession(cookieName).SetCookieValue(ao))
 
 		lb, err := roundrobin.New(fwd, sticky)
 		So(err, ShouldBeNil)
@@ -875,7 +854,11 @@ func TestPoolRoundRobinStickyObfuscatorFailReissue(t *testing.T) {
 			cookies := rr.Result().Cookies()
 			So(len(cookies), ShouldBeGreaterThan, 0)
 			So(cookies[0].Name, ShouldEqual, cookieName)
-			So(ao.Normalize(cookies[0].Value), ShouldEqual, oneServer.URL)
+
+			cv, cErr := ao.FindURL(cookies[0].Value, []*url.URL{oneURL, twoURL})
+			So(cErr, ShouldBeNil)
+			So(cv, ShouldEqual, oneURL)
+			//So(ao.Normalize(cookies[0].Value), ShouldEqual, oneServer.URL)
 		}
 
 		So(oneCount, ShouldEqual, 10)
@@ -883,7 +866,7 @@ func TestPoolRoundRobinStickyObfuscatorFailReissue(t *testing.T) {
 	})
 }
 
-func TestPoolRoundRobinStickyObfuscatorExpireReissue(t *testing.T) {
+func TestPoolRoundRobinStickyCookieExpireReissue(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 
 	logrusLogger := logrus.New()
@@ -891,7 +874,7 @@ func TestPoolRoundRobinStickyObfuscatorExpireReissue(t *testing.T) {
 
 	cookieName := "STICKYCOOKIE"
 
-	Convey("When a two-member roundrobin is created with a buffer and using an obfuscator, and requests are pinned to one instance, but the cookie expires, they get a new cookie pinned to the other instance", t, func(c C) {
+	Convey("When a two-member roundrobin is created with a buffer and using a sticky cookie, and requests are pinned to one instance, but the cookie expires, they get a new cookie pinned to the other instance", t, func(c C) {
 
 		rr := httptest.NewRecorder()
 
@@ -919,21 +902,21 @@ func TestPoolRoundRobinStickyObfuscatorExpireReissue(t *testing.T) {
 		So(err, ShouldBeNil)
 
 		// First ao has a 1ns expiration, so we know it will be expired
-		firstao, err := setupObfuscator([]byte("1234567890abcdef"), 1*time.Nanosecond)
+		firstao, err := setupStickyCookie([]byte("1234567890abcdef"), 1*time.Nanosecond)
 		So(err, ShouldBeNil)
 
 		// ao has a 1s expiration, so it'll last a bit
-		ao, err := setupObfuscator([]byte("1234567890abcdef"), 1*time.Second)
+		ao, err := setupStickyCookie([]byte("1234567890abcdef"), 1*time.Second)
 		So(err, ShouldBeNil)
 
-		cookieValue := firstao.Obfuscate(twoServer.URL)
+		cookieValue := firstao.Get(twoURL)
 		sc := http.Cookie{
 			Name:  cookieName,
 			Value: cookieValue,
 		}
 		req.AddCookie(&sc)
 
-		sticky := roundrobin.EnableStickySession(roundrobin.NewStickySessionWithOptions(cookieName, roundrobin.CookieOptions{Obfuscator: ao}))
+		sticky := roundrobin.EnableStickySession(roundrobin.NewStickySession(cookieName).SetCookieValue(ao))
 
 		lb, err := roundrobin.New(fwd, sticky)
 		So(err, ShouldBeNil)
@@ -949,26 +932,29 @@ func TestPoolRoundRobinStickyObfuscatorExpireReissue(t *testing.T) {
 		cookies := rr.Result().Cookies()
 		So(len(cookies), ShouldBeGreaterThan, 0)
 		So(cookies[0].Name, ShouldEqual, cookieName)
-		So(ao.Normalize(cookies[0].Value), ShouldEqual, oneServer.URL)
+		cv, cErr := ao.FindURL(cookies[0].Value, []*url.URL{oneURL, twoURL})
+		So(cErr, ShouldBeNil)
+		So(cv, ShouldEqual, oneURL)
+		//So(ao.Normalize(cookies[0].Value), ShouldEqual, oneServer.URL)
 
 		So(oneCount, ShouldEqual, 1)
 		So(twoCount, ShouldEqual, 0)
 	})
 }
 
-func setupObfuscator(clearKey []byte, cookieLife time.Duration) (roundrobin.Obfuscator, error) {
+func setupStickyCookie(clearKey []byte, cookieLife time.Duration) (stickycookie.CookieValue, error) {
 	var (
-		ao  roundrobin.Obfuscator
+		ao  stickycookie.CookieValue
 		err error
 	)
 
 	if cookieLife > 0 {
-		ao, err = obfuscator.NewAesObfuscatorWithExpiration(clearKey, cookieLife)
+		ao, err = stickycookie.NewAESValue(clearKey, cookieLife)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		ao, err = obfuscator.NewAesObfuscator(clearKey)
+		ao, err = stickycookie.NewAESValue(clearKey, time.Duration(0))
 		if err != nil {
 			return nil, err
 		}

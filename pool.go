@@ -1,12 +1,11 @@
 package jar
 
 import (
-	"github.com/cognusion/go-jar/obfuscator"
-
-	"github.com/cognusion/oxy/roundrobin"
 	"github.com/sirupsen/logrus"
 	"github.com/vulcand/oxy/buffer"
 	"github.com/vulcand/oxy/forward"
+	"github.com/vulcand/oxy/roundrobin"
+	"github.com/vulcand/oxy/roundrobin/stickycookie"
 
 	"encoding/base64"
 	"fmt"
@@ -79,9 +78,6 @@ var (
 func init() {
 
 	InitFuncs.Add(func() {
-		obfuscator.DebugOut = DebugOut
-		obfuscator.ErrorOut = ErrorOut
-
 		// TODO: Tighten up these Defaults!
 		DefaultTransport := &http.Transport{
 			DialContext: (&net.Dialer{
@@ -274,7 +270,7 @@ func (p *Pool) materializeSticky(next http.Handler, opts ...roundrobin.LBOption)
 		DebugOut.Printf("\t\tSticky with AES-encryption!\n")
 		if sskey := Conf.GetString(ConfigKeysStickyCookie); sskey != "" {
 			var (
-				ao       roundrobin.Obfuscator
+				ao       stickycookie.CookieValue
 				clearKey []byte
 			)
 
@@ -285,17 +281,18 @@ func (p *Pool) materializeSticky(next http.Handler, opts ...roundrobin.LBOption)
 
 			if cookielife := Conf.GetDuration(ConfigStickyCookieAESTTL); cookielife > 0 {
 				DebugOut.Printf("\t\t... with expiration of %s\n", cookielife.String())
-				ao, err = obfuscator.NewAesObfuscatorWithExpiration(clearKey, cookielife)
+				ao, err = stickycookie.NewAESValue(clearKey, cookielife)
 				if err != nil {
 					return nil, err
 				}
 			} else {
-				ao, err = obfuscator.NewAesObfuscator(clearKey)
+				ao, err = stickycookie.NewAESValue(clearKey, time.Duration(0))
 				if err != nil {
 					return nil, err
 				}
 			}
-			sticky = roundrobin.EnableStickySession(roundrobin.NewStickySessionWithOptions(cookie, roundrobin.CookieOptions{HTTPOnly: cookieHTTPOnly, Secure: cookieSecure, Obfuscator: ao}))
+			sticky = roundrobin.EnableStickySession(roundrobin.NewStickySessionWithOptions(cookie, roundrobin.CookieOptions{HTTPOnly: cookieHTTPOnly, Secure: cookieSecure}).SetCookieValue(ao))
+
 		} else {
 			// No key set!
 			return nil, ErrPoolStickyAESNoKey
@@ -303,7 +300,7 @@ func (p *Pool) materializeSticky(next http.Handler, opts ...roundrobin.LBOption)
 	case "hex":
 		// Hex-encoded values
 		DebugOut.Printf("\t\tSticky with hex-encoding!\n")
-		sticky = roundrobin.EnableStickySession(roundrobin.NewStickySessionWithOptions(cookie, roundrobin.CookieOptions{HTTPOnly: cookieHTTPOnly, Secure: cookieSecure, Obfuscator: &obfuscator.HexObfuscator{}}))
+		sticky = roundrobin.EnableStickySession(roundrobin.NewStickySessionWithOptions(cookie, roundrobin.CookieOptions{HTTPOnly: cookieHTTPOnly, Secure: cookieSecure}).SetCookieValue(&stickycookie.HashValue{}))
 	case "plain":
 		DebugOut.Printf("\t\tSticky with plaintext values!\n")
 		sticky = roundrobin.EnableStickySession(roundrobin.NewStickySessionWithOptions(cookie, roundrobin.CookieOptions{HTTPOnly: cookieHTTPOnly, Secure: cookieSecure}))
