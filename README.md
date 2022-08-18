@@ -902,7 +902,7 @@ CopyURL provides update safe copy by avoiding shallow copying User field
 
 
 
-## <a name="DumpFinisher">func</a> [DumpFinisher](https://github.com/cognusion/go-jar/tree/master/debug.go?s=3742:3799#L144)
+## <a name="DumpFinisher">func</a> [DumpFinisher](https://github.com/cognusion/go-jar/tree/master/debug.go?s=3842:3899#L147)
 ``` go
 func DumpFinisher(w http.ResponseWriter, r *http.Request)
 ```
@@ -910,7 +910,7 @@ DumpFinisher is a special finisher that reflects a ton of request output
 
 
 
-## <a name="DumpHandler">func</a> [DumpHandler](https://github.com/cognusion/go-jar/tree/master/debug.go?s=3389:3434#L134)
+## <a name="DumpHandler">func</a> [DumpHandler](https://github.com/cognusion/go-jar/tree/master/debug.go?s=3489:3534#L137)
 ``` go
 func DumpHandler(h http.Handler) http.Handler
 ```
@@ -1094,7 +1094,7 @@ LogInit initializes all of the loggers based on Conf settings
 
 
 
-## <a name="MinuteDelayer">func</a> [MinuteDelayer](https://github.com/cognusion/go-jar/tree/master/debug.go?s=4009:4067#L149)
+## <a name="MinuteDelayer">func</a> [MinuteDelayer](https://github.com/cognusion/go-jar/tree/master/debug.go?s=4109:4167#L152)
 ``` go
 func MinuteDelayer(w http.ResponseWriter, r *http.Request)
 ```
@@ -1102,7 +1102,7 @@ MinuteDelayer is a special finisher that waits for 60s before returning
 
 
 
-## <a name="MinuteStreamer">func</a> [MinuteStreamer](https://github.com/cognusion/go-jar/tree/master/debug.go?s=4388:4447#L160)
+## <a name="MinuteStreamer">func</a> [MinuteStreamer](https://github.com/cognusion/go-jar/tree/master/debug.go?s=4488:4547#L163)
 ``` go
 func MinuteStreamer(w http.ResponseWriter, r *http.Request)
 ```
@@ -1126,7 +1126,7 @@ NewECBEncrypter should never be used unless you know what you're doing
 
 
 
-## <a name="OkFinisher">func</a> [OkFinisher](https://github.com/cognusion/go-jar/tree/master/debug.go?s=4199:4254#L155)
+## <a name="OkFinisher">func</a> [OkFinisher](https://github.com/cognusion/go-jar/tree/master/debug.go?s=4299:4354#L158)
 ``` go
 func OkFinisher(w http.ResponseWriter, r *http.Request)
 ```
@@ -1287,7 +1287,7 @@ SwitchHandler adds URL switching information to the request context
 
 
 
-## <a name="TestFinisher">func</a> [TestFinisher](https://github.com/cognusion/go-jar/tree/master/debug.go?s=1378:1435#L66)
+## <a name="TestFinisher">func</a> [TestFinisher](https://github.com/cognusion/go-jar/tree/master/debug.go?s=1347:1404#L65)
 ``` go
 func TestFinisher(w http.ResponseWriter, r *http.Request)
 ```
@@ -1689,7 +1689,7 @@ CorsString is a string type for static string consistency
 
 
 
-## <a name="DebugTrip">type</a> [DebugTrip](https://github.com/cognusion/go-jar/tree/master/debug.go?s=4829:5035#L179)
+## <a name="DebugTrip">type</a> [DebugTrip](https://github.com/cognusion/go-jar/tree/master/debug.go?s=4929:5135#L182)
 ``` go
 type DebugTrip struct {
     // RTFunc is executed when RoundTrip() is called on a request.
@@ -1709,7 +1709,7 @@ DebugTrip is an http.RoundTripper with a pluggable core func to aid in debugging
 
 
 
-### <a name="DebugTrip.RoundTrip">func</a> (\*DebugTrip) [RoundTrip](https://github.com/cognusion/go-jar/tree/master/debug.go?s=5074:5144#L186)
+### <a name="DebugTrip.RoundTrip">func</a> (\*DebugTrip) [RoundTrip](https://github.com/cognusion/go-jar/tree/master/debug.go?s=5174:5244#L189)
 ``` go
 func (d *DebugTrip) RoundTrip(r *http.Request) (*http.Response, error)
 ```
@@ -2225,7 +2225,7 @@ ResponseFiller adds response information to the AccessLog entry
 
 
 
-## <a name="Member">type</a> [Member](https://github.com/cognusion/go-jar/tree/master/pool.go?s=4573:4678#L135)
+## <a name="Member">type</a> [Member](https://github.com/cognusion/go-jar/tree/master/pool.go?s=4511:4616#L131)
 ``` go
 type Member struct {
     URL     *url.URL
@@ -2516,7 +2516,7 @@ Handler is a middleware that replaces the Request path
 
 
 
-## <a name="Pool">type</a> [Pool](https://github.com/cognusion/go-jar/tree/master/pool.go?s=4726:5716#L143)
+## <a name="Pool">type</a> [Pool](https://github.com/cognusion/go-jar/tree/master/pool.go?s=4664:5654#L139)
 ``` go
 type Pool struct {
     Config *PoolConfig
@@ -2548,7 +2548,7 @@ Pool is a list of like-minded destinations
 
 
 
-### <a name="Pool.GetMember">func</a> (\*Pool) [GetMember](https://github.com/cognusion/go-jar/tree/master/pool.go?s=6380:6424#L188)
+### <a name="Pool.GetMember">func</a> (\*Pool) [GetMember](https://github.com/cognusion/go-jar/tree/master/pool.go?s=6318:6362#L184)
 ``` go
 func (p *Pool) GetMember(u *url.URL) *Member
 ```
@@ -2557,7 +2557,7 @@ GetMember interacts with an internal cache, returning a Member from the cache or
 
 
 
-### <a name="Pool.GetPool">func</a> (\*Pool) [GetPool](https://github.com/cognusion/go-jar/tree/master/pool.go?s=5974:6020#L176)
+### <a name="Pool.GetPool">func</a> (\*Pool) [GetPool](https://github.com/cognusion/go-jar/tree/master/pool.go?s=5912:5958#L172)
 ``` go
 func (p *Pool) GetPool() (http.Handler, error)
 ```
@@ -2567,7 +2567,7 @@ materialized, it does that.
 
 
 
-### <a name="Pool.IsMaterialized">func</a> (\*Pool) [IsMaterialized](https://github.com/cognusion/go-jar/tree/master/pool.go?s=5800:5836#L170)
+### <a name="Pool.IsMaterialized">func</a> (\*Pool) [IsMaterialized](https://github.com/cognusion/go-jar/tree/master/pool.go?s=5738:5774#L166)
 ``` go
 func (p *Pool) IsMaterialized() bool
 ```
@@ -2576,7 +2576,7 @@ IsMaterialized return boolean on whether the pool has been materialized or not
 
 
 
-### <a name="Pool.Materialize">func</a> (\*Pool) [Materialize](https://github.com/cognusion/go-jar/tree/master/pool.go?s=11553:11603#L334)
+### <a name="Pool.Materialize">func</a> (\*Pool) [Materialize](https://github.com/cognusion/go-jar/tree/master/pool.go?s=11497:11547#L331)
 ``` go
 func (p *Pool) Materialize() (http.Handler, error)
 ```
