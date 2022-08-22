@@ -46,7 +46,6 @@ require (
 )
 
 require (
-	github.com/carlmjohnson/versioninfo v0.22.4
 	github.com/cognusion/go-health v1.1.0
 	github.com/cognusion/go-prw v1.1.1
 	github.com/cognusion/go-sequence v1.0.0
