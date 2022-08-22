@@ -111,7 +111,7 @@ func (rd *Redirect) Finisher(w http.ResponseWriter, r *http.Request) {
 	}
 	if rd.PCRE != nil && rd.PCRE.Groups() > 0 {
 		// there are submatch groups to care about
-		m := rd.PCRE.MatcherString(r.URL.String(), 0) // create a matcher
+		m := rd.PCRE.MatcherString(r.Host, 0) // create a matcher
 		for i := 0; i < rd.PCRE.Groups(); i++ {
 			if g := m.GroupString(i + 1); g != "" {
 				s := fmt.Sprintf("$%d", i+1) // $1 $2 $3 etc

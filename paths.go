@@ -61,8 +61,8 @@ type Path struct {
 	Redirect string
 	// RedirectCode is an optional code to send as the redirect status
 	RedirectCode int
-	// RedirectPCRE is a Perl-Compatible Regular Expression with grouping to apply to the Hostname, replacing $1,$2, etc. in ``Redirect``
-	RedirectPCRE string
+	// RedirectHostMatch is a Perl-Compatible Regular Expression with grouping to apply to the Hostname, replacing $1,$2, etc. in ``Redirect``
+	RedirectHostMatch string
 	// ReplacePath is used to replace the requested path with the target path
 	ReplacePath string
 	// StripPrefix is used to replace the requested path with one sans prefix
@@ -520,16 +520,16 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 		DebugOut.Printf("\tAdding Redirect %s\n", path.Redirect)
 
 		p := Redirect{URL: path.Redirect, Code: path.RedirectCode, PCRE: nil}
-
-		if path.RedirectPCRE != "" {
+		if path.RedirectHostMatch != "" {
+			DebugOut.Printf("\t\tPCRE: %s\n", path.RedirectHostMatch)
 			// Test the PCRE
-			re, rerr := pcre.Compile(path.RedirectPCRE, pcre.CASELESS)
+			re, rerr := pcre.Compile(path.RedirectHostMatch, pcre.CASELESS)
 			if rerr != nil {
 				DebugOut.Printf("\t\tFailed: %s\n", rerr)
 				return 0, ErrConfigurationError{rerr.String()}
 			}
 			if re.Groups() < 1 {
-				return 0, ErrConfigurationError{"RedirectPCRE has no groups"}
+				return 0, ErrConfigurationError{"RedirectHostMatch has no groups"}
 			}
 			gcount := 0
 			for i := 0; i < re.Groups(); i++ {
@@ -539,13 +539,13 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 				}
 			}
 			if gcount != re.Groups() {
-				return 0, ErrConfigurationError{fmt.Sprintf("RedirectPCRE has %d groups, but Redirect has %d", re.Groups(), gcount)}
+				return 0, ErrConfigurationError{fmt.Sprintf("RedirectHostMatch has %d groups, but Redirect has %d", re.Groups(), gcount)}
 			}
 
 			p = Redirect{URL: path.Redirect, Code: path.RedirectCode, PCRE: &re}
 		}
 
-		DocsOut.Printf("Redirect (%d) to '%s' with PCRE '%s'\n\n", path.RedirectCode, path.Redirect, path.RedirectPCRE)
+		DocsOut.Printf("Redirect (%d) to '%s' with PCRE '%s'\n\n", path.RedirectCode, path.Redirect, path.RedirectHostMatch)
 		pathHandler = hchain.ThenFunc(p.Finisher)
 
 	case path.ErrorMessage != "":

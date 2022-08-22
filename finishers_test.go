@@ -130,7 +130,7 @@ func TestFinisherRedirectPCRE(t *testing.T) {
 
 		rr := httptest.NewRecorder()
 
-		re, rerr := pcre.Compile("(else)where", pcre.CASELESS)
+		re, rerr := pcre.Compile("(.*)where", pcre.CASELESS)
 		So(rerr, ShouldBeNil)
 
 		red := Redirect{
