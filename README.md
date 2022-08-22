@@ -234,15 +234,12 @@ across heterogeneous application stacks.
 
 
 #### <a name="pkg-files">Package files</a>
-[a_common.go](https://github.com/cognusion/go-jar/tree/master/a_common.go) [access.go](https://github.com/cognusion/go-jar/tree/master/access.go) [basicauth.go](https://github.com/cognusion/go-jar/tree/master/basicauth.go) [compression.go](https://github.com/cognusion/go-jar/tree/master/compression.go) [config.go](https://github.com/cognusion/go-jar/tree/master/config.go) [cors.go](https://github.com/cognusion/go-jar/tree/master/cors.go) [crypto.go](https://github.com/cognusion/go-jar/tree/master/crypto.go) [debug.go](https://github.com/cognusion/go-jar/tree/master/debug.go) [errors.go](https://github.com/cognusion/go-jar/tree/master/errors.go) [finishers.go](https://github.com/cognusion/go-jar/tree/master/finishers.go) [handlers.go](https://github.com/cognusion/go-jar/tree/master/handlers.go) [health.go](https://github.com/cognusion/go-jar/tree/master/health.go) [healthprocess.go](https://github.com/cognusion/go-jar/tree/master/healthprocess.go) [helpers.go](https://github.com/cognusion/go-jar/tree/master/helpers.go) [log.go](https://github.com/cognusion/go-jar/tree/master/log.go) [macros.go](https://github.com/cognusion/go-jar/tree/master/macros.go) [paths.go](https://github.com/cognusion/go-jar/tree/master/paths.go) [pool.go](https://github.com/cognusion/go-jar/tree/master/pool.go) [poolconfig.go](https://github.com/cognusion/go-jar/tree/master/poolconfig.go) [pools.go](https://github.com/cognusion/go-jar/tree/master/pools.go) [proxyresponsemodifier.go](https://github.com/cognusion/go-jar/tree/master/proxyresponsemodifier.go) [s3pool.go](https://github.com/cognusion/go-jar/tree/master/s3pool.go) [s3proxy.go](https://github.com/cognusion/go-jar/tree/master/s3proxy.go) [taskscheduler.go](https://github.com/cognusion/go-jar/tree/master/taskscheduler.go) [update.go](https://github.com/cognusion/go-jar/tree/master/update.go) [urlswitch.go](https://github.com/cognusion/go-jar/tree/master/urlswitch.go) [worker-zulip.go](https://github.com/cognusion/go-jar/tree/master/worker-zulip.go) [workers.go](https://github.com/cognusion/go-jar/tree/master/workers.go) [z_zMustBeLast.go](https://github.com/cognusion/go-jar/tree/master/z_zMustBeLast.go)
+[a_common.go](https://github.com/cognusion/go-jar/tree/master/a_common.go) [access.go](https://github.com/cognusion/go-jar/tree/master/access.go) [basicauth.go](https://github.com/cognusion/go-jar/tree/master/basicauth.go) [compression.go](https://github.com/cognusion/go-jar/tree/master/compression.go) [config.go](https://github.com/cognusion/go-jar/tree/master/config.go) [cors.go](https://github.com/cognusion/go-jar/tree/master/cors.go) [crypto.go](https://github.com/cognusion/go-jar/tree/master/crypto.go) [debug.go](https://github.com/cognusion/go-jar/tree/master/debug.go) [errors.go](https://github.com/cognusion/go-jar/tree/master/errors.go) [finishers.go](https://github.com/cognusion/go-jar/tree/master/finishers.go) [handlers.go](https://github.com/cognusion/go-jar/tree/master/handlers.go) [health.go](https://github.com/cognusion/go-jar/tree/master/health.go) [healthprocess.go](https://github.com/cognusion/go-jar/tree/master/healthprocess.go) [helpers.go](https://github.com/cognusion/go-jar/tree/master/helpers.go) [log.go](https://github.com/cognusion/go-jar/tree/master/log.go) [macros.go](https://github.com/cognusion/go-jar/tree/master/macros.go) [paths.go](https://github.com/cognusion/go-jar/tree/master/paths.go) [pool.go](https://github.com/cognusion/go-jar/tree/master/pool.go) [poolconfig.go](https://github.com/cognusion/go-jar/tree/master/poolconfig.go) [pools.go](https://github.com/cognusion/go-jar/tree/master/pools.go) [proxyresponsemodifier.go](https://github.com/cognusion/go-jar/tree/master/proxyresponsemodifier.go) [s3pool.go](https://github.com/cognusion/go-jar/tree/master/s3pool.go) [s3proxy.go](https://github.com/cognusion/go-jar/tree/master/s3proxy.go) [taskscheduler.go](https://github.com/cognusion/go-jar/tree/master/taskscheduler.go) [update.go](https://github.com/cognusion/go-jar/tree/master/update.go) [urlswitch.go](https://github.com/cognusion/go-jar/tree/master/urlswitch.go) [version.go](https://github.com/cognusion/go-jar/tree/master/version.go) [worker-zulip.go](https://github.com/cognusion/go-jar/tree/master/worker-zulip.go) [workers.go](https://github.com/cognusion/go-jar/tree/master/workers.go) [z_zMustBeLast.go](https://github.com/cognusion/go-jar/tree/master/z_zMustBeLast.go)
 
 
 ## <a name="pkg-constants">Constants</a>
 ``` go
 const (
-    // VERSION is the internal code revision number
-    VERSION string = "1.1.0+git"
-
     // ErrBootstrapDone should not be treated as a proper error, as it is returned if Bootstrap
     // is complete (e.g. checkconfig or doc output), and won't continue for non-error reasons
     ErrBootstrapDone = Error("Bootstrap() is done. This is not necessarily an error")
@@ -569,6 +566,12 @@ const (
     ErrS3ProxyConfigNoEC2 = Error("s3proxy used, but ec2 is false")
 )
 ```
+``` go
+const (
+    // VERSION is the internal code revision number
+    VERSION string = "1.1.0+git"
+)
+```
 
 ## <a name="pkg-variables">Variables</a>
 ``` go
@@ -802,7 +805,7 @@ AuthoritativeDomainsHandler declines to handle requests that are not listed in "
 
 
 
-## <a name="Bootstrap">func</a> [Bootstrap](https://github.com/cognusion/go-jar/tree/master/a_common.go?s=6348:6364#L236)
+## <a name="Bootstrap">func</a> [Bootstrap](https://github.com/cognusion/go-jar/tree/master/a_common.go?s=6268:6284#L233)
 ``` go
 func Bootstrap()
 ```
@@ -813,7 +816,7 @@ Bootstrap doesn't return unless the server exits
 
 
 
-## <a name="BootstrapChan">func</a> [BootstrapChan](https://github.com/cognusion/go-jar/tree/master/a_common.go?s=4355:4395#L143)
+## <a name="BootstrapChan">func</a> [BootstrapChan](https://github.com/cognusion/go-jar/tree/master/a_common.go?s=4275:4315#L140)
 ``` go
 func BootstrapChan(closer chan struct{})
 ```
@@ -824,7 +827,7 @@ BootstrapChan doesn't return unless the server exits or the passed chan is close
 
 
 
-## <a name="BuildPath">func</a> [BuildPath](https://github.com/cognusion/go-jar/tree/master/paths.go?s=5980:6049#L180)
+## <a name="BuildPath">func</a> [BuildPath](https://github.com/cognusion/go-jar/tree/master/paths.go?s=5990:6059#L180)
 ``` go
 func BuildPath(path Path, index int, router *mux.Router) (int, error)
 ```
@@ -832,7 +835,7 @@ BuildPath does the heavy lifting to build a single path (which may result in mul
 
 
 
-## <a name="BuildPaths">func</a> [BuildPaths](https://github.com/cognusion/go-jar/tree/master/paths.go?s=5269:5310#L154)
+## <a name="BuildPaths">func</a> [BuildPaths](https://github.com/cognusion/go-jar/tree/master/paths.go?s=5279:5320#L154)
 ``` go
 func BuildPaths(router *mux.Router) error
 ```
@@ -840,7 +843,7 @@ BuildPaths unmarshalls the paths config, creates handler chains, and updates the
 
 
 
-## <a name="ChanBootstrap">func</a> [ChanBootstrap](https://github.com/cognusion/go-jar/tree/master/a_common.go?s=5400:5431#L186)
+## <a name="ChanBootstrap">func</a> [ChanBootstrap](https://github.com/cognusion/go-jar/tree/master/a_common.go?s=5320:5351#L183)
 ``` go
 func ChanBootstrap() chan error
 ```
@@ -1134,7 +1137,7 @@ OkFinisher is a Finisher that simply returns "Ok", for throughput testing.
 
 
 
-## <a name="PoolLister">func</a> [PoolLister](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=3979:4034#L141)
+## <a name="PoolLister">func</a> [PoolLister](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=3971:4026#L141)
 ``` go
 func PoolLister(w http.ResponseWriter, r *http.Request)
 ```
@@ -1142,7 +1145,7 @@ PoolLister is a finisher to list the pools
 
 
 
-## <a name="PoolMemberAdder">func</a> [PoolMemberAdder](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=5161:5221#L189)
+## <a name="PoolMemberAdder">func</a> [PoolMemberAdder](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=5153:5213#L189)
 ``` go
 func PoolMemberAdder(w http.ResponseWriter, r *http.Request)
 ```
@@ -1150,7 +1153,7 @@ PoolMemberAdder is a finisher to add a member to an existing pool
 
 
 
-## <a name="PoolMemberLister">func</a> [PoolMemberLister](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=4218:4279#L151)
+## <a name="PoolMemberLister">func</a> [PoolMemberLister](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=4210:4271#L151)
 ``` go
 func PoolMemberLister(w http.ResponseWriter, r *http.Request)
 ```
@@ -1158,7 +1161,7 @@ PoolMemberLister is a finisher to list the members of an existing pool
 
 
 
-## <a name="PoolMemberLoser">func</a> [PoolMemberLoser](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=6658:6718#L244)
+## <a name="PoolMemberLoser">func</a> [PoolMemberLoser](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=6650:6710#L244)
 ``` go
 func PoolMemberLoser(w http.ResponseWriter, r *http.Request)
 ```
@@ -1917,7 +1920,7 @@ Handler is a middleware that checks the request URI against regexps and 403's if
 
 
 
-## <a name="GenericResponse">type</a> [GenericResponse](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=3636:3696#L127)
+## <a name="GenericResponse">type</a> [GenericResponse](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=3628:3688#L127)
 ``` go
 type GenericResponse struct {
     Message string
@@ -1936,7 +1939,7 @@ GenericResponse is a Finisher that returns a possibly-wrapped response
 
 
 
-### <a name="GenericResponse.Finisher">func</a> (\*GenericResponse) [Finisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=3765:3840#L133)
+### <a name="GenericResponse.Finisher">func</a> (\*GenericResponse) [Finisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=3757:3832#L133)
 ``` go
 func (gr *GenericResponse) Finisher(w http.ResponseWriter, r *http.Request)
 ```
@@ -2301,7 +2304,7 @@ WriteHeader changes the response code
 
 
 
-## <a name="Path">type</a> [Path](https://github.com/cognusion/go-jar/tree/master/paths.go?s=482:3888#L24)
+## <a name="Path">type</a> [Path](https://github.com/cognusion/go-jar/tree/master/paths.go?s=482:3898#L24)
 ``` go
 type Path struct {
     // Name is an optional "name" for the path. Will be output in some logs. If not set, will use an index number
@@ -2343,8 +2346,8 @@ type Path struct {
     Redirect string
     // RedirectCode is an optional code to send as the redirect status
     RedirectCode int
-    // RedirectPCRE is a Perl-Compatible Regular Expression with grouping to apply to the Hostname, replacing $1,$2, etc. in ``Redirect``
-    RedirectPCRE string
+    // RedirectHostMatch is a Perl-Compatible Regular Expression with grouping to apply to the Hostname, replacing $1,$2, etc. in ``Redirect``
+    RedirectHostMatch string
     // ReplacePath is used to replace the requested path with the target path
     ReplacePath string
     // StripPrefix is used to replace the requested path with one sans prefix
@@ -2410,7 +2413,7 @@ Handler is a middleware that injects the Path name, and any PathOptions into the
 
 
 
-## <a name="PathOptions">type</a> [PathOptions](https://github.com/cognusion/go-jar/tree/master/paths.go?s=3943:3982#L92)
+## <a name="PathOptions">type</a> [PathOptions](https://github.com/cognusion/go-jar/tree/master/paths.go?s=3953:3992#L92)
 ``` go
 type PathOptions map[string]interface{}
 ```
@@ -2425,7 +2428,7 @@ PathOptions is an MSI with a case-agnostic getter
 
 
 
-### <a name="PathOptions.Get">func</a> (\*PathOptions) [Get](https://github.com/cognusion/go-jar/tree/master/paths.go?s=4046:4095#L95)
+### <a name="PathOptions.Get">func</a> (\*PathOptions) [Get](https://github.com/cognusion/go-jar/tree/master/paths.go?s=4056:4105#L95)
 ``` go
 func (p *PathOptions) Get(key string) interface{}
 ```
@@ -2434,7 +2437,7 @@ Get returns an interface{} if *key* matches, otherwise nil
 
 
 
-### <a name="PathOptions.GetBool">func</a> (\*PathOptions) [GetBool](https://github.com/cognusion/go-jar/tree/master/paths.go?s=4612:4658#L124)
+### <a name="PathOptions.GetBool">func</a> (\*PathOptions) [GetBool](https://github.com/cognusion/go-jar/tree/master/paths.go?s=4622:4668#L124)
 ``` go
 func (p *PathOptions) GetBool(key string) bool
 ```
@@ -2443,7 +2446,7 @@ GetBool returns a bool value if *key* matches, otherwise false
 
 
 
-### <a name="PathOptions.GetString">func</a> (\*PathOptions) [GetString](https://github.com/cognusion/go-jar/tree/master/paths.go?s=4324:4374#L109)
+### <a name="PathOptions.GetString">func</a> (\*PathOptions) [GetString](https://github.com/cognusion/go-jar/tree/master/paths.go?s=4334:4384#L109)
 ``` go
 func (p *PathOptions) GetString(key string) string
 ```
@@ -2452,7 +2455,7 @@ GetString returns a string if *key* matches, otherwise empty string
 
 
 
-### <a name="PathOptions.GetStringSlice">func</a> (\*PathOptions) [GetStringSlice](https://github.com/cognusion/go-jar/tree/master/paths.go?s=4917:4974#L139)
+### <a name="PathOptions.GetStringSlice">func</a> (\*PathOptions) [GetStringSlice](https://github.com/cognusion/go-jar/tree/master/paths.go?s=4927:4984#L139)
 ``` go
 func (p *PathOptions) GetStringSlice(key string) []string
 ```
