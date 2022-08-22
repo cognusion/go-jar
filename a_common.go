@@ -32,9 +32,6 @@ import (
 )
 
 const (
-	// VERSION is the internal code revision number
-	VERSION string = "1.1.0+git"
-
 	// ErrBootstrapDone should not be treated as a proper error, as it is returned if Bootstrap
 	// is complete (e.g. checkconfig or doc output), and won't continue for non-error reasons
 	ErrBootstrapDone = Error("Bootstrap() is done. This is not necessarily an error")
