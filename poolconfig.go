@@ -28,7 +28,7 @@ type PoolConfig struct {
 	// For "header" and "cookie", it is paired with ConsistentHashName to choose which key from those maps is used.
 	// For "request" it is paired with ConsistentHashName to choose from one of "remoteaddr", "host", and "url".
 	ConsistentHashSource string
-	// ConsistentHasName sets the request part, header, or cookie name to pull the value from
+	// ConsistentHashName sets the request part, header, or cookie name to pull the value from
 	ConsistentHashName string
 	// Sticky is mutually exclusive to ConsistentHashing, and enables cookie-based session routing
 	Sticky bool
