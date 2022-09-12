@@ -26,7 +26,7 @@ const (
 	ConfigPoolsPreMaterialize                         = ConfigKey("pools.prematerialize")
 	ConfigPoolsDefaultConsistentHashPartitions        = ConfigKey("pools.defaultconsistenthashpartitions")
 	ConfigPoolsDefaultConsistentHashReplicationFactor = ConfigKey("pools.defaultconsistenthashreplicationfactor")
-	ConfigPoolsDefaultConsistentHashLoad              = ConfigKey("pools.defaultconsitenthashload")
+	ConfigPoolsDefaultConsistentHashLoad              = ConfigKey("pools.defaultconsistenthashload")
 )
 
 func init() {
