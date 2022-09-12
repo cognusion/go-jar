@@ -34,7 +34,7 @@ const (
 	// ErrPoolsConfigdefaultmembererrorstatusEmpty is returned when the pools.defaultmembererrorstatus is empty
 	ErrPoolsConfigdefaultmembererrorstatusEmpty = Error("pools.defaultmembererrorstatus is empty")
 
-	// ErrPoolStickyAESNoKey is returned when materializing a Pool with StickyCookieType set to 'aes' but 'keys.stickycookie' is not setr:
+	// ErrPoolStickyAESNoKey is returned when materializing a Pool with StickyCookieType set to 'aes' but 'keys.stickycookie' is not set
 	ErrPoolStickyAESNoKey = Error("Pool.StickyCookieType set to 'aes' but no keys.stickycookie set")
 
 	// ErrPoolAddMemberNotSupported is returned when Pool.AddMember is called on a Pool that doesn't support the operation
@@ -48,14 +48,20 @@ const (
 
 	// ErrPoolNoMembersConfigured is returned when a non-dynamic Pool type (e.g. S3) has no members configured
 	ErrPoolNoMembersConfigured = Error("no members configured for a non-dynamic Pool")
+
+	// ErrPoolConfigConsistentAndSticky is returned when a Pool has both Sticky and ConsistentHashing set
+	ErrPoolConfigConsistentAndSticky = Error("a Pool cannot have Sticky and ConsistentHashing set")
 )
 
 // Constants for configuration key strings
 const (
-	ConfigKeysStickyCookie     = ConfigKey("keys.stickycookie")
-	ConfigStickyCookieAESTTL   = ConfigKey("stickycookie.aes.ttl")
-	ConfigStickyCookieHTTPOnly = ConfigKey("stickycookie.httponly")
-	ConfigStickyCookieSecure   = ConfigKey("stickycookie.secure")
+	ConfigKeysStickyCookie           = ConfigKey("keys.stickycookie")
+	ConfigStickyCookieAESTTL         = ConfigKey("stickycookie.aes.ttl")
+	ConfigStickyCookieHTTPOnly       = ConfigKey("stickycookie.httponly")
+	ConfigStickyCookieSecure         = ConfigKey("stickycookie.secure")
+	ConfigConsistentHashPartitions   = ConfigKey("consistenthash.partitions")
+	ConfigConsistentHashReplications = ConfigKey("consistenthash.replfactor")
+	ConfigConsistentHashLoad         = ConfigKey("consistenthash.load")
 )
 
 var (
@@ -124,6 +130,10 @@ func init() {
 	ConfigAdditions[ConfigPoolsDefaultMemberWeight] = 1
 	ConfigAdditions[ConfigPoolsLocalMemberWeight] = 1000
 	ConfigAdditions[ConfigPoolsDefaultMemberErrorStatus] = "Warning"
+
+	ConfigAdditions[ConfigPoolsDefaultConsistentHashPartitions] = 7
+	ConfigAdditions[ConfigPoolsDefaultConsistentHashReplicationFactor] = 20
+	ConfigAdditions[ConfigPoolsDefaultConsistentHashLoad] = 1.25
 
 }
 
@@ -473,13 +483,45 @@ func (p *Pool) materializeHTTP() (http.Handler, error) {
 
 	urlcapture := URLCaptureHandler(fwd)
 
-	var lb *roundrobin.RoundRobin
+	if p.Config.Sticky && p.Config.ConsistentHashing {
+		// Mutually exclusive
+		return nil, ErrPoolConfigConsistentAndSticky
+	}
+
+	var lb PoolManager
 	if p.Config.Sticky {
 		// Pool is doing sticky load-balancing
 		lb, err = p.materializeSticky(urlcapture, roundrobin.RoundRobinLogger(logrusLogger))
 		if err != nil {
 			return nil, err
 		}
+	} else if p.Config.ConsistentHashing {
+		// Pool is using a consistent hash to direct traffics
+		DebugOut.Printf("\t\tConsistentHash with '%s'\n", p.Config.ConsistentHashName)
+
+		// Set defaults
+		partitions := Conf.GetInt(ConfigPoolsDefaultConsistentHashPartitions)
+		replication := Conf.GetInt(ConfigPoolsDefaultConsistentHashReplicationFactor)
+		load := Conf.GetFloat64(ConfigPoolsDefaultConsistentHashLoad)
+
+		// Allow overrides via PoolOptions :(
+		if v := p.Config.Options.GetInt(ConfigConsistentHashPartitions); v != -1 {
+			partitions = v
+		}
+
+		if v := p.Config.Options.GetInt(ConfigConsistentHashReplications); v != -1 {
+			replication = v
+		}
+
+		if v := p.Config.Options.GetFloat64(ConfigConsistentHashLoad); v != -1 {
+			load = v
+		}
+
+		lb, err = NewConsistentHashPoolOpts(p.Config.ConsistentHashSource, p.Config.ConsistentHashName, partitions, replication, load, p, urlcapture)
+		if err != nil {
+			return nil, err
+		}
+
 	} else {
 		// Pool is not not sticky
 		lb, err = roundrobin.New(urlcapture, roundrobin.RoundRobinLogger(logrusLogger))

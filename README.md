@@ -122,6 +122,16 @@ across heterogeneous application stacks.
   * [func NewCompression(contentTypes []string) *Compression](#NewCompression)
   * [func (c *Compression) Handler(next http.Handler) http.Handler](#Compression.Handler)
 * [type ConfigKey](#ConfigKey)
+* [type ConsistentHashPool](#ConsistentHashPool)
+  * [func NewConsistentHashPool(source, key string, pool *Pool, next http.Handler) (*ConsistentHashPool, error)](#NewConsistentHashPool)
+  * [func NewConsistentHashPoolOpts(source, key string, partitionCount, replicationFactor int, load float64, pool *Pool, next http.Handler) (*ConsistentHashPool, error)](#NewConsistentHashPoolOpts)
+  * [func (ch *ConsistentHashPool) Next() http.Handler](#ConsistentHashPool.Next)
+  * [func (ch *ConsistentHashPool) NextServer() (*url.URL, error)](#ConsistentHashPool.NextServer)
+  * [func (ch *ConsistentHashPool) RemoveServer(u *url.URL) error](#ConsistentHashPool.RemoveServer)
+  * [func (ch *ConsistentHashPool) ServeHTTP(w http.ResponseWriter, req *http.Request)](#ConsistentHashPool.ServeHTTP)
+  * [func (ch *ConsistentHashPool) ServerWeight(u *url.URL) (int, bool)](#ConsistentHashPool.ServerWeight)
+  * [func (ch *ConsistentHashPool) Servers() []*url.URL](#ConsistentHashPool.Servers)
+  * [func (ch *ConsistentHashPool) UpsertServer(u *url.URL, options ...roundrobin.ServerOption) error](#ConsistentHashPool.UpsertServer)
 * [type CorsString](#CorsString)
 * [type DebugTrip](#DebugTrip)
   * [func (d *DebugTrip) RoundTrip(r *http.Request) (*http.Response, error)](#DebugTrip.RoundTrip)
@@ -163,6 +173,7 @@ across heterogeneous application stacks.
   * [func (a *JSONAccessLog) Reset()](#JSONAccessLog.Reset)
   * [func (a *JSONAccessLog) ResponseFiller(endtime time.Time, duration time.Duration, responseCode int, responseLength int)](#JSONAccessLog.ResponseFiller)
 * [type Member](#Member)
+  * [func (m *Member) String() string](#Member.String)
 * [type NoopResponseWriter](#NoopResponseWriter)
   * [func NewNoopResponseWriter() NoopResponseWriter](#NewNoopResponseWriter)
   * [func (n *NoopResponseWriter) Header() http.Header](#NoopResponseWriter.Header)
@@ -188,6 +199,14 @@ across heterogeneous application stacks.
 * [type PoolConfig](#PoolConfig)
 * [type PoolID](#PoolID)
   * [func (p *PoolID) Handler(next http.Handler) http.Handler](#PoolID.Handler)
+* [type PoolManager](#PoolManager)
+* [type PoolOptions](#PoolOptions)
+  * [func (p *PoolOptions) Get(key string) interface{}](#PoolOptions.Get)
+  * [func (p *PoolOptions) GetBool(key string) bool](#PoolOptions.GetBool)
+  * [func (p *PoolOptions) GetFloat64(key string) float64](#PoolOptions.GetFloat64)
+  * [func (p *PoolOptions) GetInt(key string) int](#PoolOptions.GetInt)
+  * [func (p *PoolOptions) GetString(key string) string](#PoolOptions.GetString)
+  * [func (p *PoolOptions) GetStringSlice(key string) []string](#PoolOptions.GetStringSlice)
 * [type Pools](#Pools)
   * [func BuildPools() (*Pools, bool)](#BuildPools)
   * [func NewPools(poolConfigs map[string]*PoolConfig, interval time.Duration) *Pools](#NewPools)
@@ -234,7 +253,7 @@ across heterogeneous application stacks.
 
 
 #### <a name="pkg-files">Package files</a>
-[a_common.go](https://github.com/cognusion/go-jar/tree/master/a_common.go) [access.go](https://github.com/cognusion/go-jar/tree/master/access.go) [basicauth.go](https://github.com/cognusion/go-jar/tree/master/basicauth.go) [compression.go](https://github.com/cognusion/go-jar/tree/master/compression.go) [config.go](https://github.com/cognusion/go-jar/tree/master/config.go) [cors.go](https://github.com/cognusion/go-jar/tree/master/cors.go) [crypto.go](https://github.com/cognusion/go-jar/tree/master/crypto.go) [debug.go](https://github.com/cognusion/go-jar/tree/master/debug.go) [errors.go](https://github.com/cognusion/go-jar/tree/master/errors.go) [finishers.go](https://github.com/cognusion/go-jar/tree/master/finishers.go) [handlers.go](https://github.com/cognusion/go-jar/tree/master/handlers.go) [health.go](https://github.com/cognusion/go-jar/tree/master/health.go) [healthprocess.go](https://github.com/cognusion/go-jar/tree/master/healthprocess.go) [helpers.go](https://github.com/cognusion/go-jar/tree/master/helpers.go) [log.go](https://github.com/cognusion/go-jar/tree/master/log.go) [macros.go](https://github.com/cognusion/go-jar/tree/master/macros.go) [paths.go](https://github.com/cognusion/go-jar/tree/master/paths.go) [pool.go](https://github.com/cognusion/go-jar/tree/master/pool.go) [poolconfig.go](https://github.com/cognusion/go-jar/tree/master/poolconfig.go) [pools.go](https://github.com/cognusion/go-jar/tree/master/pools.go) [proxyresponsemodifier.go](https://github.com/cognusion/go-jar/tree/master/proxyresponsemodifier.go) [s3pool.go](https://github.com/cognusion/go-jar/tree/master/s3pool.go) [s3proxy.go](https://github.com/cognusion/go-jar/tree/master/s3proxy.go) [taskscheduler.go](https://github.com/cognusion/go-jar/tree/master/taskscheduler.go) [update.go](https://github.com/cognusion/go-jar/tree/master/update.go) [urlswitch.go](https://github.com/cognusion/go-jar/tree/master/urlswitch.go) [version.go](https://github.com/cognusion/go-jar/tree/master/version.go) [worker-zulip.go](https://github.com/cognusion/go-jar/tree/master/worker-zulip.go) [workers.go](https://github.com/cognusion/go-jar/tree/master/workers.go) [z_zMustBeLast.go](https://github.com/cognusion/go-jar/tree/master/z_zMustBeLast.go)
+[a_common.go](https://github.com/cognusion/go-jar/tree/master/a_common.go) [access.go](https://github.com/cognusion/go-jar/tree/master/access.go) [basicauth.go](https://github.com/cognusion/go-jar/tree/master/basicauth.go) [compression.go](https://github.com/cognusion/go-jar/tree/master/compression.go) [config.go](https://github.com/cognusion/go-jar/tree/master/config.go) [cors.go](https://github.com/cognusion/go-jar/tree/master/cors.go) [crypto.go](https://github.com/cognusion/go-jar/tree/master/crypto.go) [debug.go](https://github.com/cognusion/go-jar/tree/master/debug.go) [errors.go](https://github.com/cognusion/go-jar/tree/master/errors.go) [finishers.go](https://github.com/cognusion/go-jar/tree/master/finishers.go) [handlers.go](https://github.com/cognusion/go-jar/tree/master/handlers.go) [health.go](https://github.com/cognusion/go-jar/tree/master/health.go) [healthprocess.go](https://github.com/cognusion/go-jar/tree/master/healthprocess.go) [helpers.go](https://github.com/cognusion/go-jar/tree/master/helpers.go) [log.go](https://github.com/cognusion/go-jar/tree/master/log.go) [macros.go](https://github.com/cognusion/go-jar/tree/master/macros.go) [paths.go](https://github.com/cognusion/go-jar/tree/master/paths.go) [pool.go](https://github.com/cognusion/go-jar/tree/master/pool.go) [poolch.go](https://github.com/cognusion/go-jar/tree/master/poolch.go) [poolconfig.go](https://github.com/cognusion/go-jar/tree/master/poolconfig.go) [pools.go](https://github.com/cognusion/go-jar/tree/master/pools.go) [proxyresponsemodifier.go](https://github.com/cognusion/go-jar/tree/master/proxyresponsemodifier.go) [s3pool.go](https://github.com/cognusion/go-jar/tree/master/s3pool.go) [s3proxy.go](https://github.com/cognusion/go-jar/tree/master/s3proxy.go) [taskscheduler.go](https://github.com/cognusion/go-jar/tree/master/taskscheduler.go) [update.go](https://github.com/cognusion/go-jar/tree/master/update.go) [urlswitch.go](https://github.com/cognusion/go-jar/tree/master/urlswitch.go) [version.go](https://github.com/cognusion/go-jar/tree/master/version.go) [worker-zulip.go](https://github.com/cognusion/go-jar/tree/master/worker-zulip.go) [workers.go](https://github.com/cognusion/go-jar/tree/master/workers.go) [z_zMustBeLast.go](https://github.com/cognusion/go-jar/tree/master/z_zMustBeLast.go)
 
 
 ## <a name="pkg-constants">Constants</a>
@@ -432,7 +451,7 @@ const (
     // ErrPoolsConfigdefaultmembererrorstatusEmpty is returned when the pools.defaultmembererrorstatus is empty
     ErrPoolsConfigdefaultmembererrorstatusEmpty = Error("pools.defaultmembererrorstatus is empty")
 
-    // ErrPoolStickyAESNoKey is returned when materializing a Pool with StickyCookieType set to 'aes' but 'keys.stickycookie' is not setr:
+    // ErrPoolStickyAESNoKey is returned when materializing a Pool with StickyCookieType set to 'aes' but 'keys.stickycookie' is not set
     ErrPoolStickyAESNoKey = Error("Pool.StickyCookieType set to 'aes' but no keys.stickycookie set")
 
     // ErrPoolAddMemberNotSupported is returned when Pool.AddMember is called on a Pool that doesn't support the operation
@@ -446,25 +465,43 @@ const (
 
     // ErrPoolNoMembersConfigured is returned when a non-dynamic Pool type (e.g. S3) has no members configured
     ErrPoolNoMembersConfigured = Error("no members configured for a non-dynamic Pool")
+
+    // ErrPoolConfigConsistentAndSticky is returned when a Pool has both Sticky and ConsistentHashing set
+    ErrPoolConfigConsistentAndSticky = Error("a Pool cannot have Sticky and ConsistentHashing set")
 )
 ```
 ``` go
 const (
-    ConfigKeysStickyCookie     = ConfigKey("keys.stickycookie")
-    ConfigStickyCookieAESTTL   = ConfigKey("stickycookie.aes.ttl")
-    ConfigStickyCookieHTTPOnly = ConfigKey("stickycookie.httponly")
-    ConfigStickyCookieSecure   = ConfigKey("stickycookie.secure")
+    ConfigKeysStickyCookie           = ConfigKey("keys.stickycookie")
+    ConfigStickyCookieAESTTL         = ConfigKey("stickycookie.aes.ttl")
+    ConfigStickyCookieHTTPOnly       = ConfigKey("stickycookie.httponly")
+    ConfigStickyCookieSecure         = ConfigKey("stickycookie.secure")
+    ConfigConsistentHashPartitions   = ConfigKey("consistenthash.partitions")
+    ConfigConsistentHashReplications = ConfigKey("consistenthash.replfactor")
+    ConfigConsistentHashLoad         = ConfigKey("consistenthash.load")
 )
 ```
 Constants for configuration key strings
 
 ``` go
 const (
-    ConfigPoolsDefaultMemberErrorStatus = ConfigKey("pools.defaultmembererrorstatus")
-    ConfigPoolsDefaultMemberWeight      = ConfigKey("pools.defaultmemberweight")
-    ConfigPoolsHealthcheckInterval      = ConfigKey("pools.healthcheckinterval")
-    ConfigPoolsLocalMemberWeight        = ConfigKey("pools.localmemberweight")
-    ConfigPoolsPreMaterialize           = ConfigKey("pools.prematerialize")
+    // ErrConsistentHashNextServerUnsupported is returned if NextServer is called
+    ErrConsistentHashNextServerUnsupported = Error("Consistent Hash Pools don't support NextServer")
+
+    // ErrConsistentHashInvalidSource is returned the source is not one of "request", "header", or "cookie"
+    ErrConsistentHashInvalidSource = Error("the source provided is not valid")
+)
+```
+``` go
+const (
+    ConfigPoolsDefaultMemberErrorStatus               = ConfigKey("pools.defaultmembererrorstatus")
+    ConfigPoolsDefaultMemberWeight                    = ConfigKey("pools.defaultmemberweight")
+    ConfigPoolsHealthcheckInterval                    = ConfigKey("pools.healthcheckinterval")
+    ConfigPoolsLocalMemberWeight                      = ConfigKey("pools.localmemberweight")
+    ConfigPoolsPreMaterialize                         = ConfigKey("pools.prematerialize")
+    ConfigPoolsDefaultConsistentHashPartitions        = ConfigKey("pools.defaultconsistenthashpartitions")
+    ConfigPoolsDefaultConsistentHashReplicationFactor = ConfigKey("pools.defaultconsistenthashreplicationfactor")
+    ConfigPoolsDefaultConsistentHashLoad              = ConfigKey("pools.defaultconsitenthashload")
 )
 ```
 Constants for configuration key strings
@@ -1677,6 +1714,102 @@ ConfigKey is a string type for static config key name consistency
 
 
 
+## <a name="ConsistentHashPool">type</a> [ConsistentHashPool](https://github.com/cognusion/go-jar/tree/master/poolch.go?s=772:944#L32)
+``` go
+type ConsistentHashPool struct {
+    // contains filtered or unexported fields
+}
+
+```
+ConsistentHashPool is a PoolManager that implements a consistent hash on a key to return
+the proper member consistently
+
+
+
+
+
+
+
+### <a name="NewConsistentHashPool">func</a> [NewConsistentHashPool](https://github.com/cognusion/go-jar/tree/master/poolch.go?s=1007:1113#L41)
+``` go
+func NewConsistentHashPool(source, key string, pool *Pool, next http.Handler) (*ConsistentHashPool, error)
+```
+NewConsistentHashPool returns a primed ConsistentHashPool
+
+
+### <a name="NewConsistentHashPoolOpts">func</a> [NewConsistentHashPoolOpts](https://github.com/cognusion/go-jar/tree/master/poolch.go?s=1291:1454#L46)
+``` go
+func NewConsistentHashPoolOpts(source, key string, partitionCount, replicationFactor int, load float64, pool *Pool, next http.Handler) (*ConsistentHashPool, error)
+```
+NewConsistentHashPoolOpts exposes some internal tunables, but still returns a ConsistentHashPool
+
+
+
+
+
+### <a name="ConsistentHashPool.Next">func</a> (\*ConsistentHashPool) [Next](https://github.com/cognusion/go-jar/tree/master/poolch.go?s=3715:3764#L135)
+``` go
+func (ch *ConsistentHashPool) Next() http.Handler
+```
+Next returns the specified next Handler
+
+
+
+
+### <a name="ConsistentHashPool.NextServer">func</a> (\*ConsistentHashPool) [NextServer](https://github.com/cognusion/go-jar/tree/master/poolch.go?s=3554:3614#L130)
+``` go
+func (ch *ConsistentHashPool) NextServer() (*url.URL, error)
+```
+NextServer is an error-causing noop to implement PoolManager
+
+
+
+
+### <a name="ConsistentHashPool.RemoveServer">func</a> (\*ConsistentHashPool) [RemoveServer](https://github.com/cognusion/go-jar/tree/master/poolch.go?s=3087:3147#L110)
+``` go
+func (ch *ConsistentHashPool) RemoveServer(u *url.URL) error
+```
+RemoveServer removes the specified member from the pool
+
+
+
+
+### <a name="ConsistentHashPool.ServeHTTP">func</a> (\*ConsistentHashPool) [ServeHTTP](https://github.com/cognusion/go-jar/tree/master/poolch.go?s=2319:2400#L88)
+``` go
+func (ch *ConsistentHashPool) ServeHTTP(w http.ResponseWriter, req *http.Request)
+```
+ServeHTTP handles its part of the request
+
+
+
+
+### <a name="ConsistentHashPool.ServerWeight">func</a> (\*ConsistentHashPool) [ServerWeight](https://github.com/cognusion/go-jar/tree/master/poolch.go?s=2939:3005#L105)
+``` go
+func (ch *ConsistentHashPool) ServerWeight(u *url.URL) (int, bool)
+```
+ServerWeight is a noop to implement PoolManager
+
+
+
+
+### <a name="ConsistentHashPool.Servers">func</a> (\*ConsistentHashPool) [Servers](https://github.com/cognusion/go-jar/tree/master/poolch.go?s=2090:2140#L78)
+``` go
+func (ch *ConsistentHashPool) Servers() []*url.URL
+```
+Servers returns a list of member URLs
+
+
+
+
+### <a name="ConsistentHashPool.UpsertServer">func</a> (\*ConsistentHashPool) [UpsertServer](https://github.com/cognusion/go-jar/tree/master/poolch.go?s=3251:3347#L116)
+``` go
+func (ch *ConsistentHashPool) UpsertServer(u *url.URL, options ...roundrobin.ServerOption) error
+```
+UpsertServer adds or updates the member to the pool
+
+
+
+
 ## <a name="CorsString">type</a> [CorsString](https://github.com/cognusion/go-jar/tree/master/cors.go?s=1051:1075#L33)
 ``` go
 type CorsString = string
@@ -2016,7 +2149,7 @@ List returns the names of all of the Handlers
 
 
 
-## <a name="HealthCheckError">type</a> [HealthCheckError](https://github.com/cognusion/go-jar/tree/master/pools.go?s=9861:10064#L357)
+## <a name="HealthCheckError">type</a> [HealthCheckError](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10243:10446#L360)
 ``` go
 type HealthCheckError struct {
     PoolName    string
@@ -2041,7 +2174,7 @@ HealthCheckError is an error returned through the HealthCheck system
 
 
 
-### <a name="HealthCheckError.Error">func</a> (\*HealthCheckError) [Error](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10120:10161#L369)
+### <a name="HealthCheckError.Error">func</a> (\*HealthCheckError) [Error](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10502:10543#L372)
 ``` go
 func (h *HealthCheckError) Error() string
 ```
@@ -2050,7 +2183,7 @@ Error returns the stringified version of the error
 
 
 
-## <a name="HealthCheckResult">type</a> [HealthCheckResult](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10308:10456#L374)
+## <a name="HealthCheckResult">type</a> [HealthCheckResult](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10690:10838#L377)
 ``` go
 type HealthCheckResult struct {
     PoolName   string
@@ -2113,7 +2246,7 @@ func (i HealthCheckStatus) String() string
 
 
 
-## <a name="HealthCheckWork">type</a> [HealthCheckWork](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10506:10767#L384)
+## <a name="HealthCheckWork">type</a> [HealthCheckWork](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10888:11149#L387)
 ``` go
 type HealthCheckWork struct {
     PoolName    string
@@ -2139,7 +2272,7 @@ HealthCheckWork is Work to run a HealthCheck
 
 
 
-### <a name="HealthCheckWork.Return">func</a> (\*HealthCheckWork) [Return](https://github.com/cognusion/go-jar/tree/master/pools.go?s=12091:12143#L452)
+### <a name="HealthCheckWork.Return">func</a> (\*HealthCheckWork) [Return](https://github.com/cognusion/go-jar/tree/master/pools.go?s=12473:12525#L455)
 ``` go
 func (h *HealthCheckWork) Return(rthing interface{})
 ```
@@ -2148,7 +2281,7 @@ Return consumes a Work result and slides it downthe return channel
 
 
 
-### <a name="HealthCheckWork.Work">func</a> (\*HealthCheckWork) [Work](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10852:10896#L397)
+### <a name="HealthCheckWork.Work">func</a> (\*HealthCheckWork) [Work](https://github.com/cognusion/go-jar/tree/master/pools.go?s=11234:11278#L400)
 ``` go
 func (h *HealthCheckWork) Work() interface{}
 ```
@@ -2228,7 +2361,7 @@ ResponseFiller adds response information to the AccessLog entry
 
 
 
-## <a name="Member">type</a> [Member](https://github.com/cognusion/go-jar/tree/master/pool.go?s=4511:4616#L131)
+## <a name="Member">type</a> [Member](https://github.com/cognusion/go-jar/tree/master/pool.go?s=5154:5259#L141)
 ``` go
 type Member struct {
     URL     *url.URL
@@ -2245,6 +2378,15 @@ Member is an attribute struct to describe a Pool Member
 
 
 
+
+
+
+
+### <a name="Member.String">func</a> (\*Member) [String](https://github.com/cognusion/go-jar/tree/master/poolch.go?s=1988:2020#L73)
+``` go
+func (m *Member) String() string
+```
+String returns the Address of the Member
 
 
 
@@ -2519,7 +2661,7 @@ Handler is a middleware that replaces the Request path
 
 
 
-## <a name="Pool">type</a> [Pool](https://github.com/cognusion/go-jar/tree/master/pool.go?s=4664:5654#L139)
+## <a name="Pool">type</a> [Pool](https://github.com/cognusion/go-jar/tree/master/pool.go?s=5307:6297#L149)
 ``` go
 type Pool struct {
     Config *PoolConfig
@@ -2551,7 +2693,7 @@ Pool is a list of like-minded destinations
 
 
 
-### <a name="Pool.GetMember">func</a> (\*Pool) [GetMember](https://github.com/cognusion/go-jar/tree/master/pool.go?s=6318:6362#L184)
+### <a name="Pool.GetMember">func</a> (\*Pool) [GetMember](https://github.com/cognusion/go-jar/tree/master/pool.go?s=6961:7005#L194)
 ``` go
 func (p *Pool) GetMember(u *url.URL) *Member
 ```
@@ -2560,7 +2702,7 @@ GetMember interacts with an internal cache, returning a Member from the cache or
 
 
 
-### <a name="Pool.GetPool">func</a> (\*Pool) [GetPool](https://github.com/cognusion/go-jar/tree/master/pool.go?s=5912:5958#L172)
+### <a name="Pool.GetPool">func</a> (\*Pool) [GetPool](https://github.com/cognusion/go-jar/tree/master/pool.go?s=6555:6601#L182)
 ``` go
 func (p *Pool) GetPool() (http.Handler, error)
 ```
@@ -2570,7 +2712,7 @@ materialized, it does that.
 
 
 
-### <a name="Pool.IsMaterialized">func</a> (\*Pool) [IsMaterialized](https://github.com/cognusion/go-jar/tree/master/pool.go?s=5738:5774#L166)
+### <a name="Pool.IsMaterialized">func</a> (\*Pool) [IsMaterialized](https://github.com/cognusion/go-jar/tree/master/pool.go?s=6381:6417#L176)
 ``` go
 func (p *Pool) IsMaterialized() bool
 ```
@@ -2579,7 +2721,7 @@ IsMaterialized return boolean on whether the pool has been materialized or not
 
 
 
-### <a name="Pool.Materialize">func</a> (\*Pool) [Materialize](https://github.com/cognusion/go-jar/tree/master/pool.go?s=11497:11547#L331)
+### <a name="Pool.Materialize">func</a> (\*Pool) [Materialize](https://github.com/cognusion/go-jar/tree/master/pool.go?s=12140:12190#L341)
 ``` go
 func (p *Pool) Materialize() (http.Handler, error)
 ```
@@ -2592,7 +2734,7 @@ Materialize it for you.
 
 
 
-## <a name="PoolConfig">type</a> [PoolConfig](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=109:1718#L4)
+## <a name="PoolConfig">type</a> [PoolConfig](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=219:2620#L14)
 ``` go
 type PoolConfig struct {
     // Name is what you'd like to call this Pool
@@ -2605,7 +2747,15 @@ type PoolConfig struct {
     BufferedFails int
     // RemoveHeaders is a list of pool-specific headers to remove
     RemoveHeaders []string
-    // Stickyness
+    // ConsistentHashing is mutually exclusive to Sticky, and enables automatic distributions
+    ConsistentHashing bool
+    // ConsistentHashSource is one of "header", "cookie", or "request".
+    // For "header" and "cookie", it is paired with ConsistentHashName to choose which key from those maps is used.
+    // For "request" it is paired with ConsistentHashName to choose from one of "remoteaddr", "host", and "url".
+    ConsistentHashSource string
+    // ConsistentHasName sets the request part, header, or cookie name to pull the value from
+    ConsistentHashName string
+    // Sticky is mutually exclusive to ConsistentHashing, and enables cookie-based session routing
     Sticky bool
     // StickyCookieName overrides the name of the cookie used to handle sticky sessions
     StickyCookieName string
@@ -2627,6 +2777,9 @@ type PoolConfig struct {
     Prune bool
     // EC2Affinity specifies whether an EC2-aware JAR should prefer a same-AZ member if available
     EC2Affinity bool
+    // Options is a horrible, brittle map[string]interface{} that some PoolManagers
+    // use for per-pool configuration. Avoid if possible.
+    Options PoolOptions
 }
 
 ```
@@ -2668,7 +2821,99 @@ Handler injects the Pool name into the Context
 
 
 
-## <a name="Pools">type</a> [Pools](https://github.com/cognusion/go-jar/tree/master/pools.go?s=1070:1404#L40)
+## <a name="PoolManager">type</a> [PoolManager](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=4544:4840#L153)
+``` go
+type PoolManager interface {
+    Servers() []*url.URL
+    ServeHTTP(w http.ResponseWriter, req *http.Request)
+    ServerWeight(u *url.URL) (int, bool)
+    RemoveServer(u *url.URL) error
+    UpsertServer(u *url.URL, options ...roundrobin.ServerOption) error
+    NextServer() (*url.URL, error)
+    Next() http.Handler
+}
+```
+PoolManager is an interface to encompass oxy/roundrobin and our chpool
+
+
+
+
+
+
+
+
+
+
+## <a name="PoolOptions">type</a> [PoolOptions](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=2675:2714#L61)
+``` go
+type PoolOptions map[string]interface{}
+```
+PoolOptions is an MSI with a case-agnostic getter
+
+
+
+
+
+
+
+
+
+
+### <a name="PoolOptions.Get">func</a> (\*PoolOptions) [Get](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=2778:2827#L64)
+``` go
+func (p *PoolOptions) Get(key string) interface{}
+```
+Get returns an interface{} if *key* matches, otherwise nil
+
+
+
+
+### <a name="PoolOptions.GetBool">func</a> (\*PoolOptions) [GetBool](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=3901:3947#L123)
+``` go
+func (p *PoolOptions) GetBool(key string) bool
+```
+GetBool returns a bool value if *key* matches, otherwise false
+
+
+
+
+### <a name="PoolOptions.GetFloat64">func</a> (\*PoolOptions) [GetFloat64](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=3610:3662#L108)
+``` go
+func (p *PoolOptions) GetFloat64(key string) float64
+```
+GetFloat64 returns a float64 if *key* matches, otherwise -1
+
+
+
+
+### <a name="PoolOptions.GetInt">func</a> (\*PoolOptions) [GetInt](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=3334:3378#L93)
+``` go
+func (p *PoolOptions) GetInt(key string) int
+```
+GetInt returns an int if *key* matches, otherwise -1
+
+
+
+
+### <a name="PoolOptions.GetString">func</a> (\*PoolOptions) [GetString](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=3056:3106#L78)
+``` go
+func (p *PoolOptions) GetString(key string) string
+```
+GetString returns a string if *key* matches, otherwise empty string
+
+
+
+
+### <a name="PoolOptions.GetStringSlice">func</a> (\*PoolOptions) [GetStringSlice](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=4206:4263#L138)
+``` go
+func (p *PoolOptions) GetStringSlice(key string) []string
+```
+GetStringSlice returns a []string if *key* matches, otherwise an empty []string
+
+
+
+
+## <a name="Pools">type</a> [Pools](https://github.com/cognusion/go-jar/tree/master/pools.go?s=1452:1786#L43)
 ``` go
 type Pools struct {
     sync.RWMutex // Readers must RLock/RUnlock. Writers must Lock/Unlock
@@ -2688,7 +2933,7 @@ healthcheck pool members, managing them accordingly.
 
 
 
-### <a name="BuildPools">func</a> [BuildPools](https://github.com/cognusion/go-jar/tree/master/pools.go?s=8395:8427#L304)
+### <a name="BuildPools">func</a> [BuildPools](https://github.com/cognusion/go-jar/tree/master/pools.go?s=8777:8809#L307)
 ``` go
 func BuildPools() (*Pools, bool)
 ```
@@ -2697,7 +2942,7 @@ ConfigPoolsHealthcheckInterval will set the healthcheck interval for pool member
 Set to 0 to disable.
 
 
-### <a name="NewPools">func</a> [NewPools](https://github.com/cognusion/go-jar/tree/master/pools.go?s=1559:1639#L51)
+### <a name="NewPools">func</a> [NewPools](https://github.com/cognusion/go-jar/tree/master/pools.go?s=1941:2021#L54)
 ``` go
 func NewPools(poolConfigs map[string]*PoolConfig, interval time.Duration) *Pools
 ```
@@ -2708,7 +2953,7 @@ Set the interval to 0 to disable healthchecks
 
 
 
-### <a name="Pools.Exists">func</a> (\*Pools) [Exists](https://github.com/cognusion/go-jar/tree/master/pools.go?s=4431:4471#L162)
+### <a name="Pools.Exists">func</a> (\*Pools) [Exists](https://github.com/cognusion/go-jar/tree/master/pools.go?s=4813:4853#L165)
 ``` go
 func (p *Pools) Exists(name string) bool
 ```
@@ -2717,7 +2962,7 @@ Exists returns bool if the named Pool exists
 
 
 
-### <a name="Pools.Get">func</a> (\*Pools) [Get](https://github.com/cognusion/go-jar/tree/master/pools.go?s=4600:4646#L171)
+### <a name="Pools.Get">func</a> (\*Pools) [Get](https://github.com/cognusion/go-jar/tree/master/pools.go?s=4982:5028#L174)
 ``` go
 func (p *Pools) Get(name string) (*Pool, bool)
 ```
@@ -2726,7 +2971,7 @@ Get returns a Pool and a bool, given a name, from the Pools
 
 
 
-### <a name="Pools.List">func</a> (\*Pools) [List](https://github.com/cognusion/go-jar/tree/master/pools.go?s=4207:4238#L148)
+### <a name="Pools.List">func</a> (\*Pools) [List](https://github.com/cognusion/go-jar/tree/master/pools.go?s=4589:4620#L151)
 ``` go
 func (p *Pools) List() []string
 ```
@@ -2735,7 +2980,7 @@ List returns list of Pool names
 
 
 
-### <a name="Pools.Merge">func</a> (\*Pools) [Merge](https://github.com/cognusion/go-jar/tree/master/pools.go?s=4947:4992#L190)
+### <a name="Pools.Merge">func</a> (\*Pools) [Merge](https://github.com/cognusion/go-jar/tree/master/pools.go?s=5329:5374#L193)
 ``` go
 func (p *Pools) Merge(pools map[string]*Pool)
 ```
@@ -2744,7 +2989,7 @@ Merge adds-or-replaces the specified pools
 
 
 
-### <a name="Pools.Replace">func</a> (\*Pools) [Replace](https://github.com/cognusion/go-jar/tree/master/pools.go?s=5141:5188#L200)
+### <a name="Pools.Replace">func</a> (\*Pools) [Replace](https://github.com/cognusion/go-jar/tree/master/pools.go?s=5523:5570#L203)
 ``` go
 func (p *Pools) Replace(pools map[string]*Pool)
 ```
@@ -2753,7 +2998,7 @@ Replace does exactly that on the entire map of Pool
 
 
 
-### <a name="Pools.Set">func</a> (\*Pools) [Set](https://github.com/cognusion/go-jar/tree/master/pools.go?s=4800:4844#L182)
+### <a name="Pools.Set">func</a> (\*Pools) [Set](https://github.com/cognusion/go-jar/tree/master/pools.go?s=5182:5226#L185)
 ``` go
 func (p *Pools) Set(name string, pool *Pool)
 ```
@@ -2882,7 +3127,7 @@ encapsulated ProxyResponseModifier, discontinuing and returning an error as soon
 
 
 
-## <a name="PruneFunc">type</a> [PruneFunc](https://github.com/cognusion/go-jar/tree/master/pools.go?s=9754:9787#L354)
+## <a name="PruneFunc">type</a> [PruneFunc](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10136:10169#L357)
 ``` go
 type PruneFunc func(string) error
 ```

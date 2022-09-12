@@ -45,6 +45,8 @@ require (
 )
 
 require (
+	github.com/buraksezer/consistent v0.9.0
+	github.com/cespare/xxhash v1.1.0
 	github.com/cognusion/go-health v1.1.0
 	github.com/cognusion/go-prw v1.1.1
 	github.com/cognusion/go-sequence v1.0.0

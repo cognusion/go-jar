@@ -19,11 +19,14 @@ const (
 
 // Constants for configuration key strings
 const (
-	ConfigPoolsDefaultMemberErrorStatus = ConfigKey("pools.defaultmembererrorstatus")
-	ConfigPoolsDefaultMemberWeight      = ConfigKey("pools.defaultmemberweight")
-	ConfigPoolsHealthcheckInterval      = ConfigKey("pools.healthcheckinterval")
-	ConfigPoolsLocalMemberWeight        = ConfigKey("pools.localmemberweight")
-	ConfigPoolsPreMaterialize           = ConfigKey("pools.prematerialize")
+	ConfigPoolsDefaultMemberErrorStatus               = ConfigKey("pools.defaultmembererrorstatus")
+	ConfigPoolsDefaultMemberWeight                    = ConfigKey("pools.defaultmemberweight")
+	ConfigPoolsHealthcheckInterval                    = ConfigKey("pools.healthcheckinterval")
+	ConfigPoolsLocalMemberWeight                      = ConfigKey("pools.localmemberweight")
+	ConfigPoolsPreMaterialize                         = ConfigKey("pools.prematerialize")
+	ConfigPoolsDefaultConsistentHashPartitions        = ConfigKey("pools.defaultconsistenthashpartitions")
+	ConfigPoolsDefaultConsistentHashReplicationFactor = ConfigKey("pools.defaultconsistenthashreplicationfactor")
+	ConfigPoolsDefaultConsistentHashLoad              = ConfigKey("pools.defaultconsitenthashload")
 )
 
 func init() {
