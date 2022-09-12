@@ -603,6 +603,21 @@ pools:
       - http://192.168.0.9
 ```
 
+### pools.defaultconsistenthashload: [float]
+
+**Default: 1.25**
+From the library: Load is used to calculate average load. See the code, the paper and Google's blog post to learn about it.
+
+### pools.defaultconsistenthashpartitions: [integer]
+
+**Default: 7**
+From the library: Keys are distributed among partitions. Prime numbers are good to distribute keys uniformly. Select a big PartitionCount if you have too many keys.
+
+### pools.defaultconsistenthashreplicationfactor: [integer]
+
+**Default: 20**
+From the library: Members are replicated on consistent hash ring. This number controls the number each member is replicated on the ring.
+
 ### pools.defaultmembererrorstatus: [healthcheckstatus]
 
 **Default: Warning**
@@ -663,6 +678,21 @@ If set, all outgoing requests will be buffered. In the event of a timeout or 500
 ### bufferedfails: [number]
 
 If **buffered** is set, this is the number of times a request may fail before giving up.
+
+### consistenthashing: [true|false]
+
+**Default: false**
+If set, consistent hashing will be used on the pool, ensuring consistency and uniform distribution across pool members.
+
+### consistenthashname: [string]
+
+If **consistenthashing** is set, this value will be the field whose value is used as a hash key.
+
+### consistenthashsource: [header|cookie|request]
+
+If **consistenthashing** is set, this value specifies where to pull the value, specified by **consistenthashname**, for the hash key. 
+For "header" and "cookie", it is paired with **consistenthashname** to choose which key from those maps is used.
+For "request" it is paired with **consistenthashname** to choose from one of "remoteaddr", "host", or "url".
 
 ### ec2affinity: [true|false]
 
