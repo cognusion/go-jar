@@ -255,6 +255,30 @@ func (p *Pool) buildMember(u *url.URL) *Member {
 	return &m
 }
 
+func (p *Pool) materializeConsistent(next http.Handler) (PoolManager, error) {
+	DebugOut.Printf("\t\tConsistentHash with '%s'\n", p.Config.ConsistentHashName)
+
+	// Set defaults
+	partitions := Conf.GetInt(ConfigPoolsDefaultConsistentHashPartitions)
+	replication := Conf.GetInt(ConfigPoolsDefaultConsistentHashReplicationFactor)
+	load := Conf.GetFloat64(ConfigPoolsDefaultConsistentHashLoad)
+
+	// Allow overrides via PoolOptions :(
+	if v := p.Config.Options.GetInt(ConfigConsistentHashPartitions); v != -1 {
+		partitions = v
+	}
+
+	if v := p.Config.Options.GetInt(ConfigConsistentHashReplications); v != -1 {
+		replication = v
+	}
+
+	if v := p.Config.Options.GetFloat64(ConfigConsistentHashLoad); v != -1 {
+		load = v
+	}
+
+	return NewConsistentHashPoolOpts(p.Config.ConsistentHashSource, p.Config.ConsistentHashName, partitions, replication, load, p, next)
+}
+
 func (p *Pool) materializeSticky(next http.Handler, opts ...roundrobin.LBOption) (*roundrobin.RoundRobin, error) {
 	var (
 		cookie         = fmt.Sprintf("%s%s", "jar", p.Config.Name)
@@ -488,46 +512,23 @@ func (p *Pool) materializeHTTP() (http.Handler, error) {
 		return nil, ErrPoolConfigConsistentAndSticky
 	}
 
-	var lb PoolManager
+	var (
+		lb    PoolManager
+		pmErr error
+	)
+
 	if p.Config.Sticky {
 		// Pool is doing sticky load-balancing
-		lb, err = p.materializeSticky(urlcapture, roundrobin.RoundRobinLogger(logrusLogger))
-		if err != nil {
-			return nil, err
-		}
+		lb, pmErr = p.materializeSticky(urlcapture, roundrobin.RoundRobinLogger(logrusLogger))
 	} else if p.Config.ConsistentHashing {
 		// Pool is using a consistent hash to direct traffics
-		DebugOut.Printf("\t\tConsistentHash with '%s'\n", p.Config.ConsistentHashName)
-
-		// Set defaults
-		partitions := Conf.GetInt(ConfigPoolsDefaultConsistentHashPartitions)
-		replication := Conf.GetInt(ConfigPoolsDefaultConsistentHashReplicationFactor)
-		load := Conf.GetFloat64(ConfigPoolsDefaultConsistentHashLoad)
-
-		// Allow overrides via PoolOptions :(
-		if v := p.Config.Options.GetInt(ConfigConsistentHashPartitions); v != -1 {
-			partitions = v
-		}
-
-		if v := p.Config.Options.GetInt(ConfigConsistentHashReplications); v != -1 {
-			replication = v
-		}
-
-		if v := p.Config.Options.GetFloat64(ConfigConsistentHashLoad); v != -1 {
-			load = v
-		}
-
-		lb, err = NewConsistentHashPoolOpts(p.Config.ConsistentHashSource, p.Config.ConsistentHashName, partitions, replication, load, p, urlcapture)
-		if err != nil {
-			return nil, err
-		}
-
+		lb, pmErr = p.materializeConsistent(urlcapture)
 	} else {
-		// Pool is not not sticky
-		lb, err = roundrobin.New(urlcapture, roundrobin.RoundRobinLogger(logrusLogger))
-		if err != nil {
-			return nil, err
-		}
+		// Pool is not not sticky nor consistent, so standard rrlb
+		lb, pmErr = roundrobin.New(urlcapture, roundrobin.RoundRobinLogger(logrusLogger))
+	}
+	if pmErr != nil {
+		return nil, pmErr
 	}
 
 	// Define ListMembers
