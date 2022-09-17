@@ -512,20 +512,20 @@ func (p *Pool) materializeHTTP() (http.Handler, error) {
 		return nil, ErrPoolConfigConsistentAndSticky
 	}
 
+	// Build a PoolManager
 	var (
-		lb    PoolManager
+		pm    PoolManager
 		pmErr error
 	)
-
 	if p.Config.Sticky {
 		// Pool is doing sticky load-balancing
-		lb, pmErr = p.materializeSticky(urlcapture, roundrobin.RoundRobinLogger(logrusLogger))
+		pm, pmErr = p.materializeSticky(urlcapture, roundrobin.RoundRobinLogger(logrusLogger))
 	} else if p.Config.ConsistentHashing {
 		// Pool is using a consistent hash to direct traffics
-		lb, pmErr = p.materializeConsistent(urlcapture)
+		pm, pmErr = p.materializeConsistent(urlcapture)
 	} else {
 		// Pool is not not sticky nor consistent, so standard rrlb
-		lb, pmErr = roundrobin.New(urlcapture, roundrobin.RoundRobinLogger(logrusLogger))
+		pm, pmErr = roundrobin.New(urlcapture, roundrobin.RoundRobinLogger(logrusLogger))
 	}
 	if pmErr != nil {
 		return nil, pmErr
@@ -533,7 +533,7 @@ func (p *Pool) materializeHTTP() (http.Handler, error) {
 
 	// Define ListMembers
 	p.ListMembers = func() []*url.URL {
-		return lb.Servers()
+		return pm.Servers()
 	}
 
 	// Define AddMember
@@ -544,7 +544,7 @@ func (p *Pool) materializeHTTP() (http.Handler, error) {
 		}
 
 		m := p.GetMember(u)
-		uerr = lb.UpsertServer(u, m.weight)
+		uerr = pm.UpsertServer(u, m.weight)
 		if uerr != nil {
 			return uerr
 		}
@@ -561,7 +561,7 @@ func (p *Pool) materializeHTTP() (http.Handler, error) {
 		// If the member has been materialized, remove it from the cache
 		p.members.Delete(*u)
 
-		uerr = lb.RemoveServer(u)
+		uerr = pm.RemoveServer(u)
 		if uerr != nil {
 			if uerr.Error() == "server not found" { // Bad, M@. BAD. M@.
 				return ErrNoSuchMemberError
@@ -579,7 +579,7 @@ func (p *Pool) materializeHTTP() (http.Handler, error) {
 			return uerr
 		}
 
-		uerr = lb.RemoveServer(u)
+		uerr = pm.RemoveServer(u)
 		if uerr != nil {
 			if uerr.Error() == "server not found" { // Bad, M@. BAD. M@.
 				return ErrNoSuchMemberError
@@ -602,13 +602,13 @@ func (p *Pool) materializeHTTP() (http.Handler, error) {
 	// Buffer all the requests
 	if p.Config.Buffered {
 		DebugOut.Printf("\t\tBuffering with %d retries.\n", p.Config.BufferedFails)
-		buff, err := buffer.New(lb, buffer.Retry(fmt.Sprintf("IsNetworkError() && Attempts() < %d", p.Config.BufferedFails)), buffer.Logger(logrusLogger))
+		buff, err := buffer.New(pm, buffer.Retry(fmt.Sprintf("IsNetworkError() && Attempts() < %d", p.Config.BufferedFails)), buffer.Logger(logrusLogger))
 		if err != nil {
 			return nil, err
 		}
 		pool = buff
 	} else {
-		pool = lb
+		pool = pm
 	}
 
 	// Write lock the pool briefly to set it
