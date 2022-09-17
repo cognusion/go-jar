@@ -501,7 +501,7 @@ const (
     ConfigPoolsPreMaterialize                         = ConfigKey("pools.prematerialize")
     ConfigPoolsDefaultConsistentHashPartitions        = ConfigKey("pools.defaultconsistenthashpartitions")
     ConfigPoolsDefaultConsistentHashReplicationFactor = ConfigKey("pools.defaultconsistenthashreplicationfactor")
-    ConfigPoolsDefaultConsistentHashLoad              = ConfigKey("pools.defaultconsitenthashload")
+    ConfigPoolsDefaultConsistentHashLoad              = ConfigKey("pools.defaultconsistenthashload")
 )
 ```
 Constants for configuration key strings
@@ -2149,7 +2149,7 @@ List returns the names of all of the Handlers
 
 
 
-## <a name="HealthCheckError">type</a> [HealthCheckError](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10243:10446#L360)
+## <a name="HealthCheckError">type</a> [HealthCheckError](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10244:10447#L360)
 ``` go
 type HealthCheckError struct {
     PoolName    string
@@ -2174,7 +2174,7 @@ HealthCheckError is an error returned through the HealthCheck system
 
 
 
-### <a name="HealthCheckError.Error">func</a> (\*HealthCheckError) [Error](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10502:10543#L372)
+### <a name="HealthCheckError.Error">func</a> (\*HealthCheckError) [Error](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10503:10544#L372)
 ``` go
 func (h *HealthCheckError) Error() string
 ```
@@ -2183,7 +2183,7 @@ Error returns the stringified version of the error
 
 
 
-## <a name="HealthCheckResult">type</a> [HealthCheckResult](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10690:10838#L377)
+## <a name="HealthCheckResult">type</a> [HealthCheckResult](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10691:10839#L377)
 ``` go
 type HealthCheckResult struct {
     PoolName   string
@@ -2246,7 +2246,7 @@ func (i HealthCheckStatus) String() string
 
 
 
-## <a name="HealthCheckWork">type</a> [HealthCheckWork](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10888:11149#L387)
+## <a name="HealthCheckWork">type</a> [HealthCheckWork](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10889:11150#L387)
 ``` go
 type HealthCheckWork struct {
     PoolName    string
@@ -2272,7 +2272,7 @@ HealthCheckWork is Work to run a HealthCheck
 
 
 
-### <a name="HealthCheckWork.Return">func</a> (\*HealthCheckWork) [Return](https://github.com/cognusion/go-jar/tree/master/pools.go?s=12473:12525#L455)
+### <a name="HealthCheckWork.Return">func</a> (\*HealthCheckWork) [Return](https://github.com/cognusion/go-jar/tree/master/pools.go?s=12474:12526#L455)
 ``` go
 func (h *HealthCheckWork) Return(rthing interface{})
 ```
@@ -2281,7 +2281,7 @@ Return consumes a Work result and slides it downthe return channel
 
 
 
-### <a name="HealthCheckWork.Work">func</a> (\*HealthCheckWork) [Work](https://github.com/cognusion/go-jar/tree/master/pools.go?s=11234:11278#L400)
+### <a name="HealthCheckWork.Work">func</a> (\*HealthCheckWork) [Work](https://github.com/cognusion/go-jar/tree/master/pools.go?s=11235:11279#L400)
 ``` go
 func (h *HealthCheckWork) Work() interface{}
 ```
@@ -2721,7 +2721,7 @@ IsMaterialized return boolean on whether the pool has been materialized or not
 
 
 
-### <a name="Pool.Materialize">func</a> (\*Pool) [Materialize](https://github.com/cognusion/go-jar/tree/master/pool.go?s=12140:12190#L341)
+### <a name="Pool.Materialize">func</a> (\*Pool) [Materialize](https://github.com/cognusion/go-jar/tree/master/pool.go?s=12993:13043#L365)
 ``` go
 func (p *Pool) Materialize() (http.Handler, error)
 ```
@@ -2734,7 +2734,7 @@ Materialize it for you.
 
 
 
-## <a name="PoolConfig">type</a> [PoolConfig](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=219:2620#L14)
+## <a name="PoolConfig">type</a> [PoolConfig](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=219:2621#L14)
 ``` go
 type PoolConfig struct {
     // Name is what you'd like to call this Pool
@@ -2753,7 +2753,7 @@ type PoolConfig struct {
     // For "header" and "cookie", it is paired with ConsistentHashName to choose which key from those maps is used.
     // For "request" it is paired with ConsistentHashName to choose from one of "remoteaddr", "host", and "url".
     ConsistentHashSource string
-    // ConsistentHasName sets the request part, header, or cookie name to pull the value from
+    // ConsistentHashName sets the request part, header, or cookie name to pull the value from
     ConsistentHashName string
     // Sticky is mutually exclusive to ConsistentHashing, and enables cookie-based session routing
     Sticky bool
@@ -2821,7 +2821,7 @@ Handler injects the Pool name into the Context
 
 
 
-## <a name="PoolManager">type</a> [PoolManager](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=4544:4840#L153)
+## <a name="PoolManager">type</a> [PoolManager](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=4545:4841#L153)
 ``` go
 type PoolManager interface {
     Servers() []*url.URL
@@ -2844,7 +2844,7 @@ PoolManager is an interface to encompass oxy/roundrobin and our chpool
 
 
 
-## <a name="PoolOptions">type</a> [PoolOptions](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=2675:2714#L61)
+## <a name="PoolOptions">type</a> [PoolOptions](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=2676:2715#L61)
 ``` go
 type PoolOptions map[string]interface{}
 ```
@@ -2859,7 +2859,7 @@ PoolOptions is an MSI with a case-agnostic getter
 
 
 
-### <a name="PoolOptions.Get">func</a> (\*PoolOptions) [Get](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=2778:2827#L64)
+### <a name="PoolOptions.Get">func</a> (\*PoolOptions) [Get](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=2779:2828#L64)
 ``` go
 func (p *PoolOptions) Get(key string) interface{}
 ```
@@ -2868,7 +2868,7 @@ Get returns an interface{} if *key* matches, otherwise nil
 
 
 
-### <a name="PoolOptions.GetBool">func</a> (\*PoolOptions) [GetBool](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=3901:3947#L123)
+### <a name="PoolOptions.GetBool">func</a> (\*PoolOptions) [GetBool](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=3902:3948#L123)
 ``` go
 func (p *PoolOptions) GetBool(key string) bool
 ```
@@ -2877,7 +2877,7 @@ GetBool returns a bool value if *key* matches, otherwise false
 
 
 
-### <a name="PoolOptions.GetFloat64">func</a> (\*PoolOptions) [GetFloat64](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=3610:3662#L108)
+### <a name="PoolOptions.GetFloat64">func</a> (\*PoolOptions) [GetFloat64](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=3611:3663#L108)
 ``` go
 func (p *PoolOptions) GetFloat64(key string) float64
 ```
@@ -2886,7 +2886,7 @@ GetFloat64 returns a float64 if *key* matches, otherwise -1
 
 
 
-### <a name="PoolOptions.GetInt">func</a> (\*PoolOptions) [GetInt](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=3334:3378#L93)
+### <a name="PoolOptions.GetInt">func</a> (\*PoolOptions) [GetInt](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=3335:3379#L93)
 ``` go
 func (p *PoolOptions) GetInt(key string) int
 ```
@@ -2895,7 +2895,7 @@ GetInt returns an int if *key* matches, otherwise -1
 
 
 
-### <a name="PoolOptions.GetString">func</a> (\*PoolOptions) [GetString](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=3056:3106#L78)
+### <a name="PoolOptions.GetString">func</a> (\*PoolOptions) [GetString](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=3057:3107#L78)
 ``` go
 func (p *PoolOptions) GetString(key string) string
 ```
@@ -2904,7 +2904,7 @@ GetString returns a string if *key* matches, otherwise empty string
 
 
 
-### <a name="PoolOptions.GetStringSlice">func</a> (\*PoolOptions) [GetStringSlice](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=4206:4263#L138)
+### <a name="PoolOptions.GetStringSlice">func</a> (\*PoolOptions) [GetStringSlice](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=4207:4264#L138)
 ``` go
 func (p *PoolOptions) GetStringSlice(key string) []string
 ```
@@ -2913,7 +2913,7 @@ GetStringSlice returns a []string if *key* matches, otherwise an empty []string
 
 
 
-## <a name="Pools">type</a> [Pools](https://github.com/cognusion/go-jar/tree/master/pools.go?s=1452:1786#L43)
+## <a name="Pools">type</a> [Pools](https://github.com/cognusion/go-jar/tree/master/pools.go?s=1453:1787#L43)
 ``` go
 type Pools struct {
     sync.RWMutex // Readers must RLock/RUnlock. Writers must Lock/Unlock
@@ -2933,7 +2933,7 @@ healthcheck pool members, managing them accordingly.
 
 
 
-### <a name="BuildPools">func</a> [BuildPools](https://github.com/cognusion/go-jar/tree/master/pools.go?s=8777:8809#L307)
+### <a name="BuildPools">func</a> [BuildPools](https://github.com/cognusion/go-jar/tree/master/pools.go?s=8778:8810#L307)
 ``` go
 func BuildPools() (*Pools, bool)
 ```
@@ -2942,7 +2942,7 @@ ConfigPoolsHealthcheckInterval will set the healthcheck interval for pool member
 Set to 0 to disable.
 
 
-### <a name="NewPools">func</a> [NewPools](https://github.com/cognusion/go-jar/tree/master/pools.go?s=1941:2021#L54)
+### <a name="NewPools">func</a> [NewPools](https://github.com/cognusion/go-jar/tree/master/pools.go?s=1942:2022#L54)
 ``` go
 func NewPools(poolConfigs map[string]*PoolConfig, interval time.Duration) *Pools
 ```
@@ -2953,7 +2953,7 @@ Set the interval to 0 to disable healthchecks
 
 
 
-### <a name="Pools.Exists">func</a> (\*Pools) [Exists](https://github.com/cognusion/go-jar/tree/master/pools.go?s=4813:4853#L165)
+### <a name="Pools.Exists">func</a> (\*Pools) [Exists](https://github.com/cognusion/go-jar/tree/master/pools.go?s=4814:4854#L165)
 ``` go
 func (p *Pools) Exists(name string) bool
 ```
@@ -2962,7 +2962,7 @@ Exists returns bool if the named Pool exists
 
 
 
-### <a name="Pools.Get">func</a> (\*Pools) [Get](https://github.com/cognusion/go-jar/tree/master/pools.go?s=4982:5028#L174)
+### <a name="Pools.Get">func</a> (\*Pools) [Get](https://github.com/cognusion/go-jar/tree/master/pools.go?s=4983:5029#L174)
 ``` go
 func (p *Pools) Get(name string) (*Pool, bool)
 ```
@@ -2971,7 +2971,7 @@ Get returns a Pool and a bool, given a name, from the Pools
 
 
 
-### <a name="Pools.List">func</a> (\*Pools) [List](https://github.com/cognusion/go-jar/tree/master/pools.go?s=4589:4620#L151)
+### <a name="Pools.List">func</a> (\*Pools) [List](https://github.com/cognusion/go-jar/tree/master/pools.go?s=4590:4621#L151)
 ``` go
 func (p *Pools) List() []string
 ```
@@ -2980,7 +2980,7 @@ List returns list of Pool names
 
 
 
-### <a name="Pools.Merge">func</a> (\*Pools) [Merge](https://github.com/cognusion/go-jar/tree/master/pools.go?s=5329:5374#L193)
+### <a name="Pools.Merge">func</a> (\*Pools) [Merge](https://github.com/cognusion/go-jar/tree/master/pools.go?s=5330:5375#L193)
 ``` go
 func (p *Pools) Merge(pools map[string]*Pool)
 ```
@@ -2989,7 +2989,7 @@ Merge adds-or-replaces the specified pools
 
 
 
-### <a name="Pools.Replace">func</a> (\*Pools) [Replace](https://github.com/cognusion/go-jar/tree/master/pools.go?s=5523:5570#L203)
+### <a name="Pools.Replace">func</a> (\*Pools) [Replace](https://github.com/cognusion/go-jar/tree/master/pools.go?s=5524:5571#L203)
 ``` go
 func (p *Pools) Replace(pools map[string]*Pool)
 ```
@@ -2998,7 +2998,7 @@ Replace does exactly that on the entire map of Pool
 
 
 
-### <a name="Pools.Set">func</a> (\*Pools) [Set](https://github.com/cognusion/go-jar/tree/master/pools.go?s=5182:5226#L185)
+### <a name="Pools.Set">func</a> (\*Pools) [Set](https://github.com/cognusion/go-jar/tree/master/pools.go?s=5183:5227#L185)
 ``` go
 func (p *Pools) Set(name string, pool *Pool)
 ```
@@ -3127,7 +3127,7 @@ encapsulated ProxyResponseModifier, discontinuing and returning an error as soon
 
 
 
-## <a name="PruneFunc">type</a> [PruneFunc](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10136:10169#L357)
+## <a name="PruneFunc">type</a> [PruneFunc](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10137:10170#L357)
 ``` go
 type PruneFunc func(string) error
 ```
