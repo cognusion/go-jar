@@ -8,6 +8,8 @@
 //
 // JAR has been in production use since 2018 and handles millions of connections a day
 // across heterogeneous application stacks.
+//
+// Consumers will want to 'cd cmd/jard; go build; #enjoy'
 package jar
 
 import (

@@ -5,7 +5,7 @@ NAME=jard
 go build -o $NAME -ldflags "-linkmode external -extldflags -static"
 
 # Grab the version, per the build
-VERSION=`./${NAME} --version | perl -pe 's/\n/\t/g' | cut -f 1 | cut --delimiter=' ' -f 2`
+#VERSION=`./${NAME} --version | perl -pe 's/\n/\t/g' | cut -f 1 | cut --delimiter=' ' -f 2`
 
 echo
 echo "$NAME $VERSION..."

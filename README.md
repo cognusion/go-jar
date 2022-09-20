@@ -19,6 +19,8 @@ stability.
 JAR has been in production use since 2018 and handles millions of connections a day
 across heterogeneous application stacks.
 
+Consumers will want to 'cd cmd/jard; go build; #enjoy'
+
 
 
 
@@ -842,7 +844,7 @@ AuthoritativeDomainsHandler declines to handle requests that are not listed in "
 
 
 
-## <a name="Bootstrap">func</a> [Bootstrap](https://github.com/cognusion/go-jar/tree/master/a_common.go?s=6268:6284#L233)
+## <a name="Bootstrap">func</a> [Bootstrap](https://github.com/cognusion/go-jar/tree/master/a_common.go?s=6329:6345#L235)
 ``` go
 func Bootstrap()
 ```
@@ -853,7 +855,7 @@ Bootstrap doesn't return unless the server exits
 
 
 
-## <a name="BootstrapChan">func</a> [BootstrapChan](https://github.com/cognusion/go-jar/tree/master/a_common.go?s=4275:4315#L140)
+## <a name="BootstrapChan">func</a> [BootstrapChan](https://github.com/cognusion/go-jar/tree/master/a_common.go?s=4336:4376#L142)
 ``` go
 func BootstrapChan(closer chan struct{})
 ```
@@ -880,7 +882,7 @@ BuildPaths unmarshalls the paths config, creates handler chains, and updates the
 
 
 
-## <a name="ChanBootstrap">func</a> [ChanBootstrap](https://github.com/cognusion/go-jar/tree/master/a_common.go?s=5320:5351#L183)
+## <a name="ChanBootstrap">func</a> [ChanBootstrap](https://github.com/cognusion/go-jar/tree/master/a_common.go?s=5381:5412#L185)
 ``` go
 func ChanBootstrap() chan error
 ```
