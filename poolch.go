@@ -85,18 +85,17 @@ func (ch *ConsistentHashPool) Servers() []*url.URL {
 }
 
 // ServeHTTP handles its part of the request
-func (ch *ConsistentHashPool) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	// make shallow copy of request before chaning anything to avoid side effects
-	newReq := *req
+func (ch *ConsistentHashPool) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// make shallow copy of request
+	newReq := *r
 
-	//hk := getHashKeyFromReq(ch.hashKey, &newReq)
-	//m := ch.conhash.LocateKey(hk)
 	m := ch.conhash.LocateKey(getHashKeyFromReq(ch.hashKey, ch.hashKeySource, &newReq))
-
+	if m == nil {
+		// frick, pool is probably empty
+		RequestErrorResponse(r, w, "Pool faulted, and likely is empty", http.StatusServiceUnavailable)
+		return
+	}
 	newReq.URL = m.(*Member).URL
-
-	//DebugOut.Printf("CH Chose: %s for %s using %v!\n", newReq.URL.String(), req.URL.String(), hk)
-	//DebugOut.Printf("\t%+v ... %+v\n", req.URL, newReq.URL)
 
 	ch.next.ServeHTTP(w, &newReq)
 }
@@ -116,8 +115,10 @@ func (ch *ConsistentHashPool) RemoveServer(u *url.URL) error {
 func (ch *ConsistentHashPool) UpsertServer(u *url.URL, options ...roundrobin.ServerOption) error {
 	var m *Member
 	if ch.pool != nil {
+		// We have a pool, so let it render a Member for us
 		m = ch.pool.GetMember(u)
 	} else {
+		// Render a trivial Member
 		m = &Member{
 			URL: u,
 		}

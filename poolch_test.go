@@ -137,23 +137,48 @@ func TestPoolConsistentHash(t *testing.T) {
 		}
 
 		Convey("... when two are removed, requests continue on the remaining", func(c C) {
+
 			lb.RemoveServer(twoURL)
 			lb.RemoveServer(threeURL)
 
+			rr1 := httptest.NewRecorder()
 			oneCount = 0
 			for i := 0; i < 10; i++ {
-				lb.ServeHTTP(rr, req) // one
-				So(rr.Code, ShouldEqual, http.StatusOK)
+				lb.ServeHTTP(rr1, req) // one
+				c.So(rr1.Code, ShouldEqual, http.StatusOK)
 			}
 
+			rr2 := httptest.NewRecorder()
 			for i := 0; i < 10; i++ {
-				lb.ServeHTTP(rr, req2) // one
-				So(rr.Code, ShouldEqual, http.StatusOK)
+				lb.ServeHTTP(rr2, req2) // one
+				c.So(rr2.Code, ShouldEqual, http.StatusOK)
 			}
 
-			So(oneCount, ShouldEqual, 20)
+			c.So(oneCount, ShouldEqual, 20)
+		})
+
+		Convey("... when three are removed, Service Unavailable", func(c C) {
+			rr := httptest.NewRecorder()
+
+			lb.RemoveServer(oneURL)
+			lb.RemoveServer(twoURL)
+			lb.RemoveServer(threeURL)
+
+			lb.ServeHTTP(rr, req) // one
+			c.So(rr.Code, ShouldEqual, http.StatusServiceUnavailable)
+
+			Convey("... ... and one is added back, everything works", func(c C) {
+				rr := httptest.NewRecorder()
+				err := lb.UpsertServer(oneURL)
+				c.So(err, ShouldBeNil)
+
+				lb.ServeHTTP(rr, req) // one
+				c.So(rr.Code, ShouldEqual, http.StatusOK)
+			})
+
 		})
 	})
+
 }
 
 func TestPoolConsistentHashNoHash(t *testing.T) {
