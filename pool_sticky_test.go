@@ -5,9 +5,9 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 	"github.com/vulcand/oxy/buffer"
 	"github.com/vulcand/oxy/forward"
-	"github.com/vulcand/oxy/roundrobin"
 	"github.com/vulcand/oxy/roundrobin/stickycookie"
 
+	"encoding/base64"
 	"fmt"
 	"io"
 	"net/http"
@@ -190,10 +190,11 @@ func TestPoolRoundRobinStickyCookie(t *testing.T) {
 		}
 		req.AddCookie(&sc)
 
-		sticky := roundrobin.EnableStickySession(roundrobin.NewStickySession(cookieName).SetCookieValue(ao))
-
-		lb, err := roundrobin.New(fwd, sticky)
-		So(err, ShouldBeNil)
+		Conf.Set(ConfigStickyCookieHTTPOnly, true)
+		Conf.Set(ConfigStickyCookieSecure, true)
+		Conf.Set(ConfigKeysStickyCookie, base64.StdEncoding.EncodeToString([]byte("1234567890abcdef")))
+		lb, sErr := NewStickyPool("test", cookieName, "aes", fwd)
+		So(sErr, ShouldBeNil)
 
 		lb.UpsertServer(oneURL)
 		lb.UpsertServer(twoURL)
@@ -250,7 +251,8 @@ func TestPoolRoundRobinStickyCookieOptions(t *testing.T) {
 
 		Conf.Set(ConfigStickyCookieHTTPOnly, true)
 		Conf.Set(ConfigStickyCookieSecure, true)
-		lb, sErr := NewStickyPool("test", cookieName, "", fwd)
+		Conf.Set(ConfigKeysStickyCookie, base64.StdEncoding.EncodeToString([]byte("1234567890abcdef")))
+		lb, sErr := NewStickyPool("test", cookieName, "aes", fwd)
 		So(sErr, ShouldBeNil)
 
 		lb.UpsertServer(oneURL)
@@ -424,10 +426,11 @@ func TestPoolRoundRobinStickyCookieFailReissue(t *testing.T) {
 		}
 		req.AddCookie(&sc)
 
-		sticky := roundrobin.EnableStickySession(roundrobin.NewStickySession(cookieName).SetCookieValue(ao))
-
-		lb, err := roundrobin.New(fwd, sticky)
-		So(err, ShouldBeNil)
+		Conf.Set(ConfigStickyCookieHTTPOnly, true)
+		Conf.Set(ConfigStickyCookieSecure, true)
+		Conf.Set(ConfigKeysStickyCookie, base64.StdEncoding.EncodeToString([]byte("1234567890abcdef")))
+		lb, sErr := NewStickyPool("test", cookieName, "aes", fwd)
+		So(sErr, ShouldBeNil)
 
 		lb.UpsertServer(oneURL)
 		//lb.UpsertServer(twoURL)
@@ -503,10 +506,12 @@ func TestPoolRoundRobinStickyCookieExpireReissue(t *testing.T) {
 		}
 		req.AddCookie(&sc)
 
-		sticky := roundrobin.EnableStickySession(roundrobin.NewStickySession(cookieName).SetCookieValue(ao))
-
-		lb, err := roundrobin.New(fwd, sticky)
-		So(err, ShouldBeNil)
+		Conf.Set(ConfigStickyCookieHTTPOnly, true)
+		Conf.Set(ConfigStickyCookieSecure, true)
+		Conf.Set(ConfigKeysStickyCookie, base64.StdEncoding.EncodeToString([]byte("1234567890abcdef")))
+		Conf.Set(ConfigStickyCookieAESTTL, time.Duration(1*time.Second))
+		lb, sErr := NewStickyPool("test", cookieName, "aes", fwd)
+		So(sErr, ShouldBeNil)
 
 		lb.UpsertServer(oneURL)
 		lb.UpsertServer(twoURL)
