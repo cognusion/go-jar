@@ -59,10 +59,8 @@ func TestPoolRoundRobinSticky(t *testing.T) {
 			Value: twoServer.URL,
 		}
 		req.AddCookie(&sc)
-		sticky := roundrobin.EnableStickySession(roundrobin.NewStickySession(cookieName))
-
-		lb, err := roundrobin.New(fwd, sticky)
-		So(err, ShouldBeNil)
+		lb, sErr := NewStickyPool("test", cookieName, "", fwd)
+		So(sErr, ShouldBeNil)
 
 		lb.UpsertServer(oneURL)
 		lb.UpsertServer(twoURL)
@@ -122,10 +120,8 @@ func TestPoolRoundRobinStickyFailReissue(t *testing.T) {
 			Value: twoServer.URL,
 		}
 		req.AddCookie(&sc)
-		sticky := roundrobin.EnableStickySession(roundrobin.NewStickySession(cookieName))
-
-		lb, err := roundrobin.New(fwd, sticky)
-		So(err, ShouldBeNil)
+		lb, sErr := NewStickyPool("test", cookieName, "", fwd)
+		So(sErr, ShouldBeNil)
 
 		lb.UpsertServer(oneURL)
 		//lb.UpsertServer(twoURL)
@@ -252,13 +248,10 @@ func TestPoolRoundRobinStickyCookieOptions(t *testing.T) {
 		fwd, err := forward.New()
 		So(err, ShouldBeNil)
 
-		ao, err := setupStickyCookie([]byte("1234567890abcdef"), 0)
-		So(err, ShouldBeNil)
-
-		sticky := roundrobin.EnableStickySession(roundrobin.NewStickySessionWithOptions(cookieName, roundrobin.CookieOptions{HTTPOnly: true, Secure: true}).SetCookieValue(ao))
-
-		lb, err := roundrobin.New(fwd, sticky)
-		So(err, ShouldBeNil)
+		Conf.Set(ConfigStickyCookieHTTPOnly, true)
+		Conf.Set(ConfigStickyCookieSecure, true)
+		lb, sErr := NewStickyPool("test", cookieName, "", fwd)
+		So(sErr, ShouldBeNil)
 
 		lb.UpsertServer(oneURL)
 		lb.UpsertServer(twoURL)
@@ -338,13 +331,10 @@ func TestPoolRoundRobinStickyCookieOptionsDefault(t *testing.T) {
 		fwd, err := forward.New()
 		So(err, ShouldBeNil)
 
-		ao, err := setupStickyCookie([]byte("1234567890abcdef"), 0)
-		So(err, ShouldBeNil)
-
-		sticky := roundrobin.EnableStickySession(roundrobin.NewStickySession(cookieName).SetCookieValue(ao))
-
-		lb, err := roundrobin.New(fwd, sticky)
-		So(err, ShouldBeNil)
+		Conf.Set(ConfigStickyCookieHTTPOnly, false)
+		Conf.Set(ConfigStickyCookieSecure, false)
+		lb, sErr := NewStickyPool("test", cookieName, "", fwd)
+		So(sErr, ShouldBeNil)
 
 		lb.UpsertServer(oneURL)
 		lb.UpsertServer(twoURL)
