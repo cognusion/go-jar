@@ -11,6 +11,11 @@ import (
 	"time"
 )
 
+// materializeSticky extents Pool to create cookie-based session-pinned Pools
+func (p *Pool) materializeSticky(next http.Handler, opts ...roundrobin.LBOption) (PoolManager, error) {
+	return NewStickyPool(p.Config.Name, p.Config.StickyCookieName, p.Config.StickyCookieType, next, opts...)
+}
+
 // NewStickyPool returns a primed RoundRobin that honors pinning based on a cookie value
 func NewStickyPool(poolName, cookieName, cookieType string, next http.Handler, opts ...roundrobin.LBOption) (*roundrobin.RoundRobin, error) {
 	var (

@@ -1169,7 +1169,7 @@ NewECBEncrypter should never be used unless you know what you're doing
 
 
 
-## <a name="NewStickyPool">func</a> [NewStickyPool](https://github.com/cognusion/go-jar/tree/master/pool_sticky.go?s=259:398#L15)
+## <a name="NewStickyPool">func</a> [NewStickyPool](https://github.com/cognusion/go-jar/tree/master/pool_sticky.go?s=550:689#L20)
 ``` go
 func NewStickyPool(poolName, cookieName, cookieType string, next http.Handler, opts ...roundrobin.LBOption) (*roundrobin.RoundRobin, error)
 ```
@@ -1725,7 +1725,7 @@ ConfigKey is a string type for static config key name consistency
 
 
 
-## <a name="ConsistentHashPool">type</a> [ConsistentHashPool](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=772:944#L32)
+## <a name="ConsistentHashPool">type</a> [ConsistentHashPool](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=1704:1876#L57)
 ``` go
 type ConsistentHashPool struct {
     // contains filtered or unexported fields
@@ -1741,14 +1741,14 @@ the proper member consistently
 
 
 
-### <a name="NewConsistentHashPool">func</a> [NewConsistentHashPool](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=1007:1113#L41)
+### <a name="NewConsistentHashPool">func</a> [NewConsistentHashPool](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=1939:2045#L66)
 ``` go
 func NewConsistentHashPool(source, key string, pool *Pool, next http.Handler) (*ConsistentHashPool, error)
 ```
 NewConsistentHashPool returns a primed ConsistentHashPool
 
 
-### <a name="NewConsistentHashPoolOpts">func</a> [NewConsistentHashPoolOpts](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=1291:1454#L46)
+### <a name="NewConsistentHashPoolOpts">func</a> [NewConsistentHashPoolOpts](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=2223:2386#L71)
 ``` go
 func NewConsistentHashPoolOpts(source, key string, partitionCount, replicationFactor int, load float64, pool *Pool, next http.Handler) (*ConsistentHashPool, error)
 ```
@@ -1758,7 +1758,7 @@ NewConsistentHashPoolOpts exposes some internal tunables, but still returns a Co
 
 
 
-### <a name="ConsistentHashPool.Next">func</a> (\*ConsistentHashPool) [Next](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=3668:3717#L136)
+### <a name="ConsistentHashPool.Next">func</a> (\*ConsistentHashPool) [Next](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=4600:4649#L161)
 ``` go
 func (ch *ConsistentHashPool) Next() http.Handler
 ```
@@ -1767,7 +1767,7 @@ Next returns the specified next Handler
 
 
 
-### <a name="ConsistentHashPool.NextServer">func</a> (\*ConsistentHashPool) [NextServer](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=3507:3567#L131)
+### <a name="ConsistentHashPool.NextServer">func</a> (\*ConsistentHashPool) [NextServer](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=4439:4499#L156)
 ``` go
 func (ch *ConsistentHashPool) NextServer() (*url.URL, error)
 ```
@@ -1776,7 +1776,7 @@ NextServer is an error-causing noop to implement PoolManager
 
 
 
-### <a name="ConsistentHashPool.RemoveServer">func</a> (\*ConsistentHashPool) [RemoveServer](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=2957:3017#L109)
+### <a name="ConsistentHashPool.RemoveServer">func</a> (\*ConsistentHashPool) [RemoveServer](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=3889:3949#L134)
 ``` go
 func (ch *ConsistentHashPool) RemoveServer(u *url.URL) error
 ```
@@ -1785,7 +1785,7 @@ RemoveServer removes the specified member from the pool
 
 
 
-### <a name="ConsistentHashPool.ServeHTTP">func</a> (\*ConsistentHashPool) [ServeHTTP](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=2319:2398#L88)
+### <a name="ConsistentHashPool.ServeHTTP">func</a> (\*ConsistentHashPool) [ServeHTTP](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=3251:3330#L113)
 ``` go
 func (ch *ConsistentHashPool) ServeHTTP(w http.ResponseWriter, r *http.Request)
 ```
@@ -1794,7 +1794,7 @@ ServeHTTP handles its part of the request
 
 
 
-### <a name="ConsistentHashPool.ServerWeight">func</a> (\*ConsistentHashPool) [ServerWeight](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=2809:2875#L104)
+### <a name="ConsistentHashPool.ServerWeight">func</a> (\*ConsistentHashPool) [ServerWeight](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=3741:3807#L129)
 ``` go
 func (ch *ConsistentHashPool) ServerWeight(u *url.URL) (int, bool)
 ```
@@ -1803,7 +1803,7 @@ ServerWeight is a noop to implement PoolManager
 
 
 
-### <a name="ConsistentHashPool.Servers">func</a> (\*ConsistentHashPool) [Servers](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=2090:2140#L78)
+### <a name="ConsistentHashPool.Servers">func</a> (\*ConsistentHashPool) [Servers](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=3022:3072#L103)
 ``` go
 func (ch *ConsistentHashPool) Servers() []*url.URL
 ```
@@ -1812,7 +1812,7 @@ Servers returns a list of member URLs
 
 
 
-### <a name="ConsistentHashPool.UpsertServer">func</a> (\*ConsistentHashPool) [UpsertServer](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=3121:3217#L115)
+### <a name="ConsistentHashPool.UpsertServer">func</a> (\*ConsistentHashPool) [UpsertServer](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=4053:4149#L140)
 ``` go
 func (ch *ConsistentHashPool) UpsertServer(u *url.URL, options ...roundrobin.ServerOption) error
 ```
@@ -2393,7 +2393,7 @@ Member is an attribute struct to describe a Pool Member
 
 
 
-### <a name="Member.String">func</a> (\*Member) [String](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=1988:2020#L73)
+### <a name="Member.String">func</a> (\*Member) [String](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=2920:2952#L98)
 ``` go
 func (m *Member) String() string
 ```
@@ -2732,7 +2732,7 @@ IsMaterialized return boolean on whether the pool has been materialized or not
 
 
 
-### <a name="Pool.Materialize">func</a> (\*Pool) [Materialize](https://github.com/cognusion/go-jar/tree/master/pool.go?s=10578:10628#L288)
+### <a name="Pool.Materialize">func</a> (\*Pool) [Materialize](https://github.com/cognusion/go-jar/tree/master/pool.go?s=9512:9562#L260)
 ``` go
 func (p *Pool) Materialize() (http.Handler, error)
 ```

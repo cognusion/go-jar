@@ -252,34 +252,6 @@ func (p *Pool) buildMember(u *url.URL) *Member {
 	return &m
 }
 
-func (p *Pool) materializeConsistent(next http.Handler) (PoolManager, error) {
-	DebugOut.Printf("\t\tConsistentHash with '%s'\n", p.Config.ConsistentHashName)
-
-	// Set defaults
-	partitions := Conf.GetInt(ConfigPoolsDefaultConsistentHashPartitions)
-	replication := Conf.GetInt(ConfigPoolsDefaultConsistentHashReplicationFactor)
-	load := Conf.GetFloat64(ConfigPoolsDefaultConsistentHashLoad)
-
-	// Allow overrides via PoolOptions :(
-	if v := p.Config.Options.GetInt(ConfigConsistentHashPartitions); v != -1 {
-		partitions = v
-	}
-
-	if v := p.Config.Options.GetInt(ConfigConsistentHashReplications); v != -1 {
-		replication = v
-	}
-
-	if v := p.Config.Options.GetFloat64(ConfigConsistentHashLoad); v != -1 {
-		load = v
-	}
-
-	return NewConsistentHashPoolOpts(p.Config.ConsistentHashSource, p.Config.ConsistentHashName, partitions, replication, load, p, next)
-}
-
-func (p *Pool) materializeSticky(next http.Handler, opts ...roundrobin.LBOption) (PoolManager, error) {
-	return NewStickyPool(p.Config.Name, p.Config.StickyCookieName, p.Config.StickyCookieType, next, opts...)
-}
-
 // Materialize returns a Handler that can represent the Pool.
 //
 // Generally, you should call Pool.GetPool instead, so you can receive

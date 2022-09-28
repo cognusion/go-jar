@@ -27,6 +27,31 @@ const (
 
 type hashKeySource int
 
+// materializeConsistent extends Pool to be able to create ConsistentHashPools
+func (p *Pool) materializeConsistent(next http.Handler) (PoolManager, error) {
+	DebugOut.Printf("\t\tConsistentHash with '%s'\n", p.Config.ConsistentHashName)
+
+	// Set defaults
+	partitions := Conf.GetInt(ConfigPoolsDefaultConsistentHashPartitions)
+	replication := Conf.GetInt(ConfigPoolsDefaultConsistentHashReplicationFactor)
+	load := Conf.GetFloat64(ConfigPoolsDefaultConsistentHashLoad)
+
+	// Allow overrides via PoolOptions :(
+	if v := p.Config.Options.GetInt(ConfigConsistentHashPartitions); v != -1 {
+		partitions = v
+	}
+
+	if v := p.Config.Options.GetInt(ConfigConsistentHashReplications); v != -1 {
+		replication = v
+	}
+
+	if v := p.Config.Options.GetFloat64(ConfigConsistentHashLoad); v != -1 {
+		load = v
+	}
+
+	return NewConsistentHashPoolOpts(p.Config.ConsistentHashSource, p.Config.ConsistentHashName, partitions, replication, load, p, next)
+}
+
 // ConsistentHashPool is a PoolManager that implements a consistent hash on a key to return
 // the proper member consistently
 type ConsistentHashPool struct {
