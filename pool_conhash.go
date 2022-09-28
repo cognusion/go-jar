@@ -25,6 +25,12 @@ const (
 	cookieSource
 )
 
+func init() {
+	ConfigAdditions[ConfigPoolsDefaultConsistentHashPartitions] = 7
+	ConfigAdditions[ConfigPoolsDefaultConsistentHashReplicationFactor] = 20
+	ConfigAdditions[ConfigPoolsDefaultConsistentHashLoad] = 1.25
+}
+
 type hashKeySource int
 
 // materializeConsistent extends Pool to be able to create ConsistentHashPools

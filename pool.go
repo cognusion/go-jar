@@ -127,11 +127,6 @@ func init() {
 	ConfigAdditions[ConfigPoolsDefaultMemberWeight] = 1
 	ConfigAdditions[ConfigPoolsLocalMemberWeight] = 1000
 	ConfigAdditions[ConfigPoolsDefaultMemberErrorStatus] = "Warning"
-
-	ConfigAdditions[ConfigPoolsDefaultConsistentHashPartitions] = 7
-	ConfigAdditions[ConfigPoolsDefaultConsistentHashReplicationFactor] = 20
-	ConfigAdditions[ConfigPoolsDefaultConsistentHashLoad] = 1.25
-
 }
 
 // Member is an attribute struct to describe a Pool Member
