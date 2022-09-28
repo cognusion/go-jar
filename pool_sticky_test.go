@@ -151,7 +151,7 @@ func TestPoolRoundRobinStickyCookie(t *testing.T) {
 
 	cookieName := "STICKYCOOKIE"
 
-	Convey("When a two-member roundrobin is created with a buffer and using a sticky cookie, and requests are pinned to one instance, they stay that way", t, func(c C) {
+	Convey("When a two-member roundrobin is created with a buffer and using a HASH sticky cookie, and requests are pinned to one instance, they stay that way", t, func(c C) {
 
 		rr := httptest.NewRecorder()
 
@@ -180,7 +180,7 @@ func TestPoolRoundRobinStickyCookie(t *testing.T) {
 		fwd, err := forward.New()
 		So(err, ShouldBeNil)
 
-		ao, err := setupStickyCookie([]byte("1234567890abcdef"), 0)
+		ao := stickycookie.HashValue{Salt: "3blah6blah9"}
 		So(err, ShouldBeNil)
 
 		cookieValue := ao.Get(twoURL)
@@ -192,8 +192,8 @@ func TestPoolRoundRobinStickyCookie(t *testing.T) {
 
 		Conf.Set(ConfigStickyCookieHTTPOnly, true)
 		Conf.Set(ConfigStickyCookieSecure, true)
-		Conf.Set(ConfigKeysStickyCookie, base64.StdEncoding.EncodeToString([]byte("1234567890abcdef")))
-		lb, sErr := NewStickyPool("test", cookieName, "aes", fwd)
+		Conf.Set(ConfigKeysStickyCookie, "3blah6blah9")
+		lb, sErr := NewStickyPool("test", cookieName, "hash", fwd)
 		So(sErr, ShouldBeNil)
 
 		lb.UpsertServer(oneURL)
@@ -220,7 +220,7 @@ func TestPoolRoundRobinStickyCookieOptions(t *testing.T) {
 
 	cookieName := "STICKYCOOKIE"
 
-	Convey("When a two-member roundrobin is created with a buffer and using a sticky cookie and with HTTPOnly and Secure set, requests pin to one instance, they stay that way, and the cookies are correct", t, func(c C) {
+	Convey("When a two-member roundrobin is created with a buffer and using an AES sticky cookie and with HTTPOnly and Secure set, requests pin to one instance, they stay that way, and the cookies are correct", t, func(c C) {
 
 		rr := httptest.NewRecorder()
 
@@ -387,7 +387,7 @@ func TestPoolRoundRobinStickyCookieFailReissue(t *testing.T) {
 
 	cookieName := "STICKYCOOKIE"
 
-	Convey("When a two-member roundrobin is created with a buffer and using a sticky cookie, and requests are pinned to one instance, but that instance fails, they get bounced over with a new cookie", t, func(c C) {
+	Convey("When a two-member roundrobin is created with a buffer and using an AES sticky cookie, and requests are pinned to one instance, but that instance fails, they get bounced over with a new cookie", t, func(c C) {
 
 		rr := httptest.NewRecorder()
 
@@ -464,7 +464,7 @@ func TestPoolRoundRobinStickyCookieExpireReissue(t *testing.T) {
 
 	cookieName := "STICKYCOOKIE"
 
-	Convey("When a two-member roundrobin is created with a buffer and using a sticky cookie, and requests are pinned to one instance, but the cookie expires, they get a new cookie pinned to the other instance", t, func(c C) {
+	Convey("When a two-member roundrobin is created with a buffer and using an AES sticky cookie, and requests are pinned to one instance, but the cookie expires, they get a new cookie pinned to the other instance", t, func(c C) {
 
 		rr := httptest.NewRecorder()
 

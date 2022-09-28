@@ -81,7 +81,7 @@ The heart of JAR are Paths- filters and options that describe containers for tra
 * Dynamic membership
 * Request buffering/retrying
 * Sticky sessions (cookie-based)
-  * Plain, hex-encoded, or AES-encrypted values
+  * Plain, hashed, or AES-encrypted values
 * Response-header stripping
 * Healthchecks and membership management
 * EC2 awareness/affinity

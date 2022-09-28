@@ -34,7 +34,9 @@ type PoolConfig struct {
 	Sticky bool
 	// StickyCookieName overrides the name of the cookie used to handle sticky sessions
 	StickyCookieName string
-	// StickyCookieType allows for the setting of cookie values to "plain", "hex"-encoded, or "aes"-encrypted
+	// StickyCookieType allows for the setting of cookie values to "plain", "hash", or "aes"-encrypted.
+	// The value of Conf.GetString(ConfigKeysStickyCookie) will be the salt for "hash" as-is, or the
+	// base64-encoded key for "aes".
 	StickyCookieType string
 	// StripPrefix removes the specified string from the front of a URL before processing. Dupes Path.StripPrefix
 	StripPrefix string

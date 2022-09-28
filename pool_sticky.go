@@ -64,10 +64,10 @@ func NewStickyPool(poolName, cookieName, cookieType string, next http.Handler, o
 			// No key set!
 			return nil, ErrPoolStickyAESNoKey
 		}
-	case "hex":
-		// Hex-encoded values
-		DebugOut.Printf("\t\tSticky with hex-encoding!\n")
-		sticky = roundrobin.EnableStickySession(roundrobin.NewStickySessionWithOptions(cookie, roundrobin.CookieOptions{HTTPOnly: cookieHTTPOnly, Secure: cookieSecure}).SetCookieValue(&stickycookie.HashValue{}))
+	case "hash":
+		// Hashed values
+		DebugOut.Printf("\t\tSticky with hashed values!\n")
+		sticky = roundrobin.EnableStickySession(roundrobin.NewStickySessionWithOptions(cookie, roundrobin.CookieOptions{HTTPOnly: cookieHTTPOnly, Secure: cookieSecure}).SetCookieValue(&stickycookie.HashValue{Salt: Conf.GetString(ConfigKeysStickyCookie)}))
 	case "plain":
 		DebugOut.Printf("\t\tSticky with plaintext values!\n")
 		sticky = roundrobin.EnableStickySession(roundrobin.NewStickySessionWithOptions(cookie, roundrobin.CookieOptions{HTTPOnly: cookieHTTPOnly, Secure: cookieSecure}))

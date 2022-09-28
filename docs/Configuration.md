@@ -755,13 +755,13 @@ If set, will try to pin the source to a specific member for subsequent requests,
 **Default: "jar+Pool.Name"**
 If set, will override the default sticky cookie name.
 
-### stickycookietype: [plain|hex|aes]
+### stickycookietype: [plain|hash|aes]
 
 **Default: plain**
 If **sticky** is set, the following values are allowed:
 
 - plain - Cookie values will be a cleartext representation of the pool member the requestor is pinned to, e.g. *http://127.0.0.1:8081/*
-- hex - Cookie values will be hex encoded
+- hash - Cookie values will be hashed with **keys.stickycookie** as the salt. See **keys** below for more information.
 - aes - Cookie values will be AES-encrypted with **keys.stickycookie**. See **keys** below for more information.
 
 ### stripprefix: [string]
@@ -1045,6 +1045,8 @@ Update will download a - we hope - update .zip from the configured **updatepath*
 #### stickycookie: [base64-encoded key]
 
 If present, sticky-session cookie values will be AES-GCM encoded using this key (Base64, standard-encoding assumed). Key size *must* be exactly one of 16, 24, or 32 bytes to select AES-128, AES-192, or AES-256.
+
+Additionally used as-is as the salt for the *hash* sticky type. The previous rules do not apply.
 
 ### mapfiles: [key/value pairs]
 
