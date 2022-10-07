@@ -143,7 +143,7 @@ func loadDefaults(v *viper.Viper) error {
 	v.SetDefault(ConfigTimeout, 0)                              // Sets the total request/response timeout. Can be overridden per-path
 	v.SetDefault(ConfigKeepaliveTimeout, "5s")                  // Sets the amount of time keptalive sockets linger
 	v.SetDefault(ConfigMaxConnections, 0)                       // Maximum number of simultaneous connections to the listener
-	v.SetDefault(ConfigRequestIDHeaderName, "X-Requestid")      // Name of the header to use for adding the requestid
+	v.SetDefault(ConfigRequestIDHeaderName, "X-Request-ID")     // Name of the header to use for adding the requestid
 	v.SetDefault(ConfigSlowRequestMax, "")                      // Sets the default slow request time for logging
 	v.SetDefault(ConfigTrustRequestIDHeader, false)             // Enable trusting of incoming ConfigRequestIDHeaderName to set the requestid
 	v.SetDefault(ConfigEC2, false)                              // Enable AWS EC2-specific features
