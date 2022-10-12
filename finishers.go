@@ -19,6 +19,9 @@ const (
 var (
 	// Finishers is a map of available HandlerFuncs
 	Finishers = make(FinisherMap)
+
+	// FinisherSetups is a map of Finishers that need exec-time setup checks
+	FinisherSetups = make(map[string]FinisherSetupFunc)
 )
 
 func init() {
@@ -44,6 +47,9 @@ func (h *FinisherMap) List() []string {
 	return l
 }
 
+// FinisherSetupFunc is declared for Finishers that need exec-time setup checks
+type FinisherSetupFunc func() error
+
 // HandleFinisher takes a Finisher HandlerFunc name, and returns the function for it and nil, or nil and and error
 func HandleFinisher(handler string) (http.HandlerFunc, error) {
 	lcHandler := strings.ToLower(handler)
@@ -67,14 +73,16 @@ func HandleFinisher(handler string) (http.HandlerFunc, error) {
 	}
 
 	if h, ok = Finishers[lcHandler]; !ok {
+		// Finisher cannot be found
 		return nil, ErrFinisher404
 	}
 
-	switch {
-	case lcHandler == "s3proxy" && !Conf.GetBool(ConfigEC2):
-		return nil, ErrS3ProxyConfigNoEC2
-
-		// this is a swtich so that we can add additionals here easily
+	if fs, ok := FinisherSetups[lcHandler]; ok {
+		// Finisher has a setup component
+		if fsErr := fs(); fsErr != nil {
+			// Error!
+			return nil, fsErr
+		}
 	}
 
 	return h, nil

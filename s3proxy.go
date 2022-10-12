@@ -41,6 +41,12 @@ var (
 func init() {
 	// Set up the static finishers
 	Finishers["s3proxy"] = S3StreamProxyFinisher
+	FinisherSetups["s3proxy"] = func() error {
+		if !Conf.GetBool(ConfigEC2) {
+			return ErrS3ProxyConfigNoEC2
+		}
+		return nil
+	}
 
 	charMap = map[string]string{
 		"&":  "",
