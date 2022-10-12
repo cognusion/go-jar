@@ -30,8 +30,6 @@ var (
 	AccessOut = log.New(os.Stdout, "", 0)
 	// CommonOut is a log.Logger for Apache "common log format" logging. PLEASE DO NOT USE THIS DIRECTLY
 	CommonOut = log.New(io.Discard, "", 0)
-	// DocsOut is a log.Logger for documentation output
-	DocsOut = log.New(io.Discard, "", 0)
 	// SlowOut is a log.Logger for slow request information
 	SlowOut = log.New(io.Discard, "", 0)
 
@@ -60,10 +58,6 @@ func init() {
 
 // LogInit initializes all of the loggers based on Conf settings
 func LogInit() error {
-	// Docs, maybe
-	if Conf.GetBool(ConfigDocs) {
-		DocsOut = log.New(os.Stdout, "", 0)
-	}
 
 	// Set the Logs
 	if !Conf.GetBool(ConfigCheckConfig) {

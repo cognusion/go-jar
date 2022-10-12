@@ -23,25 +23,6 @@ func TestBootstrapConfigMin(t *testing.T) {
 	})
 }
 
-func TestBootstrapConfigMinDocs(t *testing.T) {
-
-	config := "tests/conf/min.yaml"
-
-	Convey("When a minimal config is loaded, it loads cleanly", t, func() {
-		Conf = InitConfig()
-		err := LoadConfig(config, Conf)
-		So(err, ShouldBeNil)
-		Conf.Set(ConfigDocs, true)
-
-		Convey("and bootstrap() cleanly creates a server", func() {
-			So(Conf.GetBool(ConfigDocs), ShouldBeTrue)
-			done, servers := bootstrap()
-			So(done, ShouldBeTrue)
-			So(len(servers), ShouldEqual, 1)
-		})
-	})
-}
-
 func TestBootstrapConfigMinTLS(t *testing.T) {
 
 	config := "tests/conf/mintls.yaml"

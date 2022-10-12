@@ -156,8 +156,6 @@ func BuildPaths(router *mux.Router) error {
 		paths := make([]Path, len(ipaths.([]interface{})))
 		Conf.UnmarshalKey(ConfigPaths, &paths)
 
-		DocsOut.Printf("## Paths\n\n")
-
 		// Range over the paths
 		pcount := 0
 		for _, path := range paths {
@@ -224,16 +222,13 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 	var pathRouter *mux.Route
 	if path.Absolute {
 		DebugOut.Print("\tAbsolute\n")
-		DocsOut.Printf("### %s (absolute)\n\n", path.Path)
 		pathRouter = router.Path(path.Path)
 	} else {
-		DocsOut.Printf("### %s\n\n", path.Path)
 		pathRouter = router.PathPrefix(path.Path)
 	}
 
 	// Load Host restrictions
 	if path.Host != "" {
-		DocsOut.Printf("Host: %s\n", path.Host)
 		DebugOut.Printf("\tHost: %s\n", path.Host)
 		pathRouter.Host(path.Host)
 	}
@@ -241,14 +236,12 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 	// Load Method restrictions
 	if len(path.Methods) > 0 {
 		DebugOut.Printf("\tMethods: %+v\n", path.Methods)
-		DocsOut.Printf("Methods: %s\n\n", strings.Join(path.Methods, ","))
 		pathRouter.Methods(path.Methods...)
 	}
 
 	// Load Header restrictions
 	if len(path.Headers) > 0 {
 		headers := make([]string, len(path.Headers)*2)
-		DocsOut.Printf("Headers: %s\n\n", strings.Join(path.Headers, ","))
 
 		for i, header := range path.Headers {
 			DebugOut.Printf("\tHeader: %s\n", header)
@@ -266,17 +259,13 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 		timeoutterFound bool // false
 	)
 
-	DocsOut.Printf("#### Handlers\n\n")
-
 	// Automatically load SetupHandler
 	DebugOut.Printf("\tAdding %s\n", "SetupHandler")
-	DocsOut.Printf("- SetupHandler\n")
 	hchain = hchain.Append(SetupHandler)
 
 	// Load Compression handler, maybe
 	if c := Conf.GetStringSlice(ConfigCompression); len(c) > 0 {
 		DebugOut.Printf("\tAdding Compression\n")
-		DocsOut.Printf("- Compression.Handler\n")
 		ch := NewCompression(c)
 		hchain = hchain.Append(ch.Handler)
 	}
@@ -284,29 +273,24 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 	// Automatically load RealAddr and ResponseHeaders, maybe
 	if ok := Conf.GetBool(ConfigDisableRealAddr); !ok {
 		DebugOut.Printf("\tAdding %s\n", "RealAddr")
-		DocsOut.Printf("- RealAddr\n")
 		hchain = hchain.Append(RealAddr)
 	}
 	if h := Conf.GetStringSlice(ConfigHeaders); len(h) > 0 {
 		DebugOut.Printf("\tAdding %s\n", "ResponseHeaders")
-		DocsOut.Printf("- ResponseHeaders\n")
 		hchain = hchain.Append(ResponseHeaders)
 	}
 
 	// Automatically load AccessLogHandler, always
 	DebugOut.Printf("\tAdding %s\n", "AccessLogHandler")
-	DocsOut.Printf("- AccessLogHandler\n")
 	hchain = hchain.Append(AccessLogHandler)
 
 	// Automatically load AuthoritativeDomainsHandler
 	DebugOut.Printf("\tAdding %s\n", "AuthoritativeDomainsHandler")
-	DocsOut.Printf("- AuthoritativeDomainsHandler\n")
 	hchain = hchain.Append(AuthoritativeDomainsHandler)
 
 	// Automatically load Access handler, maybe
 	if path.Allow != "" || path.Deny != "" {
 		DebugOut.Printf("\tAdding Access: Allow '%s', Deny '%s'\n", path.Allow, path.Deny)
-		DocsOut.Printf("- AccessHandler: Allow '%s', Deny '%s'\n", path.Allow, path.Deny)
 		a, err := NewAccessFromStrings(path.Allow, path.Deny)
 		if err != nil {
 			return 0, err
@@ -320,7 +304,6 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 			path.RateLimitPurge = time.Hour
 		}
 		DebugOut.Printf("\t\tRate Limit: %f\n", path.RateLimit)
-		DocsOut.Printf("- Rate Limit: %.4f, purge after %v\n", path.RateLimit, path.RateLimitPurge)
 
 		var rl RateLimiter
 		if path.RateLimitCollectOnly {
@@ -334,10 +317,8 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 	// Automatically load the BasicAuth handler, maybe
 	if path.BasicAuthSource != "" {
 		DebugOut.Printf("\tAdding %s (%s) @ %s\n", "BasicAuth.Handler", path.BasicAuthRealm, path.BasicAuthSource)
-		DocsOut.Printf("- BasicAuthHandler\n  Source: %s\n  Realm: %s\n  Users:\n", path.BasicAuthSource, path.BasicAuthRealm)
 		for _, u := range path.BasicAuthUsers {
 			DebugOut.Printf("\t\tUser '%s'\n", u)
-			DocsOut.Printf("    - %s\n", u)
 		}
 
 		b, err := NewVerifiedBasicAuth(path.BasicAuthSource, path.BasicAuthRealm, path.BasicAuthUsers)
@@ -351,7 +332,6 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 	// Automatically load the BodyByteLimit handler, maybe
 	if path.BodyByteLimit > 0 {
 		DebugOut.Printf("\tAdding BodyByteLimit(%d) handler\n", path.BodyByteLimit)
-		DocsOut.Printf("- BodyByteLimit(%d)\n", path.BodyByteLimit)
 		bbl := NewBodyByteLimit(path.BodyByteLimit)
 		hchain = hchain.Append(bbl.Handler)
 	}
@@ -359,7 +339,6 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 	// Load global handlers
 	for _, handler := range Conf.GetStringSlice(ConfigHandlers) {
 		DebugOut.Printf("\tAdding %s\n", handler)
-		DocsOut.Printf("- %s\n", handler)
 
 		lchandler := strings.ToLower(handler)
 
@@ -372,7 +351,6 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 					Duration: path.Timeout,
 				}
 				DebugOut.Printf("\t\tTimeout (Path): %s\n", path.Timeout.String())
-				DocsOut.Printf("- Timeout (Path): %s\n", path.Timeout.String())
 				hchain = hchain.Append(t.Handler)
 			} else if gt := Conf.GetDuration(ConfigTimeout); gt != 0 {
 				// Global timeout
@@ -380,7 +358,6 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 					Duration: gt,
 				}
 				DebugOut.Printf("\t\tTimeout (Global): %s\n", gt.String())
-				DocsOut.Printf("- Timeout (Global): %s\n", gt.String())
 				hchain = hchain.Append(t.Handler)
 			} else {
 				return 0, ErrConfigurationError{"timeout handler inline, but no timelimit set globally or on path!"}
@@ -401,7 +378,6 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 	// Load CORS handler, maybe
 	if c := Conf.GetStringSlice(ConfigCORSOrigins); len(c) > 0 {
 		DebugOut.Printf("\tAdding CORS\n")
-		DocsOut.Printf("- CORSHandler\n")
 		hchain = hchain.Append(CorsHandler)
 	}
 
@@ -413,11 +389,6 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 		}
 		if len(fpaths) > 0 {
 			DebugOut.Printf("\tAdding ForbiddenPaths\n")
-			DocsOut.Printf("- ForbiddenPaths.Handler\n")
-			for _, f := range fpaths {
-				DocsOut.Printf("\t- %s\n", f)
-			}
-
 			fp, err := NewForbiddenPaths(fpaths)
 			if err != nil {
 				return 0, err
@@ -429,7 +400,6 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 	// Load path-specific handlers
 	for _, handler := range path.Handlers {
 		DebugOut.Printf("\tAdding %s\n", handler)
-		DocsOut.Printf("- %s\n", handler)
 
 		lchandler := strings.ToLower(handler)
 
@@ -442,7 +412,6 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 					Duration: path.Timeout,
 				}
 				DebugOut.Printf("\t\tTimeout (Path): %s\n", path.Timeout.String())
-				DocsOut.Printf("- Timeout (Path): %s\n", path.Timeout.String())
 				hchain = hchain.Append(t.Handler)
 			} else if gt := Conf.GetDuration(ConfigTimeout); gt != 0 {
 				// Global timeout
@@ -450,7 +419,6 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 					Duration: gt,
 				}
 				DebugOut.Printf("\t\tTimeout (Global): %s\n", gt.String())
-				DocsOut.Printf("- Timeout (Global): %s\n", gt.String())
 				hchain = hchain.Append(t.Handler)
 			} else {
 				return 0, ErrConfigurationError{"timeout handler inline, but no timelimit set globally or on path!"}
@@ -470,7 +438,6 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 	// Load PathReplacer maybe
 	if path.ReplacePath != "" {
 		DebugOut.Printf("\tAdding PathReplacer to '%s'\n", path.ReplacePath)
-		DocsOut.Printf("- PathReplacerHandler to '%s'\n", path.ReplacePath)
 		pr := PathReplacer{
 			From: path.Path,
 			To:   path.ReplacePath,
@@ -481,7 +448,6 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 	// Load PathStripper maybe
 	if path.StripPrefix != "" {
 		DebugOut.Printf("\tAdding PathStripper to '%s'\n", path.ReplacePath)
-		DocsOut.Printf("- PathStripperHandler to '%s'\n", path.ReplacePath)
 		pr := PathStripper{
 			Prefix: path.StripPrefix,
 		}
@@ -496,7 +462,6 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 				Duration: path.Timeout,
 			}
 			DebugOut.Printf("\tAppending Timeout.Handler: Timeout (Path): %s\n", path.Timeout.String())
-			DocsOut.Printf("- Timeout (Path): %s\n", path.Timeout.String())
 			hchain = hchain.Append(t.Handler)
 		} else if gt := Conf.GetDuration(ConfigTimeout); gt != 0 {
 			// Global timeout
@@ -504,15 +469,12 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 				Duration: gt,
 			}
 			DebugOut.Printf("\tAppending Timeout.Handler:Timeout (Global): %s\n", gt.String())
-			DocsOut.Printf("- Timeout (Global): %s\n", gt.String())
 			hchain = hchain.Append(t.Handler)
 		}
 	}
 
 	// Load endpoint handlers
 	var pathHandler http.Handler
-
-	DocsOut.Printf("\n#### Finisher\n\n")
 
 	switch {
 	case path.Redirect != "":
@@ -545,13 +507,11 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 			p = Redirect{URL: path.Redirect, Code: path.RedirectCode, PCRE: &re}
 		}
 
-		DocsOut.Printf("Redirect (%d) to '%s' with PCRE '%s'\n\n", path.RedirectCode, path.Redirect, path.RedirectHostMatch)
 		pathHandler = hchain.ThenFunc(p.Finisher)
 
 	case path.ErrorMessage != "":
 		// path will have a static error
 		DebugOut.Printf("\tAdding ErrorMessage '%s' and ErrorCode '%d'\n", path.ErrorMessage, path.ErrorCode)
-		DocsOut.Printf("Error (%s) Code'%d'\n\n", path.ErrorMessage, path.ErrorCode)
 		p := GenericResponse{path.ErrorMessage, path.ErrorCode}
 		pathHandler = hchain.ThenFunc(p.Finisher)
 
@@ -559,11 +519,6 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 		// path will be proxied, with the Pool
 		if p, ok := LoadBalancers.Get(path.Pool); ok {
 			DebugOut.Printf("\tAdding Pool %s\n", p.Config.Name)
-			DocsOut.Printf("Pool '%s'\n\nMembers:\n", p.Config.Name)
-			for _, member := range p.Config.Members {
-				DocsOut.Printf("- %s\n", member)
-			}
-			DocsOut.Println()
 			pool, err := p.GetPool()
 			if err != nil {
 				return 0, ErrConfigurationError{fmt.Sprintf("pool '%s' had an error materializing: %s", path.Pool, err)}
@@ -578,7 +533,6 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 		// path will be handled by Finisher
 		if l, err := HandleFinisher(path.Finisher); err == nil {
 			DebugOut.Printf("\tAdding Finisher %s\n", path.Finisher)
-			DocsOut.Printf("Finisher '%s'\n\n", path.Finisher)
 			pathHandler = hchain.Then(l)
 		} else if err == ErrFinisher404 {
 			// Finisher doesn't exist

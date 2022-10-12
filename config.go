@@ -19,7 +19,6 @@ const (
 	ConfigDebugRequests        = ConfigKey("debugrequests")
 	ConfigDebugResponses       = ConfigKey("debugresponses")
 	ConfigDebugTimings         = ConfigKey("debugtimings")
-	ConfigDocs                 = ConfigKey("docs")
 	ConfigDumpConfig           = ConfigKey("dumpconfig")
 	ConfigEC2                  = ConfigKey("ec2")
 	ConfigErrorLog             = ConfigKey("errorlog")

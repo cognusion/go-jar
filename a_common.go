@@ -73,9 +73,6 @@ var (
 	// Seq is a Sequence used for request ids
 	Seq = sequence.New(1)
 
-	// APPENDIX is an array of functions that have something to contribute to the docs appendix
-	APPENDIX = make([]func(int), 0)
-
 	// Ec2Session is an aws.Session for use in various places
 	Ec2Session *aws.Session
 
@@ -299,19 +296,8 @@ func bootstrap() (done bool, servers []*http.Server) {
 		}
 	}
 
-	DocsOut.Printf("# %s Configuration Errata\n\nAs of %s\n\n", MacroDictionary.Replacer("%%NAME"), time.Now().String())
-
-	if Conf.GetBool(ConfigEC2) {
-		DocsOut.Print("EC2: true\n\n")
-	}
-
-	if SlowRequests != time.Duration(0) {
-		DocsOut.Printf("SlowRequestMax: %s\n\n", SlowRequests.String())
-	}
-
 	// Let's get Zulip out of the way
 	if Conf.GetString(ConfigZulipBaseURL) != "" {
-		DocsOut.Printf("Zulip.URL: %s\nZulip.Username: %s\nZulip.Token: %s\nZulip.RetryCount: %d\nZulip.RetryInterval: %s\n", Conf.GetString(ConfigZulipBaseURL), Conf.GetString(ConfigZulipUsername), Conf.GetString(ConfigZulipToken), Conf.GetInt(ConfigZulipRetryCount), Conf.GetDuration(ConfigZulipRetryInterval).String())
 		ZulipClient = newZulipClient(Conf.GetString(ConfigZulipBaseURL), Conf.GetString(ConfigZulipUsername), Conf.GetString(ConfigZulipToken), Conf.GetInt(ConfigZulipRetryCount), Conf.GetDuration(ConfigZulipRetryInterval))
 	}
 
@@ -348,7 +334,6 @@ func bootstrap() (done bool, servers []*http.Server) {
 	var tlscfg *tls.Config
 	if Conf.GetBool(ConfigTLSEnabled) {
 		listen = Conf.GetString(ConfigTLSListen)
-		DocsOut.Printf("## TLS\n\nlisten: %s\n", listen)
 		var cl []uint16
 		cl, err := Ciphers.CipherListToSuites(Conf.GetStringSlice(ConfigTLSCiphers))
 		if err != nil {
@@ -359,9 +344,7 @@ func bootstrap() (done bool, servers []*http.Server) {
 			cl = Ciphers.AllSuites()
 		}
 		DebugOut.Printf("Ciphers:\n")
-		DocsOut.Printf("ciphers:\n")
 		for _, c := range Conf.GetStringSlice(ConfigTLSCiphers) {
-			DocsOut.Printf("  - %s\n", c)
 			DebugOut.Printf("\t%s\n", c)
 		}
 
@@ -407,42 +390,33 @@ func bootstrap() (done bool, servers []*http.Server) {
 		// Minimum TLS Verson switching. SSL not supported.
 		switch {
 		case minV < 1.1:
-			DocsOut.Printf("MinVersion: 1.0\n")
 			tlscfg.MinVersion = tls.VersionTLS10
 
 		case minV < 1.2:
-			DocsOut.Printf("MinVersion: 1.1\n")
 			tlscfg.MinVersion = tls.VersionTLS11
 
 		case minV < 1.3:
-			DocsOut.Printf("MinVersion: 1.2\n")
 			tlscfg.MinVersion = tls.VersionTLS12
 
 		default:
-			DocsOut.Printf("MinVersion: 1.3\n")
 			tlscfg.MinVersion = tls.VersionTLS13
 		}
 
 		// Maximum TLS Verson switching. SSL not supported.
 		switch {
 		case maxV < 1.1:
-			DocsOut.Printf("MaxVersion: 1.0\n")
 			tlscfg.MaxVersion = tls.VersionTLS10
 
 		case maxV < 1.2:
-			DocsOut.Printf("MaxVersion: 1.1\n")
 			tlscfg.MaxVersion = tls.VersionTLS11
 
 		case maxV < 1.3:
-			DocsOut.Printf("MaxVersion: 1.2\n")
 			tlscfg.MaxVersion = tls.VersionTLS12
 
 		default:
-			DocsOut.Printf("MaxVersion: 1.3\n")
 			tlscfg.MaxVersion = tls.VersionTLS13
 		}
 
-		DocsOut.Println()
 		DebugOut.Printf("TLSConfig preflight: Made it.\n")
 
 	}
@@ -506,20 +480,6 @@ func bootstrap() (done bool, servers []*http.Server) {
 
 	// append the main server to the servers list
 	servers = append(servers, s)
-
-	// Docs, Appendices and exit
-	if Conf.GetBool(ConfigDocs) {
-		appendix := 1
-		for _, a := range APPENDIX {
-			a(appendix)
-			appendix++
-		}
-
-		// We don't want to execute the servers, just push out the Docs, so we're done
-		done = true
-		return
-	}
-	APPENDIX = make([]func(int), 0) // clean up
 
 	// Checkconfig bail before we spawn the listener
 	if Conf.GetBool(ConfigCheckConfig) {

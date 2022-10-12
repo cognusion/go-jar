@@ -305,7 +305,6 @@ func poolConfigMapToPoolMap(poolConfigs map[string]*PoolConfig) map[string]*Pool
 // ConfigPoolsHealthcheckInterval will set the healthcheck interval for pool members.
 // Set to 0 to disable.
 func BuildPools() (*Pools, bool) {
-	var P *Pools
 
 	if ipools := Conf.Get(ConfigPools); ipools != nil {
 		// We have pools in the config
@@ -313,43 +312,9 @@ func BuildPools() (*Pools, bool) {
 		Conf.UnmarshalKey(ConfigPools, &pools)
 		DebugOut.Printf("Pools %+v\n", pools)
 		hcDuration := Conf.GetDuration(ConfigPoolsHealthcheckInterval)
-		P = NewPools(pools, hcDuration)
+		return NewPools(pools, hcDuration), true
 	}
 
-	if P != nil {
-		// Something set P
-
-		// Expensive docsblock, so make sure we really need it before proceeding
-		if Conf.GetBool(ConfigDocs) {
-			DocsOut.Printf("## Pools\n\n")
-			for _, p := range P.pools {
-				DocsOut.Printf("### %s\n\nMembers:\n", p.Config.Name)
-				for _, m := range p.Config.Members {
-					DocsOut.Printf("- %s\n", m)
-				}
-				DocsOut.Println()
-				if p.Config.Buffered {
-					DocsOut.Printf("Buffered. Fail count %d\n\n", p.Config.BufferedFails)
-				}
-				if p.Config.Sticky {
-					cookie := p.Config.StickyCookieName
-					if cookie == "" {
-						cookie = fmt.Sprintf("jar%s", p.Config.Name)
-					}
-					DocsOut.Printf("Sticky. Cookie name '%s'\n\n", cookie)
-				}
-				if p.Config.Prune {
-					DocsOut.Print("Prune\n\n")
-				}
-				if p.Config.HealthCheckURI != "" {
-					DocsOut.Printf("HealthCheck URI: %s\n", p.Config.HealthCheckURI)
-				}
-			}
-			DocsOut.Println()
-		}
-
-		return P, true
-	}
 	return nil, false
 }
 

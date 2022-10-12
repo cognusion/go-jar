@@ -16,7 +16,6 @@ func init() {
 	// the Conf structure seamless (see Conf.BindPFlags, below)
 	pflag.Bool(jar.ConfigDebug, false, "Enable vociferous output")
 	pflag.Bool(jar.ConfigCheckConfig, false, "Run through the config load and then exit")
-	pflag.Bool(jar.ConfigDocs, false, "Run through the config, build runtime docs, and then exit")
 	config := pflag.String("config", "", "Config file to load")
 	pflag.Parse()
 

@@ -151,6 +151,7 @@ Consumers will want to 'cd cmd/jard; go build; #enjoy'
   * [func (e *ErrorWrapper) Handler(next http.Handler) http.Handler](#ErrorWrapper.Handler)
 * [type FinisherMap](#FinisherMap)
   * [func (h *FinisherMap) List() []string](#FinisherMap.List)
+* [type FinisherSetupFunc](#FinisherSetupFunc)
 * [type ForbiddenPaths](#ForbiddenPaths)
   * [func NewForbiddenPaths(paths []string) (*ForbiddenPaths, error)](#NewForbiddenPaths)
   * [func (f *ForbiddenPaths) Handler(next http.Handler) http.Handler](#ForbiddenPaths.Handler)
@@ -298,7 +299,6 @@ const (
     ConfigDebugRequests        = ConfigKey("debugrequests")
     ConfigDebugResponses       = ConfigKey("debugresponses")
     ConfigDebugTimings         = ConfigKey("debugtimings")
-    ConfigDocs                 = ConfigKey("docs")
     ConfigDumpConfig           = ConfigKey("dumpconfig")
     ConfigEC2                  = ConfigKey("ec2")
     ConfigErrorLog             = ConfigKey("errorlog")
@@ -638,9 +638,6 @@ var (
     // Seq is a Sequence used for request ids
     Seq = sequence.New(1)
 
-    // APPENDIX is an array of functions that have something to contribute to the docs appendix
-    APPENDIX = make([]func(int), 0)
-
     // Ec2Session is an aws.Session for use in various places
     Ec2Session *aws.Session
 
@@ -654,6 +651,15 @@ var (
     ConfigValidations = make(map[string]func() error)
     // ConfigAdditions is used to wire in additional default configurations
     ConfigAdditions = make(configDefaultSetter)
+)
+```
+``` go
+var (
+    // Finishers is a map of available HandlerFuncs
+    Finishers = make(FinisherMap)
+
+    // FinisherSetups is a map of Finishers that need exec-time setup checks
+    FinisherSetups = make(map[string]FinisherSetupFunc)
 )
 ```
 ``` go
@@ -713,8 +719,6 @@ var (
     AccessOut = log.New(os.Stdout, "", 0)
     // CommonOut is a log.Logger for Apache "common log format" logging. PLEASE DO NOT USE THIS DIRECTLY
     CommonOut = log.New(io.Discard, "", 0)
-    // DocsOut is a log.Logger for documentation output
-    DocsOut = log.New(io.Discard, "", 0)
     // SlowOut is a log.Logger for slow request information
     SlowOut = log.New(io.Discard, "", 0)
 
@@ -778,12 +782,6 @@ var (
 ```
 ``` go
 var (
-    // Finishers is a map of available HandlerFuncs
-    Finishers = make(FinisherMap)
-)
-```
-``` go
-var (
     // Handlers is a map of available Handlers (middlewares)
     Handlers = make(HandlerMap)
 )
@@ -813,7 +811,7 @@ ZulipClient is a global Zulip client to use for messaging, or nil if not
 
 
 
-## <a name="AccessLogHandler">func</a> [AccessLogHandler](https://github.com/cognusion/go-jar/tree/master/log.go?s=8817:8870#L283)
+## <a name="AccessLogHandler">func</a> [AccessLogHandler](https://github.com/cognusion/go-jar/tree/master/log.go?s=8638:8691#L277)
 ``` go
 func AccessLogHandler(next http.Handler) http.Handler
 ```
@@ -845,7 +843,7 @@ AuthoritativeDomainsHandler declines to handle requests that are not listed in "
 
 
 
-## <a name="Bootstrap">func</a> [Bootstrap](https://github.com/cognusion/go-jar/tree/master/a_common.go?s=6329:6345#L235)
+## <a name="Bootstrap">func</a> [Bootstrap](https://github.com/cognusion/go-jar/tree/master/a_common.go?s=6202:6218#L232)
 ``` go
 func Bootstrap()
 ```
@@ -856,7 +854,7 @@ Bootstrap doesn't return unless the server exits
 
 
 
-## <a name="BootstrapChan">func</a> [BootstrapChan](https://github.com/cognusion/go-jar/tree/master/a_common.go?s=4336:4376#L142)
+## <a name="BootstrapChan">func</a> [BootstrapChan](https://github.com/cognusion/go-jar/tree/master/a_common.go?s=4209:4249#L139)
 ``` go
 func BootstrapChan(closer chan struct{})
 ```
@@ -867,7 +865,7 @@ BootstrapChan doesn't return unless the server exits or the passed chan is close
 
 
 
-## <a name="BuildPath">func</a> [BuildPath](https://github.com/cognusion/go-jar/tree/master/paths.go?s=5990:6059#L180)
+## <a name="BuildPath">func</a> [BuildPath](https://github.com/cognusion/go-jar/tree/master/paths.go?s=5956:6025#L178)
 ``` go
 func BuildPath(path Path, index int, router *mux.Router) (int, error)
 ```
@@ -883,7 +881,7 @@ BuildPaths unmarshalls the paths config, creates handler chains, and updates the
 
 
 
-## <a name="ChanBootstrap">func</a> [ChanBootstrap](https://github.com/cognusion/go-jar/tree/master/a_common.go?s=5381:5412#L185)
+## <a name="ChanBootstrap">func</a> [ChanBootstrap](https://github.com/cognusion/go-jar/tree/master/a_common.go?s=5254:5285#L182)
 ``` go
 func ChanBootstrap() chan error
 ```
@@ -1015,7 +1013,7 @@ FolderExists returns true if the provided path exists, and is a directory
 
 
 
-## <a name="Forbidden">func</a> [Forbidden](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=2542:2596#L94)
+## <a name="Forbidden">func</a> [Forbidden](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=2802:2856#L102)
 ``` go
 func Forbidden(w http.ResponseWriter, r *http.Request)
 ```
@@ -1023,7 +1021,7 @@ Forbidden is a Finisher that returns 403 for the requested Path
 
 
 
-## <a name="GetErrorLog">func</a> [GetErrorLog](https://github.com/cognusion/go-jar/tree/master/log.go?s=3584:3669#L110)
+## <a name="GetErrorLog">func</a> [GetErrorLog](https://github.com/cognusion/go-jar/tree/master/log.go?s=3405:3490#L104)
 ``` go
 func GetErrorLog(filename, prefix string, format, size, backups, age int) *log.Logger
 ```
@@ -1031,7 +1029,7 @@ GetErrorLog gets an error-type log
 
 
 
-## <a name="GetLog">func</a> [GetLog](https://github.com/cognusion/go-jar/tree/master/log.go?s=3150:3230#L98)
+## <a name="GetLog">func</a> [GetLog](https://github.com/cognusion/go-jar/tree/master/log.go?s=2971:3051#L92)
 ``` go
 func GetLog(filename, prefix string, format, size, backups, age int) *log.Logger
 ```
@@ -1039,7 +1037,7 @@ GetLog gets a standard-type log
 
 
 
-## <a name="GetLogOrDiscard">func</a> [GetLogOrDiscard](https://github.com/cognusion/go-jar/tree/master/log.go?s=3377:3466#L104)
+## <a name="GetLogOrDiscard">func</a> [GetLogOrDiscard](https://github.com/cognusion/go-jar/tree/master/log.go?s=3198:3287#L98)
 ``` go
 func GetLogOrDiscard(filename, prefix string, format, size, backups, age int) *log.Logger
 ```
@@ -1063,7 +1061,7 @@ GetSwitchName is a function to return the switch name in a request's context, if
 
 
 
-## <a name="HandleFinisher">func</a> [HandleFinisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=1127:1188#L48)
+## <a name="HandleFinisher">func</a> [HandleFinisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=1372:1433#L54)
 ``` go
 func HandleFinisher(handler string) (http.HandlerFunc, error)
 ```
@@ -1113,7 +1111,7 @@ using a template
 
 
 
-## <a name="InitConfig">func</a> [InitConfig](https://github.com/cognusion/go-jar/tree/master/config.go?s=3170:3200#L72)
+## <a name="InitConfig">func</a> [InitConfig](https://github.com/cognusion/go-jar/tree/master/config.go?s=3122:3152#L71)
 ``` go
 func InitConfig() *viper.Viper
 ```
@@ -1121,7 +1119,7 @@ InitConfig creates an config, initialized with defaults and environment-set valu
 
 
 
-## <a name="LoadConfig">func</a> [LoadConfig](https://github.com/cognusion/go-jar/tree/master/config.go?s=3526:3586#L92)
+## <a name="LoadConfig">func</a> [LoadConfig](https://github.com/cognusion/go-jar/tree/master/config.go?s=3478:3538#L91)
 ``` go
 func LoadConfig(configFilename string, v *viper.Viper) error
 ```
@@ -1129,7 +1127,7 @@ LoadConfig read the config file and returns a config object or an error
 
 
 
-## <a name="LogInit">func</a> [LogInit](https://github.com/cognusion/go-jar/tree/master/log.go?s=1744:1764#L62)
+## <a name="LogInit">func</a> [LogInit](https://github.com/cognusion/go-jar/tree/master/log.go?s=1653:1673#L60)
 ``` go
 func LogInit() error
 ```
@@ -1185,7 +1183,7 @@ OkFinisher is a Finisher that simply returns "Ok", for throughput testing.
 
 
 
-## <a name="PoolLister">func</a> [PoolLister](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=3971:4026#L141)
+## <a name="PoolLister">func</a> [PoolLister](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=4231:4286#L149)
 ``` go
 func PoolLister(w http.ResponseWriter, r *http.Request)
 ```
@@ -1193,7 +1191,7 @@ PoolLister is a finisher to list the pools
 
 
 
-## <a name="PoolMemberAdder">func</a> [PoolMemberAdder](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=5153:5213#L189)
+## <a name="PoolMemberAdder">func</a> [PoolMemberAdder](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=5413:5473#L197)
 ``` go
 func PoolMemberAdder(w http.ResponseWriter, r *http.Request)
 ```
@@ -1201,7 +1199,7 @@ PoolMemberAdder is a finisher to add a member to an existing pool
 
 
 
-## <a name="PoolMemberLister">func</a> [PoolMemberLister](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=4210:4271#L151)
+## <a name="PoolMemberLister">func</a> [PoolMemberLister](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=4470:4531#L159)
 ``` go
 func PoolMemberLister(w http.ResponseWriter, r *http.Request)
 ```
@@ -1209,7 +1207,7 @@ PoolMemberLister is a finisher to list the members of an existing pool
 
 
 
-## <a name="PoolMemberLoser">func</a> [PoolMemberLoser](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=6650:6710#L244)
+## <a name="PoolMemberLoser">func</a> [PoolMemberLoser](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=6910:6970#L252)
 ``` go
 func PoolMemberLoser(w http.ResponseWriter, r *http.Request)
 ```
@@ -1297,7 +1295,7 @@ RouteIDInspectionHandler checks the Query params for a ROUTEID and shoves it int
 
 
 
-## <a name="S3StreamProxyFinisher">func</a> [S3StreamProxyFinisher](https://github.com/cognusion/go-jar/tree/master/s3proxy.go?s=1841:1907#L75)
+## <a name="S3StreamProxyFinisher">func</a> [S3StreamProxyFinisher](https://github.com/cognusion/go-jar/tree/master/s3proxy.go?s=1969:2035#L81)
 ``` go
 func S3StreamProxyFinisher(w http.ResponseWriter, r *http.Request)
 ```
@@ -1379,7 +1377,7 @@ Update signals the updater to update itself
 
 
 
-## <a name="ValidateExtras">func</a> [ValidateExtras](https://github.com/cognusion/go-jar/tree/master/config.go?s=8894:8923#L166)
+## <a name="ValidateExtras">func</a> [ValidateExtras](https://github.com/cognusion/go-jar/tree/master/config.go?s=8846:8875#L165)
 ``` go
 func ValidateExtras() []error
 ```
@@ -1464,7 +1462,7 @@ returning boolean
 
 
 
-## <a name="AccessLog">type</a> [AccessLog](https://github.com/cognusion/go-jar/tree/master/log.go?s=4835:5395#L157)
+## <a name="AccessLog">type</a> [AccessLog](https://github.com/cognusion/go-jar/tree/master/log.go?s=4656:5216#L151)
 ``` go
 type AccessLog interface {
     // CommonLogFormat will return the contents as a CLF-compatible string. If combined is set, a "combined" CLF is included (adds referer and user-agent)
@@ -1710,7 +1708,7 @@ Handler is a middleware to potentially GZIP-compress outgoing response bodies
 
 
 
-## <a name="ConfigKey">type</a> [ConfigKey](https://github.com/cognusion/go-jar/tree/master/config.go?s=3043:3066#L69)
+## <a name="ConfigKey">type</a> [ConfigKey](https://github.com/cognusion/go-jar/tree/master/config.go?s=2995:3018#L68)
 ``` go
 type ConfigKey = string
 ```
@@ -1725,7 +1723,7 @@ ConfigKey is a string type for static config key name consistency
 
 
 
-## <a name="ConsistentHashPool">type</a> [ConsistentHashPool](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=1704:1876#L57)
+## <a name="ConsistentHashPool">type</a> [ConsistentHashPool](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=1921:2093#L63)
 ``` go
 type ConsistentHashPool struct {
     // contains filtered or unexported fields
@@ -1741,14 +1739,14 @@ the proper member consistently
 
 
 
-### <a name="NewConsistentHashPool">func</a> [NewConsistentHashPool](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=1939:2045#L66)
+### <a name="NewConsistentHashPool">func</a> [NewConsistentHashPool](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=2156:2262#L72)
 ``` go
 func NewConsistentHashPool(source, key string, pool *Pool, next http.Handler) (*ConsistentHashPool, error)
 ```
 NewConsistentHashPool returns a primed ConsistentHashPool
 
 
-### <a name="NewConsistentHashPoolOpts">func</a> [NewConsistentHashPoolOpts](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=2223:2386#L71)
+### <a name="NewConsistentHashPoolOpts">func</a> [NewConsistentHashPoolOpts](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=2440:2603#L77)
 ``` go
 func NewConsistentHashPoolOpts(source, key string, partitionCount, replicationFactor int, load float64, pool *Pool, next http.Handler) (*ConsistentHashPool, error)
 ```
@@ -1758,7 +1756,7 @@ NewConsistentHashPoolOpts exposes some internal tunables, but still returns a Co
 
 
 
-### <a name="ConsistentHashPool.Next">func</a> (\*ConsistentHashPool) [Next](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=4600:4649#L161)
+### <a name="ConsistentHashPool.Next">func</a> (\*ConsistentHashPool) [Next](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=4817:4866#L167)
 ``` go
 func (ch *ConsistentHashPool) Next() http.Handler
 ```
@@ -1767,7 +1765,7 @@ Next returns the specified next Handler
 
 
 
-### <a name="ConsistentHashPool.NextServer">func</a> (\*ConsistentHashPool) [NextServer](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=4439:4499#L156)
+### <a name="ConsistentHashPool.NextServer">func</a> (\*ConsistentHashPool) [NextServer](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=4656:4716#L162)
 ``` go
 func (ch *ConsistentHashPool) NextServer() (*url.URL, error)
 ```
@@ -1776,7 +1774,7 @@ NextServer is an error-causing noop to implement PoolManager
 
 
 
-### <a name="ConsistentHashPool.RemoveServer">func</a> (\*ConsistentHashPool) [RemoveServer](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=3889:3949#L134)
+### <a name="ConsistentHashPool.RemoveServer">func</a> (\*ConsistentHashPool) [RemoveServer](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=4106:4166#L140)
 ``` go
 func (ch *ConsistentHashPool) RemoveServer(u *url.URL) error
 ```
@@ -1785,7 +1783,7 @@ RemoveServer removes the specified member from the pool
 
 
 
-### <a name="ConsistentHashPool.ServeHTTP">func</a> (\*ConsistentHashPool) [ServeHTTP](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=3251:3330#L113)
+### <a name="ConsistentHashPool.ServeHTTP">func</a> (\*ConsistentHashPool) [ServeHTTP](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=3468:3547#L119)
 ``` go
 func (ch *ConsistentHashPool) ServeHTTP(w http.ResponseWriter, r *http.Request)
 ```
@@ -1794,7 +1792,7 @@ ServeHTTP handles its part of the request
 
 
 
-### <a name="ConsistentHashPool.ServerWeight">func</a> (\*ConsistentHashPool) [ServerWeight](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=3741:3807#L129)
+### <a name="ConsistentHashPool.ServerWeight">func</a> (\*ConsistentHashPool) [ServerWeight](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=3958:4024#L135)
 ``` go
 func (ch *ConsistentHashPool) ServerWeight(u *url.URL) (int, bool)
 ```
@@ -1803,7 +1801,7 @@ ServerWeight is a noop to implement PoolManager
 
 
 
-### <a name="ConsistentHashPool.Servers">func</a> (\*ConsistentHashPool) [Servers](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=3022:3072#L103)
+### <a name="ConsistentHashPool.Servers">func</a> (\*ConsistentHashPool) [Servers](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=3239:3289#L109)
 ``` go
 func (ch *ConsistentHashPool) Servers() []*url.URL
 ```
@@ -1812,7 +1810,7 @@ Servers returns a list of member URLs
 
 
 
-### <a name="ConsistentHashPool.UpsertServer">func</a> (\*ConsistentHashPool) [UpsertServer](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=4053:4149#L140)
+### <a name="ConsistentHashPool.UpsertServer">func</a> (\*ConsistentHashPool) [UpsertServer](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=4270:4366#L146)
 ``` go
 func (ch *ConsistentHashPool) UpsertServer(u *url.URL, options ...roundrobin.ServerOption) error
 ```
@@ -2004,7 +2002,7 @@ Handler is the chainable handler that will wrap the error
 
 
 
-## <a name="FinisherMap">type</a> [FinisherMap](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=784:828#L34)
+## <a name="FinisherMap">type</a> [FinisherMap](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=912:956#L37)
 ``` go
 type FinisherMap map[string]http.HandlerFunc
 ```
@@ -2019,11 +2017,26 @@ FinisherMap maps Finisher names to their HandlerFuncs
 
 
 
-### <a name="FinisherMap.List">func</a> (\*FinisherMap) [List](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=880:917#L37)
+### <a name="FinisherMap.List">func</a> (\*FinisherMap) [List](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=1008:1045#L40)
 ``` go
 func (h *FinisherMap) List() []string
 ```
 List returns the names of all of the Finishers
+
+
+
+
+## <a name="FinisherSetupFunc">type</a> [FinisherSetupFunc](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=1220:1255#L51)
+``` go
+type FinisherSetupFunc func() error
+```
+FinisherSetupFunc is declared for Finishers that need exec-time setup checks
+
+
+
+
+
+
 
 
 
@@ -2064,7 +2077,7 @@ Handler is a middleware that checks the request URI against regexps and 403's if
 
 
 
-## <a name="GenericResponse">type</a> [GenericResponse](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=3628:3688#L127)
+## <a name="GenericResponse">type</a> [GenericResponse](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=3888:3948#L135)
 ``` go
 type GenericResponse struct {
     Message string
@@ -2083,7 +2096,7 @@ GenericResponse is a Finisher that returns a possibly-wrapped response
 
 
 
-### <a name="GenericResponse.Finisher">func</a> (\*GenericResponse) [Finisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=3757:3832#L133)
+### <a name="GenericResponse.Finisher">func</a> (\*GenericResponse) [Finisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=4017:4092#L141)
 ``` go
 func (gr *GenericResponse) Finisher(w http.ResponseWriter, r *http.Request)
 ```
@@ -2160,7 +2173,7 @@ List returns the names of all of the Handlers
 
 
 
-## <a name="HealthCheckError">type</a> [HealthCheckError](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10244:10447#L360)
+## <a name="HealthCheckError">type</a> [HealthCheckError](https://github.com/cognusion/go-jar/tree/master/pools.go?s=9321:9524#L325)
 ``` go
 type HealthCheckError struct {
     PoolName    string
@@ -2185,7 +2198,7 @@ HealthCheckError is an error returned through the HealthCheck system
 
 
 
-### <a name="HealthCheckError.Error">func</a> (\*HealthCheckError) [Error](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10503:10544#L372)
+### <a name="HealthCheckError.Error">func</a> (\*HealthCheckError) [Error](https://github.com/cognusion/go-jar/tree/master/pools.go?s=9580:9621#L337)
 ``` go
 func (h *HealthCheckError) Error() string
 ```
@@ -2194,7 +2207,7 @@ Error returns the stringified version of the error
 
 
 
-## <a name="HealthCheckResult">type</a> [HealthCheckResult](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10691:10839#L377)
+## <a name="HealthCheckResult">type</a> [HealthCheckResult](https://github.com/cognusion/go-jar/tree/master/pools.go?s=9768:9916#L342)
 ``` go
 type HealthCheckResult struct {
     PoolName   string
@@ -2257,7 +2270,7 @@ func (i HealthCheckStatus) String() string
 
 
 
-## <a name="HealthCheckWork">type</a> [HealthCheckWork](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10889:11150#L387)
+## <a name="HealthCheckWork">type</a> [HealthCheckWork](https://github.com/cognusion/go-jar/tree/master/pools.go?s=9966:10227#L352)
 ``` go
 type HealthCheckWork struct {
     PoolName    string
@@ -2283,7 +2296,7 @@ HealthCheckWork is Work to run a HealthCheck
 
 
 
-### <a name="HealthCheckWork.Return">func</a> (\*HealthCheckWork) [Return](https://github.com/cognusion/go-jar/tree/master/pools.go?s=12474:12526#L455)
+### <a name="HealthCheckWork.Return">func</a> (\*HealthCheckWork) [Return](https://github.com/cognusion/go-jar/tree/master/pools.go?s=11551:11603#L420)
 ``` go
 func (h *HealthCheckWork) Return(rthing interface{})
 ```
@@ -2292,7 +2305,7 @@ Return consumes a Work result and slides it downthe return channel
 
 
 
-### <a name="HealthCheckWork.Work">func</a> (\*HealthCheckWork) [Work](https://github.com/cognusion/go-jar/tree/master/pools.go?s=11235:11279#L400)
+### <a name="HealthCheckWork.Work">func</a> (\*HealthCheckWork) [Work](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10312:10356#L365)
 ``` go
 func (h *HealthCheckWork) Work() interface{}
 ```
@@ -2301,7 +2314,7 @@ Work executes the HealthCheck and returns HealthCheckResult or HealthCheckError
 
 
 
-## <a name="JSONAccessLog">type</a> [JSONAccessLog](https://github.com/cognusion/go-jar/tree/master/log.go?s=5465:6194#L169)
+## <a name="JSONAccessLog">type</a> [JSONAccessLog](https://github.com/cognusion/go-jar/tree/master/log.go?s=5286:6015#L163)
 ``` go
 type JSONAccessLog struct {
     Timestamp     string `json:"timestamp"`
@@ -2336,7 +2349,7 @@ JSONAccessLog is an AccessLog uberstruct for JSONifying log data
 
 
 
-### <a name="JSONAccessLog.CommonLogFormat">func</a> (\*JSONAccessLog) [CommonLogFormat](https://github.com/cognusion/go-jar/tree/master/log.go?s=6347:6408#L191)
+### <a name="JSONAccessLog.CommonLogFormat">func</a> (\*JSONAccessLog) [CommonLogFormat](https://github.com/cognusion/go-jar/tree/master/log.go?s=6168:6229#L185)
 ``` go
 func (a *JSONAccessLog) CommonLogFormat(combined bool) string
 ```
@@ -2345,7 +2358,7 @@ CommonLogFormat will return the contents as a CLF-compatible string. If combined
 
 
 
-### <a name="JSONAccessLog.RequestFiller">func</a> (\*JSONAccessLog) [RequestFiller](https://github.com/cognusion/go-jar/tree/master/log.go?s=7924:7978#L251)
+### <a name="JSONAccessLog.RequestFiller">func</a> (\*JSONAccessLog) [RequestFiller](https://github.com/cognusion/go-jar/tree/master/log.go?s=7745:7799#L245)
 ``` go
 func (a *JSONAccessLog) RequestFiller(r *http.Request)
 ```
@@ -2354,7 +2367,7 @@ RequestFiller adds request information to the AccessLog entry
 
 
 
-### <a name="JSONAccessLog.Reset">func</a> (\*JSONAccessLog) [Reset](https://github.com/cognusion/go-jar/tree/master/log.go?s=7070:7101#L218)
+### <a name="JSONAccessLog.Reset">func</a> (\*JSONAccessLog) [Reset](https://github.com/cognusion/go-jar/tree/master/log.go?s=6891:6922#L212)
 ``` go
 func (a *JSONAccessLog) Reset()
 ```
@@ -2363,7 +2376,7 @@ Reset will empty out the contents of the access log
 
 
 
-### <a name="JSONAccessLog.ResponseFiller">func</a> (\*JSONAccessLog) [ResponseFiller](https://github.com/cognusion/go-jar/tree/master/log.go?s=7482:7601#L240)
+### <a name="JSONAccessLog.ResponseFiller">func</a> (\*JSONAccessLog) [ResponseFiller](https://github.com/cognusion/go-jar/tree/master/log.go?s=7303:7422#L234)
 ``` go
 func (a *JSONAccessLog) ResponseFiller(endtime time.Time, duration time.Duration, responseCode int, responseLength int)
 ```
@@ -2372,7 +2385,7 @@ ResponseFiller adds response information to the AccessLog entry
 
 
 
-## <a name="Member">type</a> [Member](https://github.com/cognusion/go-jar/tree/master/pool.go?s=5074:5179#L138)
+## <a name="Member">type</a> [Member](https://github.com/cognusion/go-jar/tree/master/pool.go?s=4872:4977#L133)
 ``` go
 type Member struct {
     URL     *url.URL
@@ -2393,7 +2406,7 @@ Member is an attribute struct to describe a Pool Member
 
 
 
-### <a name="Member.String">func</a> (\*Member) [String](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=2920:2952#L98)
+### <a name="Member.String">func</a> (\*Member) [String](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=3137:3169#L104)
 ``` go
 func (m *Member) String() string
 ```
@@ -2672,7 +2685,7 @@ Handler is a middleware that replaces the Request path
 
 
 
-## <a name="Pool">type</a> [Pool](https://github.com/cognusion/go-jar/tree/master/pool.go?s=5227:6217#L146)
+## <a name="Pool">type</a> [Pool](https://github.com/cognusion/go-jar/tree/master/pool.go?s=5025:6015#L141)
 ``` go
 type Pool struct {
     Config *PoolConfig
@@ -2704,7 +2717,7 @@ Pool is a list of like-minded destinations
 
 
 
-### <a name="Pool.GetMember">func</a> (\*Pool) [GetMember](https://github.com/cognusion/go-jar/tree/master/pool.go?s=6881:6925#L191)
+### <a name="Pool.GetMember">func</a> (\*Pool) [GetMember](https://github.com/cognusion/go-jar/tree/master/pool.go?s=6679:6723#L186)
 ``` go
 func (p *Pool) GetMember(u *url.URL) *Member
 ```
@@ -2713,7 +2726,7 @@ GetMember interacts with an internal cache, returning a Member from the cache or
 
 
 
-### <a name="Pool.GetPool">func</a> (\*Pool) [GetPool](https://github.com/cognusion/go-jar/tree/master/pool.go?s=6475:6521#L179)
+### <a name="Pool.GetPool">func</a> (\*Pool) [GetPool](https://github.com/cognusion/go-jar/tree/master/pool.go?s=6273:6319#L174)
 ``` go
 func (p *Pool) GetPool() (http.Handler, error)
 ```
@@ -2723,7 +2736,7 @@ materialized, it does that.
 
 
 
-### <a name="Pool.IsMaterialized">func</a> (\*Pool) [IsMaterialized](https://github.com/cognusion/go-jar/tree/master/pool.go?s=6301:6337#L173)
+### <a name="Pool.IsMaterialized">func</a> (\*Pool) [IsMaterialized](https://github.com/cognusion/go-jar/tree/master/pool.go?s=6099:6135#L168)
 ``` go
 func (p *Pool) IsMaterialized() bool
 ```
@@ -2732,7 +2745,7 @@ IsMaterialized return boolean on whether the pool has been materialized or not
 
 
 
-### <a name="Pool.Materialize">func</a> (\*Pool) [Materialize](https://github.com/cognusion/go-jar/tree/master/pool.go?s=9512:9562#L260)
+### <a name="Pool.Materialize">func</a> (\*Pool) [Materialize](https://github.com/cognusion/go-jar/tree/master/pool.go?s=9310:9360#L255)
 ``` go
 func (p *Pool) Materialize() (http.Handler, error)
 ```
@@ -3140,7 +3153,7 @@ encapsulated ProxyResponseModifier, discontinuing and returning an error as soon
 
 
 
-## <a name="PruneFunc">type</a> [PruneFunc](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10137:10170#L357)
+## <a name="PruneFunc">type</a> [PruneFunc](https://github.com/cognusion/go-jar/tree/master/pools.go?s=9214:9247#L322)
 ``` go
 type PruneFunc func(string) error
 ```
@@ -3197,7 +3210,7 @@ Handler is the middleware for the RateLimiter
 
 
 
-## <a name="Redirect">type</a> [Redirect](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=2839:2905#L100)
+## <a name="Redirect">type</a> [Redirect](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=3099:3165#L108)
 ``` go
 type Redirect struct {
     URL  string
@@ -3217,7 +3230,7 @@ Redirect is a Finisher that returns 301 for the requested Path
 
 
 
-### <a name="Redirect.Finisher">func</a> (\*Redirect) [Finisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=2967:3035#L107)
+### <a name="Redirect.Finisher">func</a> (\*Redirect) [Finisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=3227:3295#L115)
 ``` go
 func (rd *Redirect) Finisher(w http.ResponseWriter, r *http.Request)
 ```
@@ -3260,7 +3273,7 @@ ServeHTTP is a proper http.Handler for authenticated S3 requests
 
 
 
-## <a name="StatusFinisher">type</a> [StatusFinisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=2229:2252#L84)
+## <a name="StatusFinisher">type</a> [StatusFinisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=2489:2512#L92)
 ``` go
 type StatusFinisher int
 ```
@@ -3275,7 +3288,7 @@ StatusFinisher is an abstracted type to dynamically provide Finishers of standar
 
 
 
-### <a name="StatusFinisher.Finisher">func</a> (StatusFinisher) [Finisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=2321:2394#L87)
+### <a name="StatusFinisher.Finisher">func</a> (StatusFinisher) [Finisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=2581:2654#L95)
 ``` go
 func (sf StatusFinisher) Finisher(w http.ResponseWriter, r *http.Request)
 ```
