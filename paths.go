@@ -531,7 +531,7 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 
 	case path.Finisher != "":
 		// path will be handled by Finisher
-		if l, err := HandleFinisher(path.Finisher); err == nil {
+		if l, err := HandleFinisher(path.Finisher, &path); err == nil {
 			DebugOut.Printf("\tAdding Finisher %s\n", path.Finisher)
 			pathHandler = hchain.Then(l)
 		} else if err == ErrFinisher404 {

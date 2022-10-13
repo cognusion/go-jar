@@ -41,7 +41,7 @@ var (
 func init() {
 	// Set up the static finishers
 	Finishers["s3proxy"] = S3StreamProxyFinisher
-	FinisherSetups["s3proxy"] = func() error {
+	FinisherSetups["s3proxy"] = func(p *Path) error {
 		if !Conf.GetBool(ConfigEC2) {
 			return ErrS3ProxyConfigNoEC2
 		}

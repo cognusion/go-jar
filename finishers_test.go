@@ -19,7 +19,7 @@ func init() {
 func TestHandleFinisherLowerCase(t *testing.T) {
 
 	Convey("When a request for a known-finisher is made, and the name is lower-cased, it is found", t, func() {
-		finisher, err := HandleFinisher("forbidden")
+		finisher, err := HandleFinisher("forbidden", nil)
 		So(err, ShouldBeNil)
 		So(finisher, ShouldNotBeNil)
 	})
@@ -27,7 +27,7 @@ func TestHandleFinisherLowerCase(t *testing.T) {
 
 func TestHandleFinisherMixedCase(t *testing.T) {
 	Convey("When a request for a known-finisher is made, and the name is mix-cased, it is found", t, func() {
-		finisher, ok := HandleFinisher("ForBiDDeN")
+		finisher, ok := HandleFinisher("ForBiDDeN", nil)
 		So(ok, ShouldBeNil)
 		So(finisher, ShouldNotBeNil)
 	})

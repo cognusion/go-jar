@@ -48,10 +48,10 @@ func (h *FinisherMap) List() []string {
 }
 
 // FinisherSetupFunc is declared for Finishers that need exec-time setup checks
-type FinisherSetupFunc func() error
+type FinisherSetupFunc func(*Path) error
 
 // HandleFinisher takes a Finisher HandlerFunc name, and returns the function for it and nil, or nil and and error
-func HandleFinisher(handler string) (http.HandlerFunc, error) {
+func HandleFinisher(handler string, path *Path) (http.HandlerFunc, error) {
 	lcHandler := strings.ToLower(handler)
 	var (
 		h  http.HandlerFunc
@@ -79,7 +79,7 @@ func HandleFinisher(handler string) (http.HandlerFunc, error) {
 
 	if fs, ok := FinisherSetups[lcHandler]; ok {
 		// Finisher has a setup component
-		if fsErr := fs(); fsErr != nil {
+		if fsErr := fs(path); fsErr != nil {
 			// Error!
 			return nil, fsErr
 		}
