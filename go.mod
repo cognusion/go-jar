@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/NYTimes/gziphandler v1.1.1
 	github.com/abbot/go-http-auth v0.4.0
-	github.com/aws/aws-sdk-go v1.44.82
+	github.com/aws/aws-sdk-go v1.44.94
 	github.com/cognusion/go-cronzilla v1.0.0
 	github.com/cognusion/go-nagios-checks v0.0.0-20190904125444-02e4e9610d38 // indirect
 	github.com/cognusion/go-timings v1.0.0
@@ -52,13 +52,16 @@ require (
 	github.com/cognusion/go-sequence v1.0.0
 	github.com/cognusion/go-zulipsend v1.0.0
 	github.com/cognusion/srvdisco v0.0.0-20180516035551-b4507d3e8282
+	github.com/eventials/go-tus v0.0.0-20220610120217-05d0564bb571
 	github.com/spf13/pflag v1.0.5
+	github.com/tus/tusd v1.9.2
 	go.uber.org/atomic v1.10.0
 )
 
 require (
 	github.com/BurntSushi/toml v0.4.1 // indirect
 	github.com/HdrHistogram/hdrhistogram-go v1.1.2 // indirect
+	github.com/bmizerany/pat v0.0.0-20170815010413-6226ea591a40 // indirect
 	github.com/go-pkgz/expirable-cache v0.1.0 // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
