@@ -83,6 +83,7 @@ forbiddenpaths:
 ### handlers: [list]
 
 Handlers listed here will be prepended to the **handlers** list of *all* Paths.
+
 ```yaml
 handlers:
   - Recoverer
@@ -155,7 +156,7 @@ Sets the name of the request header to set with the request ID.
 
 ### slowrequestmax: [duration]
 
-**Default: <unset>**
+**Default: unset**
 If set, requests taking longer than this will be logged to **slowlog**.
 
 ### tempfolder: [path]
@@ -235,7 +236,7 @@ List of ciphersuites- ordered- that you want to support. The list of acceptable 
 
 Available ciphers vary, but the superset is below (the provided hex ID is a reference to the RFC-assigned cipher suite ID)
 
-```
+```text
 "TLS_RSA_WITH_RC4_128_SHA":                0x0005,
 "TLS_RSA_WITH_3DES_EDE_CBC_SHA":           0x000a,
 "TLS_RSA_WITH_AES_128_CBC_SHA":            0x002f,
@@ -760,7 +761,7 @@ If set, will override the default sticky cookie name.
 **Default: plain**
 If **sticky** is set, the following values are allowed:
 
-- plain - Cookie values will be a cleartext representation of the pool member the requestor is pinned to, e.g. *http://127.0.0.1:8081/*
+- plain - Cookie values will be a cleartext representation of the pool member the requestor is pinned to, e.g. `http://127.0.0.1:8081/`
 - hash - Cookie values will be hashed with **keys.stickycookie** as the salt. See **keys** below for more information.
 - aes - Cookie values will be AES-encrypted with **keys.stickycookie**. See **keys** below for more information.
 
@@ -1027,6 +1028,10 @@ Stack returns a stackdump. Best not to let this out, umkay?
 ### TestingFinisher (Test)
 
 TestingFinisher reflects request headers, cookie information, etc for debugging.
+
+### TUS
+
+The experimental TUS finisher supports the [TUS](https://tus.io/) resumable upload protocol. Each **Path** needs a **tus.targeturi** set to a `file://` for local folder spooling or ``s3://`` for S3 spooling (Requires **EC2: true**, currently)
 
 ### Update
 

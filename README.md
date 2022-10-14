@@ -56,7 +56,7 @@ Consumers will want to 'cd cmd/jard; go build; #enjoy'
 * [func GetLogOrDiscard(filename, prefix string, format, size, backups, age int) *log.Logger](#GetLogOrDiscard)
 * [func GetRequestID(ctx context.Context) string](#GetRequestID)
 * [func GetSwitchName(request *http.Request) string](#GetSwitchName)
-* [func HandleFinisher(handler string) (http.HandlerFunc, error)](#HandleFinisher)
+* [func HandleFinisher(handler string, path *Path) (http.HandlerFunc, error)](#HandleFinisher)
 * [func HandleGenericWrapper(code int, r *http.Request, rw *prw.PluggableResponseWriter, body []byte) bool](#HandleGenericWrapper)
 * [func HandleHandler(handler string, hchain alice.Chain) (alice.Chain, error)](#HandleHandler)
 * [func HandleReload(name string, mfiles map[string]string)](#HandleReload)
@@ -257,7 +257,7 @@ Consumers will want to 'cd cmd/jard; go build; #enjoy'
 
 
 #### <a name="pkg-files">Package files</a>
-[a_common.go](https://github.com/cognusion/go-jar/tree/master/a_common.go) [access.go](https://github.com/cognusion/go-jar/tree/master/access.go) [basicauth.go](https://github.com/cognusion/go-jar/tree/master/basicauth.go) [compression.go](https://github.com/cognusion/go-jar/tree/master/compression.go) [config.go](https://github.com/cognusion/go-jar/tree/master/config.go) [cors.go](https://github.com/cognusion/go-jar/tree/master/cors.go) [crypto.go](https://github.com/cognusion/go-jar/tree/master/crypto.go) [debug.go](https://github.com/cognusion/go-jar/tree/master/debug.go) [errors.go](https://github.com/cognusion/go-jar/tree/master/errors.go) [finishers.go](https://github.com/cognusion/go-jar/tree/master/finishers.go) [handlers.go](https://github.com/cognusion/go-jar/tree/master/handlers.go) [health.go](https://github.com/cognusion/go-jar/tree/master/health.go) [healthprocess.go](https://github.com/cognusion/go-jar/tree/master/healthprocess.go) [helpers.go](https://github.com/cognusion/go-jar/tree/master/helpers.go) [log.go](https://github.com/cognusion/go-jar/tree/master/log.go) [macros.go](https://github.com/cognusion/go-jar/tree/master/macros.go) [paths.go](https://github.com/cognusion/go-jar/tree/master/paths.go) [pool.go](https://github.com/cognusion/go-jar/tree/master/pool.go) [pool_conhash.go](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go) [pool_sticky.go](https://github.com/cognusion/go-jar/tree/master/pool_sticky.go) [poolconfig.go](https://github.com/cognusion/go-jar/tree/master/poolconfig.go) [pools.go](https://github.com/cognusion/go-jar/tree/master/pools.go) [proxyresponsemodifier.go](https://github.com/cognusion/go-jar/tree/master/proxyresponsemodifier.go) [s3pool.go](https://github.com/cognusion/go-jar/tree/master/s3pool.go) [s3proxy.go](https://github.com/cognusion/go-jar/tree/master/s3proxy.go) [taskscheduler.go](https://github.com/cognusion/go-jar/tree/master/taskscheduler.go) [update.go](https://github.com/cognusion/go-jar/tree/master/update.go) [urlswitch.go](https://github.com/cognusion/go-jar/tree/master/urlswitch.go) [version.go](https://github.com/cognusion/go-jar/tree/master/version.go) [worker-zulip.go](https://github.com/cognusion/go-jar/tree/master/worker-zulip.go) [workers.go](https://github.com/cognusion/go-jar/tree/master/workers.go) [z_zMustBeLast.go](https://github.com/cognusion/go-jar/tree/master/z_zMustBeLast.go)
+[a_common.go](https://github.com/cognusion/go-jar/tree/master/a_common.go) [access.go](https://github.com/cognusion/go-jar/tree/master/access.go) [basicauth.go](https://github.com/cognusion/go-jar/tree/master/basicauth.go) [compression.go](https://github.com/cognusion/go-jar/tree/master/compression.go) [config.go](https://github.com/cognusion/go-jar/tree/master/config.go) [cors.go](https://github.com/cognusion/go-jar/tree/master/cors.go) [crypto.go](https://github.com/cognusion/go-jar/tree/master/crypto.go) [debug.go](https://github.com/cognusion/go-jar/tree/master/debug.go) [errors.go](https://github.com/cognusion/go-jar/tree/master/errors.go) [finishers.go](https://github.com/cognusion/go-jar/tree/master/finishers.go) [handlers.go](https://github.com/cognusion/go-jar/tree/master/handlers.go) [health.go](https://github.com/cognusion/go-jar/tree/master/health.go) [healthprocess.go](https://github.com/cognusion/go-jar/tree/master/healthprocess.go) [helpers.go](https://github.com/cognusion/go-jar/tree/master/helpers.go) [log.go](https://github.com/cognusion/go-jar/tree/master/log.go) [macros.go](https://github.com/cognusion/go-jar/tree/master/macros.go) [paths.go](https://github.com/cognusion/go-jar/tree/master/paths.go) [pool.go](https://github.com/cognusion/go-jar/tree/master/pool.go) [pool_conhash.go](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go) [pool_sticky.go](https://github.com/cognusion/go-jar/tree/master/pool_sticky.go) [poolconfig.go](https://github.com/cognusion/go-jar/tree/master/poolconfig.go) [pools.go](https://github.com/cognusion/go-jar/tree/master/pools.go) [proxyresponsemodifier.go](https://github.com/cognusion/go-jar/tree/master/proxyresponsemodifier.go) [s3pool.go](https://github.com/cognusion/go-jar/tree/master/s3pool.go) [s3proxy.go](https://github.com/cognusion/go-jar/tree/master/s3proxy.go) [taskscheduler.go](https://github.com/cognusion/go-jar/tree/master/taskscheduler.go) [tus.go](https://github.com/cognusion/go-jar/tree/master/tus.go) [update.go](https://github.com/cognusion/go-jar/tree/master/update.go) [urlswitch.go](https://github.com/cognusion/go-jar/tree/master/urlswitch.go) [version.go](https://github.com/cognusion/go-jar/tree/master/version.go) [worker-zulip.go](https://github.com/cognusion/go-jar/tree/master/worker-zulip.go) [workers.go](https://github.com/cognusion/go-jar/tree/master/workers.go) [z_zMustBeLast.go](https://github.com/cognusion/go-jar/tree/master/z_zMustBeLast.go)
 
 
 ## <a name="pkg-constants">Constants</a>
@@ -526,6 +526,14 @@ const (
 )
 ```
 Constants for configuration key strings
+
+``` go
+const (
+    ConfigTUSTargetURI     = ConfigKey("tus.targeturi")
+    ErrTUSTargetURIMissing = Error("tus.targeturi missing from path options")
+)
+```
+Constants for configuration key strings and Errors
 
 ``` go
 const (
@@ -1013,7 +1021,7 @@ FolderExists returns true if the provided path exists, and is a directory
 
 
 
-## <a name="Forbidden">func</a> [Forbidden](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=2802:2856#L102)
+## <a name="Forbidden">func</a> [Forbidden](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=2823:2877#L102)
 ``` go
 func Forbidden(w http.ResponseWriter, r *http.Request)
 ```
@@ -1061,9 +1069,9 @@ GetSwitchName is a function to return the switch name in a request's context, if
 
 
 
-## <a name="HandleFinisher">func</a> [HandleFinisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=1372:1433#L54)
+## <a name="HandleFinisher">func</a> [HandleFinisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=1377:1450#L54)
 ``` go
-func HandleFinisher(handler string) (http.HandlerFunc, error)
+func HandleFinisher(handler string, path *Path) (http.HandlerFunc, error)
 ```
 HandleFinisher takes a Finisher HandlerFunc name, and returns the function for it and nil, or nil and and error
 
@@ -1183,7 +1191,7 @@ OkFinisher is a Finisher that simply returns "Ok", for throughput testing.
 
 
 
-## <a name="PoolLister">func</a> [PoolLister](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=4231:4286#L149)
+## <a name="PoolLister">func</a> [PoolLister](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=4252:4307#L149)
 ``` go
 func PoolLister(w http.ResponseWriter, r *http.Request)
 ```
@@ -1191,7 +1199,7 @@ PoolLister is a finisher to list the pools
 
 
 
-## <a name="PoolMemberAdder">func</a> [PoolMemberAdder](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=5413:5473#L197)
+## <a name="PoolMemberAdder">func</a> [PoolMemberAdder](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=5434:5494#L197)
 ``` go
 func PoolMemberAdder(w http.ResponseWriter, r *http.Request)
 ```
@@ -1199,7 +1207,7 @@ PoolMemberAdder is a finisher to add a member to an existing pool
 
 
 
-## <a name="PoolMemberLister">func</a> [PoolMemberLister](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=4470:4531#L159)
+## <a name="PoolMemberLister">func</a> [PoolMemberLister](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=4491:4552#L159)
 ``` go
 func PoolMemberLister(w http.ResponseWriter, r *http.Request)
 ```
@@ -1207,7 +1215,7 @@ PoolMemberLister is a finisher to list the members of an existing pool
 
 
 
-## <a name="PoolMemberLoser">func</a> [PoolMemberLoser](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=6910:6970#L252)
+## <a name="PoolMemberLoser">func</a> [PoolMemberLoser](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=6931:6991#L252)
 ``` go
 func PoolMemberLoser(w http.ResponseWriter, r *http.Request)
 ```
@@ -1295,7 +1303,7 @@ RouteIDInspectionHandler checks the Query params for a ROUTEID and shoves it int
 
 
 
-## <a name="S3StreamProxyFinisher">func</a> [S3StreamProxyFinisher](https://github.com/cognusion/go-jar/tree/master/s3proxy.go?s=1969:2035#L81)
+## <a name="S3StreamProxyFinisher">func</a> [S3StreamProxyFinisher](https://github.com/cognusion/go-jar/tree/master/s3proxy.go?s=1976:2042#L81)
 ``` go
 func S3StreamProxyFinisher(w http.ResponseWriter, r *http.Request)
 ```
@@ -2026,9 +2034,9 @@ List returns the names of all of the Finishers
 
 
 
-## <a name="FinisherSetupFunc">type</a> [FinisherSetupFunc](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=1220:1255#L51)
+## <a name="FinisherSetupFunc">type</a> [FinisherSetupFunc](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=1220:1260#L51)
 ``` go
-type FinisherSetupFunc func() error
+type FinisherSetupFunc func(*Path) error
 ```
 FinisherSetupFunc is declared for Finishers that need exec-time setup checks
 
@@ -2077,7 +2085,7 @@ Handler is a middleware that checks the request URI against regexps and 403's if
 
 
 
-## <a name="GenericResponse">type</a> [GenericResponse](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=3888:3948#L135)
+## <a name="GenericResponse">type</a> [GenericResponse](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=3909:3969#L135)
 ``` go
 type GenericResponse struct {
     Message string
@@ -2096,7 +2104,7 @@ GenericResponse is a Finisher that returns a possibly-wrapped response
 
 
 
-### <a name="GenericResponse.Finisher">func</a> (\*GenericResponse) [Finisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=4017:4092#L141)
+### <a name="GenericResponse.Finisher">func</a> (\*GenericResponse) [Finisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=4038:4113#L141)
 ``` go
 func (gr *GenericResponse) Finisher(w http.ResponseWriter, r *http.Request)
 ```
@@ -3210,7 +3218,7 @@ Handler is the middleware for the RateLimiter
 
 
 
-## <a name="Redirect">type</a> [Redirect](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=3099:3165#L108)
+## <a name="Redirect">type</a> [Redirect](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=3120:3186#L108)
 ``` go
 type Redirect struct {
     URL  string
@@ -3230,7 +3238,7 @@ Redirect is a Finisher that returns 301 for the requested Path
 
 
 
-### <a name="Redirect.Finisher">func</a> (\*Redirect) [Finisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=3227:3295#L115)
+### <a name="Redirect.Finisher">func</a> (\*Redirect) [Finisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=3248:3316#L115)
 ``` go
 func (rd *Redirect) Finisher(w http.ResponseWriter, r *http.Request)
 ```
@@ -3273,7 +3281,7 @@ ServeHTTP is a proper http.Handler for authenticated S3 requests
 
 
 
-## <a name="StatusFinisher">type</a> [StatusFinisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=2489:2512#L92)
+## <a name="StatusFinisher">type</a> [StatusFinisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=2510:2533#L92)
 ``` go
 type StatusFinisher int
 ```
@@ -3288,7 +3296,7 @@ StatusFinisher is an abstracted type to dynamically provide Finishers of standar
 
 
 
-### <a name="StatusFinisher.Finisher">func</a> (StatusFinisher) [Finisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=2581:2654#L95)
+### <a name="StatusFinisher.Finisher">func</a> (StatusFinisher) [Finisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=2602:2675#L95)
 ``` go
 func (sf StatusFinisher) Finisher(w http.ResponseWriter, r *http.Request)
 ```
