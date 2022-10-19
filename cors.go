@@ -15,6 +15,7 @@ const (
 	ConfigCORSAllowMethods     = ConfigKey("CORS.allowmethods")
 	ConfigCORSOrigins          = ConfigKey("CORS.origins")
 	ConfigCORSMaxAge           = ConfigKey("CORS.maxage")
+	ConfigCORSPrivateNetwork   = ConfigKey("CORS.privatenetwork")
 
 	CORSAllowOrigin      = CorsString("Access-Control-Allow-Origin")
 	CORSAllowCredentials = CorsString("Access-Control-Allow-Credentials")
@@ -22,6 +23,7 @@ const (
 	CORSAllowMethods     = CorsString("Access-Control-Allow-Methods")
 	CORSAllowHeaders     = CorsString("Access-Control-Allow-Headers")
 	CORSMaxAge           = CorsString("Access-Control-Max-Age")
+	CORSPrivateNetwork   = CorsString("Access-Control-Request-Private-Network")
 )
 
 var (
@@ -40,6 +42,7 @@ func init() {
 	ConfigAdditions[ConfigCORSAllowMethods] = ""           // A verbatim string to put in Allow methods
 	ConfigAdditions[ConfigCORSAllowCredentials] = "false"  // A verbatim string to put in Allow credentials
 	ConfigAdditions[ConfigCORSMaxAge] = "60"               // A verbatim string to put in Max age
+	ConfigAdditions[ConfigCORSPrivateNetwork] = "false"    // A verbatim string to put in Private Network
 
 	InitFuncs.Add(func() {
 		// Compile the CORS.origins expressions, for speed
@@ -49,6 +52,7 @@ func init() {
 				"allowmethods":     Conf.GetString(ConfigCORSAllowMethods),
 				"allowcredentials": Conf.GetString(ConfigCORSAllowCredentials),
 				"maxage":           Conf.GetString(ConfigCORSMaxAge),
+				"privatenetwork":   Conf.GetString(ConfigCORSPrivateNetwork),
 			}
 			c, err := NewCORSFromConfig(Conf.GetStringSlice(ConfigCORSOrigins), cmap)
 			if err != nil {
@@ -68,6 +72,7 @@ type CORS struct {
 	AllowMethods     string
 	AllowHeaders     string
 	MaxAge           string
+	PrivateNetwork   string
 
 	// originRes is a list of compiled Regexps, because faster
 	originRes []*pcre.Regexp
@@ -88,6 +93,7 @@ func NewCORSFromConfig(origins []string, conf map[string]string) (*CORS, error) 
 	c.AllowMethods = conf["allowmethods"]
 	c.AllowHeaders = conf["allowheaders"]
 	c.MaxAge = conf["maxage"]
+	c.PrivateNetwork = conf["privatenetwork"]
 
 	if err := c.AddOrigin(origins); err != nil {
 		return nil, err
@@ -155,12 +161,13 @@ func (c *CORS) Handler(next http.Handler) http.Handler {
 }
 
 func (c *CORS) String() string {
-	return fmt.Sprintf("%s: %s\n%s: %s\n%s: %s\n%s: %s\n%s: %s\n",
+	return fmt.Sprintf("%s: %s\n%s: %s\n%s: %s\n%s: %s\n%s: %s\n%s: %s\n",
 		CORSAllowCredentials, c.AllowCredentials,
 		CORSExposeHeaders, c.AllowHeaders,
 		CORSAllowMethods, c.AllowMethods,
 		CORSAllowHeaders, c.AllowHeaders,
-		CORSMaxAge, c.MaxAge)
+		CORSMaxAge, c.MaxAge,
+		CORSPrivateNetwork, c.PrivateNetwork)
 }
 
 // ResponseModifier is an oxy/forward opsetter to remove CORS headers from responses
@@ -172,6 +179,7 @@ func (c *CORS) ResponseModifier(resp *http.Response) error {
 	delete(resp.Header, CORSAllowMethods)
 	delete(resp.Header, CORSAllowHeaders)
 	delete(resp.Header, CORSMaxAge)
+	delete(resp.Header, CORSPrivateNetwork)
 
 	return nil
 }
@@ -185,6 +193,7 @@ func (c *CORS) handle(rw *prw.PluggableResponseWriter, origin, Method, requestID
 	rw.Header().Del(CORSAllowMethods)
 	rw.Header().Del(CORSAllowHeaders)
 	rw.Header().Del(CORSMaxAge)
+	rw.Header().Del(CORSPrivateNetwork)
 
 	if deleteOnly {
 		// We already know we're not going to match, so
@@ -208,6 +217,7 @@ func (c *CORS) handle(rw *prw.PluggableResponseWriter, origin, Method, requestID
 		rw.Header().Set(CORSAllowOrigin, origin)
 		rw.Header().Set(CORSAllowCredentials, c.AllowCredentials)
 		rw.Header().Set(CORSExposeHeaders, c.AllowHeaders)
+		rw.Header().Set(CORSPrivateNetwork, c.PrivateNetwork)
 
 		if Method == http.MethodOptions {
 			rw.Header().Set(CORSAllowMethods, c.AllowMethods)

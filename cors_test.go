@@ -29,6 +29,7 @@ func CorsHandlersInit() {
 		"allowmethods":     Conf.GetString(ConfigCORSAllowMethods),
 		"allowcredentials": Conf.GetString(ConfigCORSAllowCredentials),
 		"maxage":           Conf.GetString(ConfigCORSMaxAge),
+		"privatenetwork":   Conf.GetString(ConfigCORSPrivateNetwork),
 	}
 	c, err := NewCORSFromConfig(Conf.GetStringSlice(ConfigCORSOrigins), cmap)
 	if err != nil {
@@ -48,6 +49,7 @@ func TestCorsBadRegexp(t *testing.T) {
 		"allowmethods":     Conf.GetString(ConfigCORSAllowMethods),
 		"allowcredentials": Conf.GetString(ConfigCORSAllowCredentials),
 		"maxage":           Conf.GetString(ConfigCORSMaxAge),
+		"privatenetwork":   Conf.GetString(ConfigCORSPrivateNetwork),
 	}
 
 	Convey("When a CORS is created with an awful regexp, an error is returned, and everything is ok", t, func() {

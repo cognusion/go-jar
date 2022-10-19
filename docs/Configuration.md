@@ -859,6 +859,7 @@ CORS:
   allowmethods: "GET, POST, PUT, DELETE, PATCH"
   allowcredentials: "false"
   maxage: "86400"
+  privatenetwork: "false"
 ```
 
 #### CORS.origins: [list]
@@ -867,19 +868,23 @@ This is a list of strings to test against. Regular expressions are fully support
 
 #### CORS.allowheaders: [string]
 
-A verbatim string put to in Allow/Expose -Headers
+A verbatim string put to in `Access-Control-Allow-Headers` and `Access-Control-Expose-Headers`
 
 #### CORS.allowmethods: [string]
 
-A verbatim string to put in Allow-Methods
+A verbatim string to put in `Access-Control-Allow-Methods`
 
 #### CORS.allowcredentials: [string]
 
-A verbatim string to put in Allow-Credentials
+A verbatim string to put in `Access-Control-Allow-Credentials`
 
 #### CORS.maxage: [string]
 
-A verbatim string to put in Max-Age
+A verbatim string to put in `Access-Control-Max-Age`
+
+#### CORS.privatenetwork: [string]
+
+A verbative string to put in `Access-Control-Request-Private-Network`
 
 ### ErrorWrapper.Handler (ErrorHandler)
 
