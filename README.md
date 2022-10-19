@@ -346,6 +346,7 @@ const (
     ConfigCORSAllowMethods     = ConfigKey("CORS.allowmethods")
     ConfigCORSOrigins          = ConfigKey("CORS.origins")
     ConfigCORSMaxAge           = ConfigKey("CORS.maxage")
+    ConfigCORSPrivateNetwork   = ConfigKey("CORS.privatenetwork")
 
     CORSAllowOrigin      = CorsString("Access-Control-Allow-Origin")
     CORSAllowCredentials = CorsString("Access-Control-Allow-Credentials")
@@ -353,6 +354,7 @@ const (
     CORSAllowMethods     = CorsString("Access-Control-Allow-Methods")
     CORSAllowHeaders     = CorsString("Access-Control-Allow-Headers")
     CORSMaxAge           = CorsString("Access-Control-Max-Age")
+    CORSPrivateNetwork   = CorsString("Access-Control-Request-Private-Network")
 )
 ```
 Constants for configuration key strings
@@ -1589,13 +1591,14 @@ Handler limits the size of Request.Body
 
 
 
-## <a name="CORS">type</a> [CORS](https://github.com/cognusion/go-jar/tree/master/cors.go?s=2529:2736#L66)
+## <a name="CORS">type</a> [CORS](https://github.com/cognusion/go-jar/tree/master/cors.go?s=2838:3070#L70)
 ``` go
 type CORS struct {
     AllowCredentials string
     AllowMethods     string
     AllowHeaders     string
     MaxAge           string
+    PrivateNetwork   string
     // contains filtered or unexported fields
 }
 
@@ -1610,14 +1613,14 @@ and thus need to either be added via AddOrigins() or supplied to NewCORSFromConf
 
 
 
-### <a name="NewCORS">func</a> [NewCORS](https://github.com/cognusion/go-jar/tree/master/cors.go?s=2785:2805#L77)
+### <a name="NewCORS">func</a> [NewCORS](https://github.com/cognusion/go-jar/tree/master/cors.go?s=3119:3139#L82)
 ``` go
 func NewCORS() *CORS
 ```
 NewCORS returns an initialized CORS struct.
 
 
-### <a name="NewCORSFromConfig">func</a> [NewCORSFromConfig](https://github.com/cognusion/go-jar/tree/master/cors.go?s=2971:3050#L85)
+### <a name="NewCORSFromConfig">func</a> [NewCORSFromConfig](https://github.com/cognusion/go-jar/tree/master/cors.go?s=3305:3384#L90)
 ``` go
 func NewCORSFromConfig(origins []string, conf map[string]string) (*CORS, error)
 ```
@@ -1627,7 +1630,7 @@ NewCORSFromConfig returns an initialized CORS struct from a list of origins and 
 
 
 
-### <a name="CORS.AddOrigin">func</a> (\*CORS) [AddOrigin](https://github.com/cognusion/go-jar/tree/master/cors.go?s=3365:3413#L99)
+### <a name="CORS.AddOrigin">func</a> (\*CORS) [AddOrigin](https://github.com/cognusion/go-jar/tree/master/cors.go?s=3742:3790#L105)
 ``` go
 func (c *CORS) AddOrigin(origins []string) error
 ```
@@ -1636,7 +1639,7 @@ AddOrigin adds an origin expression to the CORS struct
 
 
 
-### <a name="CORS.Handler">func</a> (\*CORS) [Handler](https://github.com/cognusion/go-jar/tree/master/cors.go?s=3856:3910#L115)
+### <a name="CORS.Handler">func</a> (\*CORS) [Handler](https://github.com/cognusion/go-jar/tree/master/cors.go?s=4233:4287#L121)
 ``` go
 func (c *CORS) Handler(next http.Handler) http.Handler
 ```
@@ -1646,7 +1649,7 @@ a whitelist of expressions, and may change the response headers accordingly
 
 
 
-### <a name="CORS.ResponseModifier">func</a> (\*CORS) [ResponseModifier](https://github.com/cognusion/go-jar/tree/master/cors.go?s=5379:5437#L167)
+### <a name="CORS.ResponseModifier">func</a> (\*CORS) [ResponseModifier](https://github.com/cognusion/go-jar/tree/master/cors.go?s=5804:5862#L174)
 ``` go
 func (c *CORS) ResponseModifier(resp *http.Response) error
 ```
@@ -1655,7 +1658,7 @@ ResponseModifier is an oxy/forward opsetter to remove CORS headers from response
 
 
 
-### <a name="CORS.String">func</a> (\*CORS) [String](https://github.com/cognusion/go-jar/tree/master/cors.go?s=5017:5047#L157)
+### <a name="CORS.String">func</a> (\*CORS) [String](https://github.com/cognusion/go-jar/tree/master/cors.go?s=5394:5424#L163)
 ``` go
 func (c *CORS) String() string
 ```
@@ -1827,7 +1830,7 @@ UpsertServer adds or updates the member to the pool
 
 
 
-## <a name="CorsString">type</a> [CorsString](https://github.com/cognusion/go-jar/tree/master/cors.go?s=1051:1075#L33)
+## <a name="CorsString">type</a> [CorsString](https://github.com/cognusion/go-jar/tree/master/cors.go?s=1191:1215#L35)
 ``` go
 type CorsString = string
 ```
