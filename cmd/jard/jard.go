@@ -16,7 +16,7 @@ func init() {
 	pflag.Bool(jar.ConfigDebug, false, "Enable vociferous output")
 	pflag.Bool(jar.ConfigCheckConfig, false, "Run through the config load and then exit")
 	pflag.Bool(jar.ConfigDumpConfig, false, "Load the config, dump it to stderr, and then exit")
-	pflag.BoolVar(&configVersion, "version", false, fmt.Sprintf("Print the version (%s), and then exit", jar.VERSION))
+	pflag.BoolVar(&configVersion, "version", false, "Print the version and then exit")
 
 	config := pflag.String("config", "", "Config file to load")
 	pflag.Parse()
