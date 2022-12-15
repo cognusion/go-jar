@@ -539,7 +539,7 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 			return 0, ErrConfigurationError{fmt.Sprintf("finisher '%s' is not a listed finisher handler", path.Finisher)}
 		} else {
 			// Other finisher error
-			return 0, ErrConfigurationError{fmt.Sprintf("finisher '%s' exists but retuned error: %v", path.Finisher, err)}
+			return 0, ErrConfigurationError{fmt.Sprintf("finisher '%s' exists but returned error: %v", path.Finisher, err)}
 		}
 
 	default:
