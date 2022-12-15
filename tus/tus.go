@@ -46,6 +46,7 @@ func (t *TUS) defaultCallBack(e tusd.HookEvent) error {
 
 func (t *TUS) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Pass the request on to TUS
+	DebugOut.Println("TUS Handler...")
 	t.handler.ServeHTTP(w, r)
 }
 
@@ -73,6 +74,7 @@ func NewTUS(targetURI, basePath string) (*TUS, error) {
 	} else if strings.HasPrefix(strings.ToLower(targetURI), "file://") {
 		// Handle local file
 		trimTargetURI := strings.TrimPrefix(targetURI, "file://")
+		DebugOut.Printf("NewTUS: %s -> %s\n", basePath, trimTargetURI)
 		store = filestore.New(trimTargetURI)
 
 	} else {

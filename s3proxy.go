@@ -41,11 +41,11 @@ var (
 func init() {
 	// Set up the static finishers
 	Finishers["s3proxy"] = S3StreamProxyFinisher
-	FinisherSetups["s3proxy"] = func(p *Path) error {
+	FinisherSetups["s3proxy"] = func(p *Path) (http.HandlerFunc, error) {
 		if !Conf.GetBool(ConfigEC2) {
-			return ErrS3ProxyConfigNoEC2
+			return nil, ErrS3ProxyConfigNoEC2
 		}
-		return nil
+		return nil, nil
 	}
 
 	charMap = map[string]string{

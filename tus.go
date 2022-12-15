@@ -21,33 +21,20 @@ const (
 
 func init() {
 	// Set up the static finishers
-	Finishers["tus"] = tusFinisher
-	FinisherSetups["tus"] = func(p *Path) error {
-		if !p.Options.GetBool(ConfigTUSTargetURI) {
-			return ErrTUSTargetURIMissing
+	Finishers["tus"] = nil
+	FinisherSetups["tus"] = func(p *Path) (http.HandlerFunc, error) {
+		var targetURI string
+		if targetURI = p.Options.GetString(ConfigTUSTargetURI); targetURI == "" {
+			return nil, ErrTUSTargetURIMissing
 		}
-		return nil
-	}
-}
-
-// tusFinisher implements the TUS endpoint dynamically
-func tusFinisher(w http.ResponseWriter, r *http.Request) {
-	var (
-		pathOptions PathOptions
-	)
-
-	if popts := r.Context().Value(PathOptionsKey); popts != nil {
-		pathOptions = popts.(PathOptions)
+		t, terr := tus.NewTUS(targetURI, p.Path)
+		if terr != nil {
+			return nil, terr
+		}
+		return http.StripPrefix(p.Path, t).ServeHTTP, nil
 	}
 
-	targetURI := pathOptions.GetString(ConfigTUSTargetURI)
-	tus, err := tus.NewTUS(targetURI, r.RequestURI)
-	if err != nil {
-		// Ugh run-time error
-		ErrorOut.Printf("%s%s\n", ErrRequestError{r, "Error creating a TUS"}, err.Error())
-		RequestErrorResponse(r, w, "There was an error creating the data upload endpoint", http.StatusInternalServerError)
-		return
-	}
-
-	tus.ServeHTTP(w, r)
+	InitFuncs.Add(func() {
+		tus.DebugOut = DebugOut
+	})
 }
