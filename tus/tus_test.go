@@ -36,19 +36,19 @@ func TestTUS(t *testing.T) {
 
 		tfile := fmt.Sprintf("file://%s/", tdir)
 
-		tus, err := NewTUS(tfile, "/")
+		tus, err := NewTUS(tfile, "/tus/")
 		So(err, ShouldBeNil)
-
-		srv := httptest.NewServer(tus)
+		srv := httptest.NewServer(http.StripPrefix("/tus/", tus))
 		defer srv.Close()
 
 		// create the tus client.
 		tConfig := tusc.DefaultConfig()
 		tConfig.HttpClient = srv.Client()
-		client, err := tusc.NewClient(srv.URL, tConfig)
+		client, err := tusc.NewClient(srv.URL+"/tus/", tConfig)
 		So(err, ShouldBeNil)
 		client.Header.Add("X-Request-ID", "U"+randString(7))
 
+		DebugOut.Printf("Client: %+v\n", client)
 		// create an upload from the buffer.
 		upload := tusc.NewUploadFromBytes(buff.Bytes())
 		So(upload, ShouldNotBeNil)
@@ -95,8 +95,7 @@ func TestTUS(t *testing.T) {
 			So(rErr, ShouldBeNil)
 			defer resp.Body.Close()
 
-			So(resp.StatusCode, ShouldEqual, http.StatusForbidden)
-			So(resp.ContentLength, ShouldEqual, 0)
+			So(resp.StatusCode, ShouldEqual, http.StatusMethodNotAllowed)
 		})
 
 		Convey("... When a DELETE request is made to an existing TUS URI path, it is Forbidden", func() {
@@ -110,8 +109,7 @@ func TestTUS(t *testing.T) {
 			So(rErr, ShouldBeNil)
 			defer resp.Body.Close()
 
-			So(resp.StatusCode, ShouldEqual, http.StatusForbidden)
-			So(resp.ContentLength, ShouldEqual, 0)
+			So(resp.StatusCode, ShouldEqual, http.StatusPreconditionFailed)
 		})
 	})
 }

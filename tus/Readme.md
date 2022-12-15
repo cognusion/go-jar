@@ -68,7 +68,7 @@ Error returns the stringified version of Error
 
 
 
-## <a name="TUS">type</a> [TUS](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=860:1010#L35)
+## <a name="TUS">type</a> [TUS](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=860:1002#L35)
 ``` go
 type TUS struct {
     CallBack func(tusd.HookEvent) error
@@ -84,7 +84,7 @@ TUS is a Finisher implementing the tus.io Open Protocol for Resumable Uploads
 
 
 
-### <a name="NewTUS">func</a> [NewTUS](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=2152:2205#L79)
+### <a name="NewTUS">func</a> [NewTUS](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=1711:1764#L62)
 ``` go
 func NewTUS(targetURI, basePath string) (*TUS, error)
 ```
@@ -95,7 +95,7 @@ the target itself is a problem. basePath should be the URI base.
 
 
 
-### <a name="TUS.ServeHTTP">func</a> (\*TUS) [ServeHTTP](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=1096:1159#L47)
+### <a name="TUS.ServeHTTP">func</a> (\*TUS) [ServeHTTP](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=1088:1151#L47)
 ``` go
 func (t *TUS) ServeHTTP(w http.ResponseWriter, r *http.Request)
 ```

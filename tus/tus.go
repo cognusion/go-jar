@@ -35,7 +35,7 @@ func (e Error) Error() string {
 type TUS struct {
 	targetURI string
 	basePath  string
-	handler   *tusd.UnroutedHandler
+	handler   *tusd.Handler
 	config    *tusd.Config
 	CallBack  func(tusd.HookEvent) error
 }
@@ -45,29 +45,8 @@ func (t *TUS) defaultCallBack(e tusd.HookEvent) error {
 }
 
 func (t *TUS) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodPost:
-		t.handler.PostFile(w, r)
-	case http.MethodHead:
-		t.handler.HeadFile(w, r)
-	case http.MethodPatch:
-		t.handler.PatchFile(w, r)
-	case http.MethodGet:
-		if !t.config.DisableDownload {
-			t.handler.GetFile(w, r)
-		} else {
-			w.WriteHeader(http.StatusForbidden)
-		}
-	case http.MethodDelete:
-		// Only attach the DELETE handler if the Terminate() method is provided
-		if t.config.StoreComposer.UsesTerminater && !t.config.DisableTermination {
-			t.handler.DelFile(w, r)
-		} else {
-			w.WriteHeader(http.StatusForbidden)
-		}
-	default:
-		w.WriteHeader(http.StatusMethodNotAllowed)
-	}
+	// Pass the request on to TUS
+	t.handler.ServeHTTP(w, r)
 }
 
 // jarTUSDataStore is a rage interface because tusd.DataStore doesn't require
@@ -104,14 +83,15 @@ func NewTUS(targetURI, basePath string) (*TUS, error) {
 	store.UseIn(composer)
 
 	tConfig := tusd.Config{
-		BasePath:              basePath,
-		StoreComposer:         composer,
-		Logger:                DebugOut,
-		NotifyCompleteUploads: false, // TODO
-		DisableDownload:       true,  // TODO
-		DisableTermination:    true,  // TODO
+		BasePath:      basePath,
+		StoreComposer: composer,
+		Logger:        DebugOut,
+		//NotifyCompleteUploads: false, // TODO
+		DisableDownload:    true, // TODO
+		DisableTermination: true, // TODO
 	}
-	handler, err := tusd.NewUnroutedHandler(tConfig)
+
+	handler, err := tusd.NewHandler(tConfig)
 	if err != nil {
 		return nil, err
 	}
