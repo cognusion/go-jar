@@ -29,8 +29,8 @@ type S3Pool struct {
 // NewS3Pool returns an S3Pool or an error
 func NewS3Pool(s3url string) (*S3Pool, error) {
 
-	// If the Ec2Session isn't initialized, we cannot grab it
-	if Ec2Session == nil {
+	// If the AWSSession isn't initialized, we cannot grab it
+	if AWSSession == nil {
 		return nil, ErrNoSession
 	}
 
@@ -40,7 +40,7 @@ func NewS3Pool(s3url string) (*S3Pool, error) {
 	}
 
 	return &S3Pool{
-		session: Ec2Session,
+		session: AWSSession,
 		bucket:  bucket,
 	}, nil
 

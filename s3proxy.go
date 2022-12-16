@@ -29,8 +29,8 @@ const (
 )
 
 const (
-	// ErrS3ProxyConfigNoEC2 is returned when the s3proxy is used, but ec2 is not.
-	ErrS3ProxyConfigNoEC2 = Error("s3proxy used, but ec2 is false")
+	// ErrS3ProxyConfigNoAWS is returned when the s3proxy is used, but AWS is not.
+	ErrS3ProxyConfigNoAWS = Error("s3proxy used, but AWS is not configured")
 )
 
 var (
@@ -42,8 +42,8 @@ func init() {
 	// Set up the static finishers
 	Finishers["s3proxy"] = S3StreamProxyFinisher
 	FinisherSetups["s3proxy"] = func(p *Path) (http.HandlerFunc, error) {
-		if !Conf.GetBool(ConfigEC2) {
-			return nil, ErrS3ProxyConfigNoEC2
+		if AWSSession == nil {
+			return nil, ErrS3ProxyConfigNoAWS
 		}
 		return nil, nil
 	}
@@ -111,7 +111,7 @@ func S3StreamProxyFinisher(w http.ResponseWriter, r *http.Request) {
 		basefn string
 	)
 
-	svc := s3manager.NewUploader(Ec2Session.AWS)
+	svc := s3manager.NewUploader(AWSSession.AWS)
 
 	if pathOptions.GetString(ConfigS3StreamProxyZulipStream) != "" && ZulipClient != nil {
 		DebugOut.Print(ErrRequestError{r, fmt.Sprintf("S3StreamProxy using Zulip %s %s\n", pathOptions.GetString(ConfigS3StreamProxyZulipStream), pathOptions.GetString(ConfigS3StreamProxyZulipTopic))}.String())

@@ -36,8 +36,8 @@ type Session struct {
 	Me  *ec2metadata.EC2InstanceIdentityDocument
 }
 
-// NewSession returns a Session or an error
-func NewSession(awsRegion, awsAccessKey, awsSecretKey string) (*Session, error) {
+// NewSession returns a Session or an error. If `ec2` is false, `Session.Me` will be false.
+func NewSession(awsRegion, awsAccessKey, awsSecretKey string, ec2 bool) (*Session, error) {
 
 	s := Session{}
 	awsSession, err := InitAWS(awsRegion, awsAccessKey, awsSecretKey)
@@ -48,13 +48,15 @@ func NewSession(awsRegion, awsAccessKey, awsSecretKey string) (*Session, error) 
 	}
 	s.AWS = awsSession
 
-	idd, err := s.getMe()
-	if err != nil {
-		// Error getting ec2metadata
-		return nil, err
+	if ec2 {
+		idd, err := s.getMe()
+		if err != nil {
+			// Error getting ec2metadata
+			return nil, err
+		}
+		s.Me = &idd
+		DebugOut.Printf("EC2 Me: %+v\n", idd)
 	}
-	s.Me = &idd
-	DebugOut.Printf("EC2 Me: %+v\n", idd)
 	return &s, nil
 }
 

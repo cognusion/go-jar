@@ -73,8 +73,8 @@ var (
 	// Seq is a Sequence used for request ids
 	Seq = sequence.New(1)
 
-	// Ec2Session is an aws.Session for use in various places
-	Ec2Session *aws.Session
+	// AWSSession is an aws.Session for use in various places
+	AWSSession *aws.Session
 
 	// Hostname is a local cache of os.Hostname
 	Hostname string
@@ -278,7 +278,7 @@ func bootstrap() (done bool, servers []*http.Server) {
 		)
 
 		// TODO: config-driven params, vs. IAM instance profiles
-		Ec2Session, err = aws.NewSession(awsRegion, awsAccessKey, awsSecretKey)
+		AWSSession, err = aws.NewSession(awsRegion, awsAccessKey, awsSecretKey, Conf.GetBool(ConfigEC2))
 		if err != nil {
 			panic(fmt.Errorf("error intializing AWS session: '%w'", err))
 		}

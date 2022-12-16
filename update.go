@@ -17,8 +17,8 @@ import (
 )
 
 const (
-	// ErrUpdateConfigS3NoEC2 is returned when the s3 updatepath is set, but ec2 is not.
-	ErrUpdateConfigS3NoEC2 = Error("s3 updatepath set, but ec2 is false")
+	// ErrUpdateConfigS3NoAWS is returned when the s3 updatepath is set, but AWS is not.
+	ErrUpdateConfigS3NoAWS = Error("s3 updatepath set, but AWS is not configured")
 
 	// ErrUpdateConfigEmptyURL is returned when the updatepath is empty
 	ErrUpdateConfigEmptyURL = Error("update url is empty, not updating")
@@ -77,9 +77,9 @@ func init() {
 	}()
 
 	ConfigValidations["s3updatepath"] = func() error {
-		if up := Conf.GetString(ConfigUpdatePath); up != "" && !Conf.GetBool(ConfigEC2) {
-			// Update requires EC2, for now
-			return ErrUpdateConfigS3NoEC2
+		if up := Conf.GetString(ConfigUpdatePath); up != "" && AWSSession == nil {
+			// Update requires AWS, for now
+			return ErrUpdateConfigS3NoAWS
 		}
 		return nil
 	}
@@ -110,8 +110,8 @@ func handleUpdate(url string, restart bool) error {
 		return ErrUpdateConfigEmptyURL
 	}
 
-	// If the Ec2Session isn't initialized, we cannot grab it
-	if Ec2Session == nil {
+	// If the AWSSession isn't initialized, we cannot grab it
+	if AWSSession == nil {
 		return ErrNoSession
 	}
 
@@ -138,7 +138,7 @@ func handleUpdate(url string, restart bool) error {
 	tzfolder := fmt.Sprintf("%s/%s", tmp, "jarupdate")
 
 	// grab the file and save it
-	_, err = Ec2Session.BucketToFile(bucket, bucketPath, tfile)
+	_, err = AWSSession.BucketToFile(bucket, bucketPath, tfile)
 	if err != nil {
 		ErrorOut.Printf("Error downloading '%s' from '%s' to '%s': %s\n", bucketPath, bucket, tfile, err)
 		return err

@@ -206,12 +206,12 @@ func (p *Pool) buildMember(u *url.URL) *Member {
 	}
 
 	// If we're EC2-aware, and the member is for an S3 bucket
-	if Ec2Session != nil && u.Scheme == "s3" {
+	if AWSSession != nil && u.Scheme == "s3" {
 		return &m
 	}
 
 	// If we're EC2-aware, and this Pool is using EC2Affinity, let's find out what the AZ is
-	if Ec2Session != nil && p.Config.EC2Affinity {
+	if AWSSession != nil && Conf.GetBool(ConfigEC2) && p.Config.EC2Affinity {
 
 		if !p.Config.Prune {
 			// Not forcing this, but chances are you don't know what you're doing.
@@ -231,11 +231,11 @@ func (p *Pool) buildMember(u *url.URL) *Member {
 			}
 		}
 
-		if az, azerr := Ec2Session.GetInstanceAZByIP(m.Address); azerr != nil {
+		if az, azerr := AWSSession.GetInstanceAZByIP(m.Address); azerr != nil {
 			ErrorOut.Printf("Error adding EC2-aware pool-member '%s' to %s: %s\n", m.Address, p.Config.Name, azerr)
 		} else if az == "" {
 			DebugOut.Printf("\t\t\tPool %s has member %s that has no AZ\n", p.Config.Name, m.Address)
-		} else if az == Ec2Session.Me.AvailabilityZone {
+		} else if az == AWSSession.Me.AvailabilityZone {
 			DebugOut.Printf("\t\t\tPool %s has member %s that is AZ-local!\n", p.Config.Name, m.Address)
 			m.weight = roundrobin.Weight(LocalMemberWeight)
 			m.AZ = az
