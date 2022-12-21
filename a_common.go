@@ -274,11 +274,12 @@ func bootstrap() (done bool, servers []*http.Server) {
 			awsRegion    = Conf.GetString(ConfigKeysAwsRegion)
 			awsAccessKey = Conf.GetString(ConfigKeysAwsAccessKey)
 			awsSecretKey = Conf.GetString(ConfigKeysAwsSecretKey)
+			ec2          = Conf.GetBool(ConfigEC2)
 			err          error
 		)
 
-		// TODO: config-driven params, vs. IAM instance profiles
-		AWSSession, err = aws.NewSession(awsRegion, awsAccessKey, awsSecretKey, Conf.GetBool(ConfigEC2))
+		DebugOut.Printf("AWS Setup: Region: %s AccessKey: %s SecretKey: %s EC2: %t\n", awsRegion, awsAccessKey, awsSecretKey[:3], ec2)
+		AWSSession, err = aws.NewSession(awsRegion, awsAccessKey, awsSecretKey, ec2)
 		if err != nil {
 			panic(fmt.Errorf("error intializing AWS session: '%w'", err))
 		}
