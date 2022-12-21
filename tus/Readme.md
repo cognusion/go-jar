@@ -43,7 +43,7 @@ var (
 
 
 
-## <a name="Error">type</a> [Error](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=492:509#L25)
+## <a name="Error">type</a> [Error](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=532:549#L26)
 ``` go
 type Error string
 ```
@@ -58,7 +58,7 @@ Error is an error type
 
 
 
-### <a name="Error.Error">func</a> (Error) [Error](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=561:590#L28)
+### <a name="Error.Error">func</a> (Error) [Error](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=601:630#L29)
 ``` go
 func (e Error) Error() string
 ```
@@ -67,7 +67,7 @@ Error returns the stringified version of Error
 
 
 
-## <a name="TUS">type</a> [TUS](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=695:759#L33)
+## <a name="TUS">type</a> [TUS](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=735:799#L34)
 ``` go
 type TUS struct {
     // contains filtered or unexported fields
@@ -82,7 +82,7 @@ TUS is a Finisher implementing the tus.io Open Protocol for Resumable Uploads
 
 
 
-### <a name="NewTUS">func</a> [NewTUS](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=1345:1398#L54)
+### <a name="NewTUS">func</a> [NewTUS](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=1066:1119#L47)
 ``` go
 func NewTUS(targetURI, basePath string) (*TUS, error)
 ```
@@ -90,7 +90,7 @@ NewTUS returns an initialized TUS for targetURIs of `file://`.
 basePath should be the URI base.
 
 
-### <a name="NewTUSwithS3">func</a> [NewTUSwithS3](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=1577:1657#L60)
+### <a name="NewTUSwithS3">func</a> [NewTUSwithS3](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=1298:1378#L53)
 ``` go
 func NewTUSwithS3(targetURI, basePath string, s3api s3store.S3API) (*TUS, error)
 ```
@@ -101,7 +101,7 @@ s3api should be an s3.S3. basePath should be the URI base.
 
 
 
-### <a name="TUS.ServeHTTP">func</a> (\*TUS) [ServeHTTP](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=761:824#L38)
+### <a name="TUS.ServeHTTP">func</a> (\*TUS) [ServeHTTP](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=801:864#L39)
 ``` go
 func (t *TUS) ServeHTTP(w http.ResponseWriter, r *http.Request)
 ```

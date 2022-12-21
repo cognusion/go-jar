@@ -3,6 +3,7 @@ package tus
 import (
 	"github.com/tus/tusd/pkg/filestore"
 	tusd "github.com/tus/tusd/pkg/handler"
+	"github.com/tus/tusd/pkg/memorylocker"
 	"github.com/tus/tusd/pkg/s3store"
 
 	"io"
@@ -41,14 +42,6 @@ func (t *TUS) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	t.handler.ServeHTTP(w, r)
 }
 
-// jarTUSDataStore is a rage interface because tusd.DataStore doesn't require
-// UseIn, although it's implemented universally and not doing so means major
-// implmentation friction. JAR requires DataStores to implment it. Period.
-type jarTUSDataStore interface {
-	tusd.DataStore
-	UseIn(composer *tusd.StoreComposer)
-}
-
 // NewTUS returns an initialized TUS for targetURIs of `file://`.
 // basePath should be the URI base.
 func NewTUS(targetURI, basePath string) (*TUS, error) {
@@ -62,29 +55,28 @@ func NewTUSwithS3(targetURI, basePath string, s3api s3store.S3API) (*TUS, error)
 }
 
 func newTUS(targetURI, basePath string, s3api s3store.S3API) (*TUS, error) {
-	var (
-		store jarTUSDataStore
-	)
+
+	composer := tusd.NewStoreComposer()
 
 	// Check the prefix
 	if strings.HasPrefix(strings.ToLower(targetURI), "s3://") {
 		// Handle S3
 		trimTargetURI := strings.TrimPrefix(targetURI, "s3://")
 		DebugOut.Printf("NewTUSwithS3: %s -> %s\n", basePath, trimTargetURI)
-		store = s3store.New(targetURI, s3api)
+		store := s3store.New(trimTargetURI, s3api)
+		store.UseIn(composer)
 
+		locker := memorylocker.New()
+		locker.UseIn(composer)
 	} else if strings.HasPrefix(strings.ToLower(targetURI), "file://") {
 		// Handle local file
 		trimTargetURI := strings.TrimPrefix(targetURI, "file://")
 		DebugOut.Printf("NewTUS: %s -> %s\n", basePath, trimTargetURI)
-		store = filestore.New(trimTargetURI)
-
+		store := filestore.New(trimTargetURI)
+		store.UseIn(composer)
 	} else {
 		return nil, ErrBadTargetPrefix
 	}
-
-	composer := tusd.NewStoreComposer()
-	store.UseIn(composer)
 
 	tConfig := tusd.Config{
 		BasePath:           basePath,
