@@ -105,6 +105,11 @@ func InitAWS(awsRegion, awsAccessKey, awsSecretKey string) (*session.Session, er
 	return session.NewSession(config)
 }
 
+// S3Client returns a raw S3 client from the current session
+func (s *Session) S3Client() *s3.S3 {
+	return s3.New(s.AWS)
+}
+
 // BucketToFile copies a file from an S3 bucket to a local file
 func (s *Session) BucketToFile(bucket, bucketPath, filename string) (size int64, err error) {
 	// Timings

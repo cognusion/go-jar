@@ -25,6 +25,7 @@
   * [func (s *Session) BucketUploadWithContext(ctx context.Context, bucket, bucketPath string, file io.Reader) error](#Session.BucketUploadWithContext)
   * [func (s *Session) GetInstanceAZByIP(ip string) (string, error)](#Session.GetInstanceAZByIP)
   * [func (s *Session) GetInstancesAZByIP(ips []*string) (*map[string]string, error)](#Session.GetInstancesAZByIP)
+  * [func (s *Session) S3Client() *s3.S3](#Session.S3Client)
 
 
 #### <a name="pkg-files">Package files</a>
@@ -43,7 +44,7 @@ var (
 ```
 
 
-## <a name="GetAwsRegion">func</a> [GetAwsRegion](https://github.com/cognusion/go-jar/tree/master/aws/aws.go?s=7469:7504#L276)
+## <a name="GetAwsRegion">func</a> [GetAwsRegion](https://github.com/cognusion/go-jar/tree/master/aws/aws.go?s=7593:7628#L281)
 ``` go
 func GetAwsRegion() (region string)
 ```
@@ -53,7 +54,7 @@ then falling back EC2 metadata calls
 
 
 
-## <a name="GetAwsRegionE">func</a> [GetAwsRegionE](https://github.com/cognusion/go-jar/tree/master/aws/aws.go?s=7708:7755#L284)
+## <a name="GetAwsRegionE">func</a> [GetAwsRegionE](https://github.com/cognusion/go-jar/tree/master/aws/aws.go?s=7832:7879#L289)
 ``` go
 func GetAwsRegionE() (region string, err error)
 ```
@@ -75,7 +76,7 @@ instance, then it will use the local IAM role
 
 
 
-## <a name="S3urlToParts">func</a> [S3urlToParts](https://github.com/cognusion/go-jar/tree/master/aws/aws.go?s=8106:8171#L300)
+## <a name="S3urlToParts">func</a> [S3urlToParts](https://github.com/cognusion/go-jar/tree/master/aws/aws.go?s=8230:8295#L305)
 ``` go
 func S3urlToParts(url string) (bucket, filePath, filename string)
 ```
@@ -111,7 +112,7 @@ NewSession returns a Session or an error. If `ec2` is false, `Session.Me` will b
 
 
 
-### <a name="Session.BucketToFile">func</a> (\*Session) [BucketToFile](https://github.com/cognusion/go-jar/tree/master/aws/aws.go?s=2819:2910#L109)
+### <a name="Session.BucketToFile">func</a> (\*Session) [BucketToFile](https://github.com/cognusion/go-jar/tree/master/aws/aws.go?s=2943:3034#L114)
 ``` go
 func (s *Session) BucketToFile(bucket, bucketPath, filename string) (size int64, err error)
 ```
@@ -120,7 +121,7 @@ BucketToFile copies a file from an S3 bucket to a local file
 
 
 
-### <a name="Session.BucketToWriter">func</a> (\*Session) [BucketToWriter](https://github.com/cognusion/go-jar/tree/master/aws/aws.go?s=3472:3570#L133)
+### <a name="Session.BucketToWriter">func</a> (\*Session) [BucketToWriter](https://github.com/cognusion/go-jar/tree/master/aws/aws.go?s=3596:3694#L138)
 ``` go
 func (s *Session) BucketToWriter(bucket, bucketPath string, out io.Writer) (size int64, err error)
 ```
@@ -129,7 +130,7 @@ BucketToWriter copies a file from an S3 bucket to a Writer
 
 
 
-### <a name="Session.BucketToWriterWithContext">func</a> (\*Session) [BucketToWriterWithContext](https://github.com/cognusion/go-jar/tree/master/aws/aws.go?s=3732:3862#L138)
+### <a name="Session.BucketToWriterWithContext">func</a> (\*Session) [BucketToWriterWithContext](https://github.com/cognusion/go-jar/tree/master/aws/aws.go?s=3856:3986#L143)
 ``` go
 func (s *Session) BucketToWriterWithContext(ctx context.Context, bucket, bucketPath string, out io.Writer) (size int64, err error)
 ```
@@ -138,7 +139,7 @@ BucketToWriterWithContext copies a file from an S3 bucket to a Writer
 
 
 
-### <a name="Session.BucketUpload">func</a> (\*Session) [BucketUpload](https://github.com/cognusion/go-jar/tree/master/aws/aws.go?s=4367:4446#L157)
+### <a name="Session.BucketUpload">func</a> (\*Session) [BucketUpload](https://github.com/cognusion/go-jar/tree/master/aws/aws.go?s=4491:4570#L162)
 ``` go
 func (s *Session) BucketUpload(bucket, bucketPath string, file io.Reader) error
 ```
@@ -147,7 +148,7 @@ BucketUpload uploads the file to the bucket/bucketPath
 
 
 
-### <a name="Session.BucketUploadWithContext">func</a> (\*Session) [BucketUploadWithContext](https://github.com/cognusion/go-jar/tree/master/aws/aws.go?s=4631:4742#L162)
+### <a name="Session.BucketUploadWithContext">func</a> (\*Session) [BucketUploadWithContext](https://github.com/cognusion/go-jar/tree/master/aws/aws.go?s=4755:4866#L167)
 ``` go
 func (s *Session) BucketUploadWithContext(ctx context.Context, bucket, bucketPath string, file io.Reader) error
 ```
@@ -156,7 +157,7 @@ BucketUploadWithContext uploads the file to the bucket/bucketPath, with the spec
 
 
 
-### <a name="Session.GetInstanceAZByIP">func</a> (\*Session) [GetInstanceAZByIP](https://github.com/cognusion/go-jar/tree/master/aws/aws.go?s=5650:5712#L188)
+### <a name="Session.GetInstanceAZByIP">func</a> (\*Session) [GetInstanceAZByIP](https://github.com/cognusion/go-jar/tree/master/aws/aws.go?s=5774:5836#L193)
 ``` go
 func (s *Session) GetInstanceAZByIP(ip string) (string, error)
 ```
@@ -165,11 +166,20 @@ GetInstanceAZByIP returns an Availability Zone or an error
 
 
 
-### <a name="Session.GetInstancesAZByIP">func</a> (\*Session) [GetInstancesAZByIP](https://github.com/cognusion/go-jar/tree/master/aws/aws.go?s=6400:6479#L224)
+### <a name="Session.GetInstancesAZByIP">func</a> (\*Session) [GetInstancesAZByIP](https://github.com/cognusion/go-jar/tree/master/aws/aws.go?s=6524:6603#L229)
 ``` go
 func (s *Session) GetInstancesAZByIP(ips []*string) (*map[string]string, error)
 ```
 GetInstancesAZByIP returns a map of IPs to Availability Zones or an error
+
+
+
+
+### <a name="Session.S3Client">func</a> (\*Session) [S3Client](https://github.com/cognusion/go-jar/tree/master/aws/aws.go?s=2816:2851#L109)
+``` go
+func (s *Session) S3Client() *s3.S3
+```
+S3Client returns a raw S3 client from the current session
 
 
 
