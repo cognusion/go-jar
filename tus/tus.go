@@ -14,8 +14,6 @@ import (
 const (
 	// ErrBadTargetPrefix is returned by HandleFinisher if the requested TUS targetURL prefix does not exist
 	ErrBadTargetPrefix = Error("requested targetURI prefix is not valid")
-	// ErrUnimplemented is returned by the default CallBack in the even callbacks were enabled but a callback handler wasn't
-	ErrUnimplemented = Error("unimplemented")
 )
 
 var (
@@ -33,15 +31,8 @@ func (e Error) Error() string {
 
 // TUS is a Finisher implementing the tus.io Open Protocol for Resumable Uploads
 type TUS struct {
-	targetURI string
-	basePath  string
-	handler   *tusd.Handler
-	config    *tusd.Config
-	CallBack  func(tusd.HookEvent) error
-}
-
-func (t *TUS) defaultCallBack(e tusd.HookEvent) error {
-	return ErrUnimplemented
+	handler *tusd.Handler
+	config  *tusd.Config
 }
 
 func (t *TUS) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -78,6 +69,8 @@ func newTUS(targetURI, basePath string, s3api s3store.S3API) (*TUS, error) {
 	// Check the prefix
 	if strings.HasPrefix(strings.ToLower(targetURI), "s3://") {
 		// Handle S3
+		trimTargetURI := strings.TrimPrefix(targetURI, "s3://")
+		DebugOut.Printf("NewTUSwithS3: %s -> %s\n", basePath, trimTargetURI)
 		store = s3store.New(targetURI, s3api)
 
 	} else if strings.HasPrefix(strings.ToLower(targetURI), "file://") {
@@ -94,10 +87,9 @@ func newTUS(targetURI, basePath string, s3api s3store.S3API) (*TUS, error) {
 	store.UseIn(composer)
 
 	tConfig := tusd.Config{
-		BasePath:      basePath,
-		StoreComposer: composer,
-		Logger:        DebugOut,
-		//NotifyCompleteUploads: false, // TODO
+		BasePath:           basePath,
+		StoreComposer:      composer,
+		Logger:             DebugOut,
 		DisableDownload:    true, // TODO
 		DisableTermination: true, // TODO
 	}
@@ -107,13 +99,9 @@ func newTUS(targetURI, basePath string, s3api s3store.S3API) (*TUS, error) {
 		return nil, err
 	}
 
-	var t TUS
-	t = TUS{
-		targetURI: targetURI,
-		basePath:  basePath,
-		handler:   handler,
-		config:    &tConfig,
-		CallBack:  t.defaultCallBack,
+	var t = TUS{
+		handler: handler,
+		config:  &tConfig,
 	}
 	return &t, nil
 }

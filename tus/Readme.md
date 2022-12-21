@@ -30,8 +30,6 @@
 const (
     // ErrBadTargetPrefix is returned by HandleFinisher if the requested TUS targetURL prefix does not exist
     ErrBadTargetPrefix = Error("requested targetURI prefix is not valid")
-    // ErrUnimplemented is returned by the default CallBack in the even callbacks were enabled but a callback handler wasn't
-    ErrUnimplemented = Error("unimplemented")
 )
 ```
 
@@ -45,7 +43,7 @@ var (
 
 
 
-## <a name="Error">type</a> [Error](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=657:674#L27)
+## <a name="Error">type</a> [Error](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=492:509#L25)
 ``` go
 type Error string
 ```
@@ -60,7 +58,7 @@ Error is an error type
 
 
 
-### <a name="Error.Error">func</a> (Error) [Error](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=726:755#L30)
+### <a name="Error.Error">func</a> (Error) [Error](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=561:590#L28)
 ``` go
 func (e Error) Error() string
 ```
@@ -69,10 +67,9 @@ Error returns the stringified version of Error
 
 
 
-## <a name="TUS">type</a> [TUS](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=860:1002#L35)
+## <a name="TUS">type</a> [TUS](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=695:759#L33)
 ``` go
 type TUS struct {
-    CallBack func(tusd.HookEvent) error
     // contains filtered or unexported fields
 }
 
@@ -85,7 +82,7 @@ TUS is a Finisher implementing the tus.io Open Protocol for Resumable Uploads
 
 
 
-### <a name="NewTUS">func</a> [NewTUS](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=1672:1725#L63)
+### <a name="NewTUS">func</a> [NewTUS](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=1345:1398#L54)
 ``` go
 func NewTUS(targetURI, basePath string) (*TUS, error)
 ```
@@ -93,7 +90,7 @@ NewTUS returns an initialized TUS for targetURIs of `file://`.
 basePath should be the URI base.
 
 
-### <a name="NewTUSwithS3">func</a> [NewTUSwithS3](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=1904:1984#L69)
+### <a name="NewTUSwithS3">func</a> [NewTUSwithS3](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=1577:1657#L60)
 ``` go
 func NewTUSwithS3(targetURI, basePath string, s3api s3store.S3API) (*TUS, error)
 ```
@@ -104,7 +101,7 @@ s3api should be an s3.S3. basePath should be the URI base.
 
 
 
-### <a name="TUS.ServeHTTP">func</a> (\*TUS) [ServeHTTP](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=1088:1151#L47)
+### <a name="TUS.ServeHTTP">func</a> (\*TUS) [ServeHTTP](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=761:824#L38)
 ``` go
 func (t *TUS) ServeHTTP(w http.ResponseWriter, r *http.Request)
 ```
