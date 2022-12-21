@@ -17,6 +17,7 @@
   * [func (e Error) Error() string](#Error.Error)
 * [type TUS](#TUS)
   * [func NewTUS(targetURI, basePath string) (*TUS, error)](#NewTUS)
+  * [func NewTUSwithS3(targetURI, basePath string, s3api s3store.S3API) (*TUS, error)](#NewTUSwithS3)
   * [func (t *TUS) ServeHTTP(w http.ResponseWriter, r *http.Request)](#TUS.ServeHTTP)
 
 
@@ -84,12 +85,20 @@ TUS is a Finisher implementing the tus.io Open Protocol for Resumable Uploads
 
 
 
-### <a name="NewTUS">func</a> [NewTUS](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=1711:1764#L62)
+### <a name="NewTUS">func</a> [NewTUS](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=1672:1725#L63)
 ``` go
 func NewTUS(targetURI, basePath string) (*TUS, error)
 ```
-NewTUS returns an initialized TUS, or an error if targetURI is not one of “s3://“ or “file://“ or
-the target itself is a problem. basePath should be the URI base.
+NewTUS returns an initialized TUS for targetURIs of `file://`.
+basePath should be the URI base.
+
+
+### <a name="NewTUSwithS3">func</a> [NewTUSwithS3](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=1904:1984#L69)
+``` go
+func NewTUSwithS3(targetURI, basePath string, s3api s3store.S3API) (*TUS, error)
+```
+NewTUSwithS3 returns an initialized TUS for targetURIs of `s3://`.
+s3api should be an s3.S3. basePath should be the URI base.
 
 
 

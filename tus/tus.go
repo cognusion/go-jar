@@ -58,10 +58,19 @@ type jarTUSDataStore interface {
 	UseIn(composer *tusd.StoreComposer)
 }
 
-// NewTUS returns an initialized TUS, or an error if targetURI is not one of “s3://“ or “file://“ or
-// the target itself is a problem. basePath should be the URI base.
+// NewTUS returns an initialized TUS for targetURIs of `file://`.
+// basePath should be the URI base.
 func NewTUS(targetURI, basePath string) (*TUS, error) {
+	return newTUS(targetURI, basePath, nil)
+}
 
+// NewTUSwithS3 returns an initialized TUS for targetURIs of `s3://`.
+// s3api should be an s3.S3. basePath should be the URI base.
+func NewTUSwithS3(targetURI, basePath string, s3api s3store.S3API) (*TUS, error) {
+	return newTUS(targetURI, basePath, s3api)
+}
+
+func newTUS(targetURI, basePath string, s3api s3store.S3API) (*TUS, error) {
 	var (
 		store jarTUSDataStore
 	)
@@ -69,7 +78,7 @@ func NewTUS(targetURI, basePath string) (*TUS, error) {
 	// Check the prefix
 	if strings.HasPrefix(strings.ToLower(targetURI), "s3://") {
 		// Handle S3
-		store = s3store.New(targetURI, nil)
+		store = s3store.New(targetURI, s3api)
 
 	} else if strings.HasPrefix(strings.ToLower(targetURI), "file://") {
 		// Handle local file
