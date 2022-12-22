@@ -278,7 +278,7 @@ func bootstrap() (done bool, servers []*http.Server) {
 			err          error
 		)
 
-		DebugOut.Printf("AWS Setup: Region: %s AccessKey: %s SecretKey: %s EC2: %t\n", awsRegion, awsAccessKey, awsSecretKey[:3], ec2)
+		DebugOut.Printf("AWS Setup: Region: %s AccessKey: %s SecretKey: hahaha EC2: %t\n", awsRegion, awsAccessKey, ec2)
 		AWSSession, err = aws.NewSession(awsRegion, awsAccessKey, awsSecretKey, ec2)
 		if err != nil {
 			panic(fmt.Errorf("error intializing AWS session: '%w'", err))
