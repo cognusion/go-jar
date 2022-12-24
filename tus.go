@@ -16,8 +16,9 @@ import (
 
 // Constants for configuration key strings and Errors
 const (
-	ConfigTUSTargetURI     = ConfigKey("tus.targeturi")
-	ErrTUSTargetURIMissing = Error("tus.targeturi missing from path options")
+	ConfigTUSTargetURI       = ConfigKey("tus.targeturi")
+	ConfigTUSAppendExtension = ConfigKey("tus.appendextension")
+	ErrTUSTargetURIMissing   = Error("tus.targeturi missing from path options")
 )
 
 func init() {
@@ -34,10 +35,10 @@ func init() {
 			return nil, ErrTUSTargetURIMissing
 		} else if strings.HasPrefix(strings.ToLower(targetURI), "s3://") {
 			// S3 target
-			t, err = tus.NewTUSwithS3(targetURI, p.Path, AWSSession.S3Client())
+			t, err = tus.New(p.Path, tus.Config{TargetURI: targetURI, S3Client: AWSSession.S3Client()})
 		} else if strings.HasPrefix(strings.ToLower(targetURI), "file://") {
 			// File target
-			t, err = tus.NewTUS(targetURI, p.Path)
+			t, err = tus.New(p.Path, tus.Config{TargetURI: targetURI})
 		} else {
 			// Bad prefix
 			err = tus.ErrBadTargetPrefix

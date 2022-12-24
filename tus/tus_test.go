@@ -21,7 +21,7 @@ func TestTUS(t *testing.T) {
 	Convey("When a TUS is created with an unsupported target prefix, the appropriate error is returned", t, func() {
 
 		tfile := fmt.Sprintf("crap://%s/tustest.fil", "")
-		tus, err := NewTUS(tfile, "/")
+		tus, err := New("/", Config{TargetURI: tfile})
 		So(err, ShouldEqual, ErrBadTargetPrefix)
 		So(tus, ShouldBeNil)
 	})
@@ -36,7 +36,7 @@ func TestTUS(t *testing.T) {
 
 		tfile := fmt.Sprintf("file://%s/", tdir)
 
-		tus, err := NewTUS(tfile, "/tus/")
+		tus, err := New("/tus/", Config{TargetURI: tfile})
 		So(err, ShouldBeNil)
 		srv := httptest.NewServer(http.StripPrefix("/tus/", tus))
 		defer srv.Close()

@@ -13,16 +13,16 @@
 ## <a name="pkg-index">Index</a>
 * [Constants](#pkg-constants)
 * [Variables](#pkg-variables)
+* [type Config](#Config)
 * [type Error](#Error)
   * [func (e Error) Error() string](#Error.Error)
 * [type TUS](#TUS)
-  * [func NewTUS(targetURI, basePath string) (*TUS, error)](#NewTUS)
-  * [func NewTUSwithS3(targetURI, basePath string, s3api s3store.S3API) (*TUS, error)](#NewTUSwithS3)
+  * [func New(basePath string, config Config) (*TUS, error)](#New)
   * [func (t *TUS) ServeHTTP(w http.ResponseWriter, r *http.Request)](#TUS.ServeHTTP)
 
 
 #### <a name="pkg-files">Package files</a>
-[tus.go](https://github.com/cognusion/go-jar/tree/master/tus/tus.go)
+[config.go](https://github.com/cognusion/go-jar/tree/master/tus/config.go) [tus.go](https://github.com/cognusion/go-jar/tree/master/tus/tus.go)
 
 
 ## <a name="pkg-constants">Constants</a>
@@ -40,6 +40,30 @@ var (
     DebugOut = log.New(io.Discard, "[DEBUG] ", 0)
 )
 ```
+
+
+
+## <a name="Config">type</a> [Config](https://github.com/cognusion/go-jar/tree/master/tus/config.go?s=110:473#L6)
+``` go
+type Config struct {
+    // TargetURI is a `file://` or `s3://` URI to designate where the upload should go
+    TargetURI string
+    // AppendExtension renames (COPY,DELETE) the file after upload. This can result in
+    // increased costs for paid storage services
+    AppendExtension bool
+    // S3Client is an s3.S3 to be used if TargetURI is an `s3://`
+    S3Client s3store.S3API
+}
+
+```
+Config encapsulates various options passable to New
+
+
+
+
+
+
+
 
 
 
@@ -82,20 +106,11 @@ TUS is a Finisher implementing the tus.io Open Protocol for Resumable Uploads
 
 
 
-### <a name="NewTUS">func</a> [NewTUS](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=1066:1119#L47)
+### <a name="New">func</a> [New](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=998:1052#L46)
 ``` go
-func NewTUS(targetURI, basePath string) (*TUS, error)
+func New(basePath string, config Config) (*TUS, error)
 ```
-NewTUS returns an initialized TUS for targetURIs of `file://`.
-basePath should be the URI base.
-
-
-### <a name="NewTUSwithS3">func</a> [NewTUSwithS3](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=1298:1378#L53)
-``` go
-func NewTUSwithS3(targetURI, basePath string, s3api s3store.S3API) (*TUS, error)
-```
-NewTUSwithS3 returns an initialized TUS for targetURIs of `s3://`.
-s3api should be an s3.S3. basePath should be the URI base.
+New returns an initialized TUS
 
 
 
