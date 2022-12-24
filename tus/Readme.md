@@ -38,21 +38,23 @@ const (
 var (
     // DebugOut is a log.Logger for debug messages
     DebugOut = log.New(io.Discard, "[DEBUG] ", 0)
+    // ErrorOut is a log.Logger for error messages
+    ErrorOut = log.New(io.Discard, "[ERROR] ", 0)
 )
 ```
 
 
 
-## <a name="Config">type</a> [Config](https://github.com/cognusion/go-jar/tree/master/tus/config.go?s=110:473#L6)
+## <a name="Config">type</a> [Config](https://github.com/cognusion/go-jar/tree/master/tus/config.go?s=115:495#L6)
 ``` go
 type Config struct {
     // TargetURI is a `file://` or `s3://` URI to designate where the upload should go
     TargetURI string
-    // AppendExtension renames (COPY,DELETE) the file after upload. This can result in
+    // AppendFilename renames (COPY,DELETE) the file after upload to append `-filename.ext`. This can result in
     // increased costs for paid storage services
-    AppendExtension bool
+    AppendFilename bool
     // S3Client is an s3.S3 to be used if TargetURI is an `s3://`
-    S3Client s3store.S3API
+    S3Client *s3.S3
 }
 
 ```
@@ -67,7 +69,7 @@ Config encapsulates various options passable to New
 
 
 
-## <a name="Error">type</a> [Error](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=532:549#L26)
+## <a name="Error">type</a> [Error](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=755:772#L36)
 ``` go
 type Error string
 ```
@@ -82,7 +84,7 @@ Error is an error type
 
 
 
-### <a name="Error.Error">func</a> (Error) [Error](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=601:630#L29)
+### <a name="Error.Error">func</a> (Error) [Error](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=824:853#L39)
 ``` go
 func (e Error) Error() string
 ```
@@ -91,7 +93,7 @@ Error returns the stringified version of Error
 
 
 
-## <a name="TUS">type</a> [TUS](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=735:799#L34)
+## <a name="TUS">type</a> [TUS](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=958:1038#L44)
 ``` go
 type TUS struct {
     // contains filtered or unexported fields
@@ -106,17 +108,18 @@ TUS is a Finisher implementing the tus.io Open Protocol for Resumable Uploads
 
 
 
-### <a name="New">func</a> [New](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=998:1052#L46)
+### <a name="New">func</a> [New](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=1158:1212#L52)
 ``` go
 func New(basePath string, config Config) (*TUS, error)
 ```
-New returns an initialized TUS
+New returns an initialized TUS. **WARNING:** Do not set `Config.S3Client`
+unless you're using S3 as the target.
 
 
 
 
 
-### <a name="TUS.ServeHTTP">func</a> (\*TUS) [ServeHTTP](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=801:864#L39)
+### <a name="TUS.ServeHTTP">func</a> (\*TUS) [ServeHTTP](https://github.com/cognusion/go-jar/tree/master/tus/tus.go?s=2613:2676#L112)
 ``` go
 func (t *TUS) ServeHTTP(w http.ResponseWriter, r *http.Request)
 ```

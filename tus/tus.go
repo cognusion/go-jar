@@ -1,14 +1,19 @@
 package tus
 
 import (
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/s3"
+
 	"github.com/tus/tusd/pkg/filestore"
 	tusd "github.com/tus/tusd/pkg/handler"
 	"github.com/tus/tusd/pkg/memorylocker"
 	"github.com/tus/tusd/pkg/s3store"
 
+	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -20,6 +25,10 @@ const (
 var (
 	// DebugOut is a log.Logger for debug messages
 	DebugOut = log.New(io.Discard, "[DEBUG] ", 0)
+	// ErrorOut is a log.Logger for error messages
+	ErrorOut = log.New(io.Discard, "[ERROR] ", 0)
+
+	bofcACL = "bucket-owner-full-control"
 )
 
 // Error is an error type
@@ -34,15 +43,11 @@ func (e Error) Error() string {
 type TUS struct {
 	handler *tusd.Handler
 	config  *tusd.Config
+	s3      *s3.S3
 }
 
-func (t *TUS) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// Pass the request on to TUS
-	DebugOut.Println("TUS Handler...")
-	t.handler.ServeHTTP(w, r)
-}
-
-// New returns an initialized TUS
+// New returns an initialized TUS. **WARNING:** Do not set `Config.S3Client`
+// unless you're using S3 as the target.
 func New(basePath string, config Config) (*TUS, error) {
 
 	composer := tusd.NewStoreComposer()
@@ -51,7 +56,7 @@ func New(basePath string, config Config) (*TUS, error) {
 	if strings.HasPrefix(strings.ToLower(config.TargetURI), "s3://") {
 		// Handle S3
 		trimTargetURI := strings.TrimPrefix(config.TargetURI, "s3://")
-		DebugOut.Printf("NewTUSwithS3: %s -> %s\n", basePath, trimTargetURI)
+		DebugOut.Printf("NewTUS S3: %s -> %s\n", basePath, trimTargetURI)
 		store := s3store.New(trimTargetURI, config.S3Client)
 		store.UseIn(composer)
 
@@ -60,7 +65,7 @@ func New(basePath string, config Config) (*TUS, error) {
 	} else if strings.HasPrefix(strings.ToLower(config.TargetURI), "file://") {
 		// Handle local file
 		trimTargetURI := strings.TrimPrefix(config.TargetURI, "file://")
-		DebugOut.Printf("NewTUS: %s -> %s\n", basePath, trimTargetURI)
+		DebugOut.Printf("NewTUS File: %s -> %s\n", basePath, trimTargetURI)
 		store := filestore.New(trimTargetURI)
 		store.UseIn(composer)
 	} else {
@@ -74,7 +79,7 @@ func New(basePath string, config Config) (*TUS, error) {
 		DisableDownload:    true, // TODO
 		DisableTermination: true, // TODO
 	}
-	if config.AppendExtension {
+	if config.AppendFilename {
 		tConfig.NotifyCompleteUploads = true
 	}
 
@@ -83,21 +88,88 @@ func New(basePath string, config Config) (*TUS, error) {
 		return nil, err
 	}
 
-	if config.AppendExtension {
-		go func() {
-			for {
-				event := <-handler.CompleteUploads
-				if event.Upload.IsFinal {
-					// TODO: This is clearly not working
-					DebugOut.Printf("TUS Upload of %s finished: %s/%s\n", event.Upload.MetaData["filename"], event.Upload.Storage["Bucket"], event.Upload.Storage["Key"])
-				}
-			}
-		}()
-	}
-
 	var t = TUS{
 		handler: handler,
 		config:  &tConfig,
+		s3:      config.S3Client,
 	}
+
+	if config.AppendFilename {
+		DebugOut.Println("TUS appending filenames")
+		if t.s3 != nil {
+			// S3
+			go t.eventHandlerS3()
+		} else {
+			// File
+			go t.eventHandlerFile()
+		}
+	}
+
 	return &t, nil
+}
+
+func (t *TUS) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// Pass the request on to TUS
+	DebugOut.Println("TUS Handler...")
+	t.handler.ServeHTTP(w, r)
+}
+
+func (t *TUS) eventHandlerS3() {
+	defer DebugOut.Println("TUS eventHandler exiting...")
+	for {
+		event := <-t.handler.CompleteUploads
+		if event.Upload.IsFinal || !event.Upload.IsPartial {
+			DebugOut.Printf("TUS Upload of %s finished: %s/%s\n", event.Upload.MetaData["filename"], event.Upload.Storage["Bucket"], event.Upload.Storage["Key"])
+			err := t.rename(event.Upload.Storage["Bucket"], event.Upload.Storage["Key"], fmt.Sprintf("%s-%s", event.Upload.Storage["Key"], event.Upload.MetaData["filename"]))
+			if err != nil {
+				ErrorOut.Printf("TUS Rename error %+v : %+v\n", err, event)
+			}
+		}
+	}
+}
+
+func (t *TUS) eventHandlerFile() {
+	defer DebugOut.Println("TUS eventHandler exiting...")
+	for {
+		event := <-t.handler.CompleteUploads
+		if event.Upload.IsFinal || !event.Upload.IsPartial {
+			// File
+			DebugOut.Printf("TUS Upload of %s finished: %s\n", event.Upload.MetaData["filename"], event.Upload.Storage["Path"])
+			err := t.rename("", event.Upload.Storage["Path"], fmt.Sprintf("%s-%s", event.Upload.Storage["Path"], event.Upload.MetaData["filename"]))
+			if err != nil {
+				ErrorOut.Printf("TUS Rename error %+v : %+v\n", err, event)
+			}
+		}
+	}
+}
+
+// rename is a copy followed by a delete
+func (t *TUS) rename(bucket, old, new string) error {
+
+	if t.s3 != nil {
+		// S3
+		cpCfg := s3.CopyObjectInput{
+			ACL:        aws.String(bofcACL),
+			Bucket:     aws.String(bucket),
+			CopySource: aws.String(fmt.Sprintf("%s/%s", bucket, old)),
+			Key:        aws.String(new),
+		}
+
+		delCfg := s3.DeleteObjectInput{
+			Bucket: aws.String(bucket),
+			Key:    aws.String(old),
+		}
+
+		if _, err := t.s3.CopyObject(&cpCfg); err != nil {
+			return err
+		} else if _, err = t.s3.DeleteObject(&delCfg); err != nil {
+			return err
+		}
+	} else {
+		// File
+		if err := os.Rename(old, new); err != nil {
+			return err
+		}
+	}
+	return nil
 }
