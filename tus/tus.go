@@ -42,35 +42,24 @@ func (t *TUS) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	t.handler.ServeHTTP(w, r)
 }
 
-// NewTUS returns an initialized TUS for targetURIs of `file://`.
-// basePath should be the URI base.
-func NewTUS(targetURI, basePath string) (*TUS, error) {
-	return newTUS(targetURI, basePath, nil)
-}
-
-// NewTUSwithS3 returns an initialized TUS for targetURIs of `s3://`.
-// s3api should be an s3.S3. basePath should be the URI base.
-func NewTUSwithS3(targetURI, basePath string, s3api s3store.S3API) (*TUS, error) {
-	return newTUS(targetURI, basePath, s3api)
-}
-
-func newTUS(targetURI, basePath string, s3api s3store.S3API) (*TUS, error) {
+// New returns an initialized TUS
+func New(basePath string, config Config) (*TUS, error) {
 
 	composer := tusd.NewStoreComposer()
 
 	// Check the prefix
-	if strings.HasPrefix(strings.ToLower(targetURI), "s3://") {
+	if strings.HasPrefix(strings.ToLower(config.TargetURI), "s3://") {
 		// Handle S3
-		trimTargetURI := strings.TrimPrefix(targetURI, "s3://")
+		trimTargetURI := strings.TrimPrefix(config.TargetURI, "s3://")
 		DebugOut.Printf("NewTUSwithS3: %s -> %s\n", basePath, trimTargetURI)
-		store := s3store.New(trimTargetURI, s3api)
+		store := s3store.New(trimTargetURI, config.S3Client)
 		store.UseIn(composer)
 
 		locker := memorylocker.New()
 		locker.UseIn(composer)
-	} else if strings.HasPrefix(strings.ToLower(targetURI), "file://") {
+	} else if strings.HasPrefix(strings.ToLower(config.TargetURI), "file://") {
 		// Handle local file
-		trimTargetURI := strings.TrimPrefix(targetURI, "file://")
+		trimTargetURI := strings.TrimPrefix(config.TargetURI, "file://")
 		DebugOut.Printf("NewTUS: %s -> %s\n", basePath, trimTargetURI)
 		store := filestore.New(trimTargetURI)
 		store.UseIn(composer)
@@ -85,10 +74,25 @@ func newTUS(targetURI, basePath string, s3api s3store.S3API) (*TUS, error) {
 		DisableDownload:    true, // TODO
 		DisableTermination: true, // TODO
 	}
+	if config.AppendExtension {
+		tConfig.NotifyCompleteUploads = true
+	}
 
 	handler, err := tusd.NewHandler(tConfig)
 	if err != nil {
 		return nil, err
+	}
+
+	if config.AppendExtension {
+		go func() {
+			for {
+				event := <-handler.CompleteUploads
+				if event.Upload.IsFinal {
+					// TODO: This is clearly not working
+					DebugOut.Printf("TUS Upload of %s finished: %s/%s\n", event.Upload.MetaData["filename"], event.Upload.Storage["Bucket"], event.Upload.Storage["Key"])
+				}
+			}
+		}()
 	}
 
 	var t = TUS{
