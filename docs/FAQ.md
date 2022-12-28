@@ -22,7 +22,7 @@ In general, if the Path is going to end, you want a Finisher, if it's going to b
 
 ## Q: Handler or Finisher?
 
-In general, if you're operating *on* a Request or a Response, versus serving the content of a Request, you want a Handler. Especially if you want something proxied, let a Pool do the heavy-lifting there, and write a Handler.
+In general, if you're operating *on* a Request or a Response, versus serving the *content* of a Request, you want a Handler. Especially if you want something proxied, let a Pool do the heavy-lifting there, and write a Handler.
 
 ## Q: Why do Handlers take an http.Handler and return an http.Handler, instead of just *be* an http.Handler?
 
@@ -120,33 +120,8 @@ If I, for example, call an option ``"somethingspeledright"`` and you get it wron
 
 ## Q: How do S3 Pools work?
 
-If a pool has a member of ``s3://bucket`` then the Pool type is automatically set to S3, and EC2 IAM profiles are used. This implies running on an EC2 instance, and that the instance profile allows at least read access to the specified bucket.
+If a pool has a member of ``s3://bucket`` then the Pool type is automatically set to S3, and EC2 IAM profiles are used. This implies having AWS credentials and/or an IAM instance profile set up to access said bucket.
 
 ## Q: How do websockets work?
 
 If a pool has a member of ``ws://host:port/path`` then the Pool type is automatically set to WS, and websockets should be properly proxied. Not all Handlers may be websocket-safe, however, so less is more.
-
-## Q: ZOMG JAR IS USING SO MUCH RAM?! WTF?!!
-
-Calm down. While it is possible there's an engineering defect, it's unlikely. The test batteries are pretty keen on finding goro leaks, and in a goro-heavy
-architecture like JAR, having a heap leak without a goro leak is gonna be pretty tough. More likely, this is a result of Go changing how it marks free memory. 
-
-### TL;DR
-
-Freed memory is marked as reclaimable, but puts no pressure on the kernel to *actually* free the memory. This can be switched to a different marking style, that fairly immediately reclaims memory. There's nothing wrong with leaving it as-is. JAR will continue to reuse the overallocated memory as-needed instead of requesting new pages, unless it actually needs new pages.
-
-If this is concerning, you can change how the Go runtime marks free memory by setting ``GODEBUG=madvdontneed=1`` before you run your Go application.
-
-### Why
-
-Many languages like to give off an air of being "memory efficient". What this means to most people is "use little memory", which from an engineering perspective means "free memory quickly and get the RSS size down, so someone staring at ``top`` won't freak out." *Actual* memory efficiency is to let the memory manager decide what to do and when, and not waste time requesting N pages when you just freed >=N pages a moment ago. That's hard to sell to someone staring at ``top``, however.
-
-#### DONTNEED
-
-When you advise the kernel that you "don't need" a range of memory, the memory manager wipes it from your allocation (RSS no longer reports the freed range) even though you can still write to it (and thus have it added back to your RSS) it until the memory manager *actually* reclaims the memory at some point in the future. This is the most universally-compatible memory "freeing" advice on fairly modern memory management systems. Go prior to 1.12 used **MADV_DONTNEED**.
-
-#### FREE
-
-When you advise the kernel that a range is "free", the memory manager doesn't do a damn thing until it decides it needs to reclaim memory. The "free" memory can absolutely be written to again until the memory manager *actually* reclaims the memory. Because this advisory is a noop under normal conditions, applications using it appear to bloat, as they will stay at peak allocation until the memory manager decides it needs more pages, and *then* goes and reclaims it (and *then* RSS no longer report the freed memory). Go 1.12 uses **MADV_FREE** on supporting systems.
-
-An interesting side effect of this, is it makes peak memory usage more apparent, as even a momentary need for a burst of memory will persist indefinitely on a healthy system, effectively showing a HWM for memory usage.
