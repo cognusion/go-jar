@@ -1063,7 +1063,7 @@ Please note that only root-level S3 buckets are supported at this time (no "fold
 
 #### tus.appendfilename: [true/false]
 
-If `true` will append the orginal filename to the target filename, e.g. `hash-filename.ext`. **NOTE:** for S3 this is a COPY, DELETE and will incur additional charges. Also, for S3 this operation is **limited to files < 5GB in size**, as there is extra work required to "copy" files larger than 5GB within S3, and we're not doing that right now.
+If `true` will append the original filename to the target filename, e.g. `hash-filename.ext`. **NOTE:** for S3 this is a COPY, DELETE and will incur additional charges. Also, for S3 this operation is **limited to files < 5GB in size**, as there is extra work required to "copy" files larger than 5GB within S3, and we're not doing that right now.
 
 ### Update
 
