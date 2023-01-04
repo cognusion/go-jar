@@ -157,6 +157,10 @@ Consumers will want to 'cd cmd/jard; go build; #enjoy'
   * [func (f *ForbiddenPaths) Handler(next http.Handler) http.Handler](#ForbiddenPaths.Handler)
 * [type GenericResponse](#GenericResponse)
   * [func (gr *GenericResponse) Finisher(w http.ResponseWriter, r *http.Request)](#GenericResponse.Finisher)
+* [type HMAC](#HMAC)
+  * [func NewHMAC(key, salt string, expiration time.Duration) *HMAC](#NewHMAC)
+  * [func (h *HMAC) Handler(next http.Handler) http.Handler](#HMAC.Handler)
+  * [func (h *HMAC) ServeHTTP(w http.ResponseWriter, req *http.Request)](#HMAC.ServeHTTP)
 * [type HTTPWork](#HTTPWork)
   * [func (h *HTTPWork) Return(rthing interface{})](#HTTPWork.Return)
   * [func (h *HTTPWork) Work() interface{}](#HTTPWork.Work)
@@ -189,6 +193,7 @@ Consumers will want to 'cd cmd/jard; go build; #enjoy'
 * [type PathOptions](#PathOptions)
   * [func (p *PathOptions) Get(key string) interface{}](#PathOptions.Get)
   * [func (p *PathOptions) GetBool(key string) bool](#PathOptions.GetBool)
+  * [func (p *PathOptions) GetDuration(key string) (time.Duration, error)](#PathOptions.GetDuration)
   * [func (p *PathOptions) GetString(key string) string](#PathOptions.GetString)
   * [func (p *PathOptions) GetStringSlice(key string) []string](#PathOptions.GetStringSlice)
 * [type PathReplacer](#PathReplacer)
@@ -257,7 +262,7 @@ Consumers will want to 'cd cmd/jard; go build; #enjoy'
 
 
 #### <a name="pkg-files">Package files</a>
-[a_common.go](https://github.com/cognusion/go-jar/tree/master/a_common.go) [access.go](https://github.com/cognusion/go-jar/tree/master/access.go) [basicauth.go](https://github.com/cognusion/go-jar/tree/master/basicauth.go) [compression.go](https://github.com/cognusion/go-jar/tree/master/compression.go) [config.go](https://github.com/cognusion/go-jar/tree/master/config.go) [cors.go](https://github.com/cognusion/go-jar/tree/master/cors.go) [crypto.go](https://github.com/cognusion/go-jar/tree/master/crypto.go) [debug.go](https://github.com/cognusion/go-jar/tree/master/debug.go) [errors.go](https://github.com/cognusion/go-jar/tree/master/errors.go) [finishers.go](https://github.com/cognusion/go-jar/tree/master/finishers.go) [handlers.go](https://github.com/cognusion/go-jar/tree/master/handlers.go) [health.go](https://github.com/cognusion/go-jar/tree/master/health.go) [healthprocess.go](https://github.com/cognusion/go-jar/tree/master/healthprocess.go) [helpers.go](https://github.com/cognusion/go-jar/tree/master/helpers.go) [log.go](https://github.com/cognusion/go-jar/tree/master/log.go) [macros.go](https://github.com/cognusion/go-jar/tree/master/macros.go) [paths.go](https://github.com/cognusion/go-jar/tree/master/paths.go) [pool.go](https://github.com/cognusion/go-jar/tree/master/pool.go) [pool_conhash.go](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go) [pool_sticky.go](https://github.com/cognusion/go-jar/tree/master/pool_sticky.go) [poolconfig.go](https://github.com/cognusion/go-jar/tree/master/poolconfig.go) [pools.go](https://github.com/cognusion/go-jar/tree/master/pools.go) [proxyresponsemodifier.go](https://github.com/cognusion/go-jar/tree/master/proxyresponsemodifier.go) [s3pool.go](https://github.com/cognusion/go-jar/tree/master/s3pool.go) [s3proxy.go](https://github.com/cognusion/go-jar/tree/master/s3proxy.go) [taskscheduler.go](https://github.com/cognusion/go-jar/tree/master/taskscheduler.go) [tus.go](https://github.com/cognusion/go-jar/tree/master/tus.go) [update.go](https://github.com/cognusion/go-jar/tree/master/update.go) [urlswitch.go](https://github.com/cognusion/go-jar/tree/master/urlswitch.go) [version.go](https://github.com/cognusion/go-jar/tree/master/version.go) [worker-http.go](https://github.com/cognusion/go-jar/tree/master/worker-http.go) [worker-zulip.go](https://github.com/cognusion/go-jar/tree/master/worker-zulip.go) [workers.go](https://github.com/cognusion/go-jar/tree/master/workers.go) [z_zMustBeLast.go](https://github.com/cognusion/go-jar/tree/master/z_zMustBeLast.go)
+[a_common.go](https://github.com/cognusion/go-jar/tree/master/a_common.go) [access.go](https://github.com/cognusion/go-jar/tree/master/access.go) [basicauth.go](https://github.com/cognusion/go-jar/tree/master/basicauth.go) [compression.go](https://github.com/cognusion/go-jar/tree/master/compression.go) [config.go](https://github.com/cognusion/go-jar/tree/master/config.go) [cors.go](https://github.com/cognusion/go-jar/tree/master/cors.go) [crypto.go](https://github.com/cognusion/go-jar/tree/master/crypto.go) [debug.go](https://github.com/cognusion/go-jar/tree/master/debug.go) [errors.go](https://github.com/cognusion/go-jar/tree/master/errors.go) [finishers.go](https://github.com/cognusion/go-jar/tree/master/finishers.go) [handlers.go](https://github.com/cognusion/go-jar/tree/master/handlers.go) [health.go](https://github.com/cognusion/go-jar/tree/master/health.go) [healthprocess.go](https://github.com/cognusion/go-jar/tree/master/healthprocess.go) [helpers.go](https://github.com/cognusion/go-jar/tree/master/helpers.go) [hmac.go](https://github.com/cognusion/go-jar/tree/master/hmac.go) [log.go](https://github.com/cognusion/go-jar/tree/master/log.go) [macros.go](https://github.com/cognusion/go-jar/tree/master/macros.go) [paths.go](https://github.com/cognusion/go-jar/tree/master/paths.go) [pool.go](https://github.com/cognusion/go-jar/tree/master/pool.go) [pool_conhash.go](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go) [pool_sticky.go](https://github.com/cognusion/go-jar/tree/master/pool_sticky.go) [poolconfig.go](https://github.com/cognusion/go-jar/tree/master/poolconfig.go) [pools.go](https://github.com/cognusion/go-jar/tree/master/pools.go) [proxyresponsemodifier.go](https://github.com/cognusion/go-jar/tree/master/proxyresponsemodifier.go) [s3pool.go](https://github.com/cognusion/go-jar/tree/master/s3pool.go) [s3proxy.go](https://github.com/cognusion/go-jar/tree/master/s3proxy.go) [taskscheduler.go](https://github.com/cognusion/go-jar/tree/master/taskscheduler.go) [tus.go](https://github.com/cognusion/go-jar/tree/master/tus.go) [update.go](https://github.com/cognusion/go-jar/tree/master/update.go) [urlswitch.go](https://github.com/cognusion/go-jar/tree/master/urlswitch.go) [version.go](https://github.com/cognusion/go-jar/tree/master/version.go) [worker-http.go](https://github.com/cognusion/go-jar/tree/master/worker-http.go) [worker-zulip.go](https://github.com/cognusion/go-jar/tree/master/worker-zulip.go) [workers.go](https://github.com/cognusion/go-jar/tree/master/workers.go) [z_zMustBeLast.go](https://github.com/cognusion/go-jar/tree/master/z_zMustBeLast.go)
 
 
 ## <a name="pkg-constants">Constants</a>
@@ -441,6 +446,16 @@ const (
 ```
 ``` go
 const (
+    ConfigHMACKey            = ConfigKey("hmac.key")             // String? Bytes? Base64encoded bytes?
+    ConfigHMACSalt           = ConfigKey("hmac.salt")            // String? Bytes? Base64encoded bytes? TODO: Make dynamic
+    ConfigHMACExpiration     = ConfigKey("hmac.expiration")      // Duration
+    ConfigHMACExpirationName = ConfigKey("hmac.expirationfield") // String. Default: "expiration"
+)
+```
+PathOptions for HMAC signing
+
+``` go
+const (
     ConfigCompression     = ConfigKey("compression")
     ConfigDisableRealAddr = ConfigKey("disablerealaddr")
     ConfigForbiddenPaths  = ConfigKey("forbiddenpaths")
@@ -531,16 +546,17 @@ Constants for configuration key strings
 
 ``` go
 const (
-    ConfigTUSTargetURI     = ConfigKey("tus.targeturi")
-    ErrTUSTargetURIMissing = Error("tus.targeturi missing from path options")
+    ConfigTUSTargetURI      = ConfigKey("tus.targeturi")
+    ConfigTUSAppendFilename = ConfigKey("tus.appendfilename")
+    ErrTUSTargetURIMissing  = Error("tus.targeturi missing from path options")
 )
 ```
 Constants for configuration key strings and Errors
 
 ``` go
 const (
-    // ErrUpdateConfigS3NoEC2 is returned when the s3 updatepath is set, but ec2 is not.
-    ErrUpdateConfigS3NoEC2 = Error("s3 updatepath set, but ec2 is false")
+    // ErrUpdateConfigS3NoAWS is returned when the s3 updatepath is set, but AWS is not.
+    ErrUpdateConfigS3NoAWS = Error("s3 updatepath set, but AWS is not configured")
 
     // ErrUpdateConfigEmptyURL is returned when the updatepath is empty
     ErrUpdateConfigEmptyURL = Error("update url is empty, not updating")
@@ -612,8 +628,8 @@ const (
 ```
 ``` go
 const (
-    // ErrS3ProxyConfigNoEC2 is returned when the s3proxy is used, but ec2 is not.
-    ErrS3ProxyConfigNoEC2 = Error("s3proxy used, but ec2 is false")
+    // ErrS3ProxyConfigNoAWS is returned when the s3proxy is used, but AWS is not.
+    ErrS3ProxyConfigNoAWS = Error("s3proxy used, but AWS is not configured")
 )
 ```
 
@@ -642,8 +658,8 @@ var (
     // Seq is a Sequence used for request ids
     Seq = sequence.New(1)
 
-    // Ec2Session is an aws.Session for use in various places
-    Ec2Session *aws.Session
+    // AWSSession is an aws.Session for use in various places
+    AWSSession *aws.Session
 
     // Hostname is a local cache of os.Hostname
     Hostname string
@@ -875,7 +891,7 @@ BootstrapChan doesn't return unless the server exits or the passed chan is close
 
 
 
-## <a name="BuildPath">func</a> [BuildPath](https://github.com/cognusion/go-jar/tree/master/paths.go?s=5956:6025#L178)
+## <a name="BuildPath">func</a> [BuildPath](https://github.com/cognusion/go-jar/tree/master/paths.go?s=6457:6526#L195)
 ``` go
 func BuildPath(path Path, index int, router *mux.Router) (int, error)
 ```
@@ -883,7 +899,7 @@ BuildPath does the heavy lifting to build a single path (which may result in mul
 
 
 
-## <a name="BuildPaths">func</a> [BuildPaths](https://github.com/cognusion/go-jar/tree/master/paths.go?s=5279:5320#L154)
+## <a name="BuildPaths">func</a> [BuildPaths](https://github.com/cognusion/go-jar/tree/master/paths.go?s=5780:5821#L171)
 ``` go
 func BuildPaths(router *mux.Router) error
 ```
@@ -969,7 +985,7 @@ DumpHandler is a special handler that ships a ton of request output to DebugLog
 
 
 
-## <a name="ECBDecrypt">func</a> [ECBDecrypt](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=5931:6014#L186)
+## <a name="ECBDecrypt">func</a> [ECBDecrypt](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=5963:6046#L188)
 ``` go
 func ECBDecrypt(b64key string, eb64ciphertext string) (plaintext []byte, err error)
 ```
@@ -978,7 +994,7 @@ PKCS5 padding is trimmed as needed
 
 
 
-## <a name="ECBEncrypt">func</a> [ECBEncrypt](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=6701:6783#L216)
+## <a name="ECBEncrypt">func</a> [ECBEncrypt](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=6733:6815#L218)
 ``` go
 func ECBEncrypt(b64key string, plaintext []byte) (b64ciphertext string, err error)
 ```
@@ -1161,7 +1177,7 @@ MinuteStreamer is a special finisher that writes the next number, once a secondi
 
 
 
-## <a name="NewECBDecrypter">func</a> [NewECBDecrypter](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=8072:8125#L275)
+## <a name="NewECBDecrypter">func</a> [NewECBDecrypter](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=8104:8157#L277)
 ``` go
 func NewECBDecrypter(b cipher.Block) cipher.BlockMode
 ```
@@ -1169,7 +1185,7 @@ NewECBDecrypter should never be used unless you know what you're doing
 
 
 
-## <a name="NewECBEncrypter">func</a> [NewECBEncrypter](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=7356:7409#L248)
+## <a name="NewECBEncrypter">func</a> [NewECBEncrypter](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=7388:7441#L250)
 ``` go
 func NewECBEncrypter(b cipher.Block) cipher.BlockMode
 ```
@@ -1289,7 +1305,7 @@ ResponseHeaders is a simple piece of middleware that sets configured headers
 
 
 
-## <a name="Restart">func</a> [Restart](https://github.com/cognusion/go-jar/tree/master/update.go?s=2576:2628#L100)
+## <a name="Restart">func</a> [Restart](https://github.com/cognusion/go-jar/tree/master/update.go?s=2578:2630#L100)
 ``` go
 func Restart(w http.ResponseWriter, r *http.Request)
 ```
@@ -1305,7 +1321,7 @@ RouteIDInspectionHandler checks the Query params for a ROUTEID and shoves it int
 
 
 
-## <a name="S3StreamProxyFinisher">func</a> [S3StreamProxyFinisher](https://github.com/cognusion/go-jar/tree/master/s3proxy.go?s=2006:2072#L81)
+## <a name="S3StreamProxyFinisher">func</a> [S3StreamProxyFinisher](https://github.com/cognusion/go-jar/tree/master/s3proxy.go?s=2008:2074#L81)
 ``` go
 func S3StreamProxyFinisher(w http.ResponseWriter, r *http.Request)
 ```
@@ -1370,7 +1386,7 @@ URLCaptureHandler is an unchainable handler that captures the Hostname of the Po
 
 
 
-## <a name="Unzip">func</a> [Unzip](https://github.com/cognusion/go-jar/tree/master/update.go?s=4694:4728#L181)
+## <a name="Unzip">func</a> [Unzip](https://github.com/cognusion/go-jar/tree/master/update.go?s=4696:4730#L181)
 ``` go
 func Unzip(src, dest string) error
 ```
@@ -1379,7 +1395,7 @@ returning an error if appropriate
 
 
 
-## <a name="Update">func</a> [Update](https://github.com/cognusion/go-jar/tree/master/update.go?s=2260:2311#L89)
+## <a name="Update">func</a> [Update](https://github.com/cognusion/go-jar/tree/master/update.go?s=2262:2313#L89)
 ``` go
 func Update(w http.ResponseWriter, r *http.Request)
 ```
@@ -1665,7 +1681,7 @@ func (c *CORS) String() string
 
 
 
-## <a name="Cert">type</a> [Cert](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=3958:4029#L115)
+## <a name="Cert">type</a> [Cert](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=3990:4061#L117)
 ``` go
 type Cert struct {
     Domain   string
@@ -2116,6 +2132,57 @@ Finisher is a ... Finisher for the instantiated GenericResponse
 
 
 
+## <a name="HMAC">type</a> [HMAC](https://github.com/cognusion/go-jar/tree/master/hmac.go?s=1441:1740#L48)
+``` go
+type HMAC struct {
+
+    // If non-zero, the Handler will enforce timestamp (UnixMilli) comparison to "now"
+    Expiration time.Duration
+    // If set, this will be the name of the query parameter holding the timestamp.
+    // If unset, "expiration" is assumed.
+    ExpirationField string
+    // contains filtered or unexported fields
+}
+
+```
+HMAC is a Handler that verifies the signature and possibly the timestamp of a request URL,
+and a Finisher that can sign URLs if so desired.
+
+
+
+
+
+
+
+### <a name="NewHMAC">func</a> [NewHMAC](https://github.com/cognusion/go-jar/tree/master/hmac.go?s=1840:1902#L59)
+``` go
+func NewHMAC(key, salt string, expiration time.Duration) *HMAC
+```
+NewHMAC returns an initialized Verifier. If expiration is unset, expirations are not enforced.
+
+
+
+
+
+### <a name="HMAC.Handler">func</a> (\*HMAC) [Handler](https://github.com/cognusion/go-jar/tree/master/hmac.go?s=2905:2959#L87)
+``` go
+func (h *HMAC) Handler(next http.Handler) http.Handler
+```
+Handler does the HMAC verification, and possibly expiration calculation, of the request
+
+
+
+
+### <a name="HMAC.ServeHTTP">func</a> (\*HMAC) [ServeHTTP](https://github.com/cognusion/go-jar/tree/master/hmac.go?s=2166:2232#L70)
+``` go
+func (h *HMAC) ServeHTTP(w http.ResponseWriter, req *http.Request)
+```
+ServeHTTP is a Finisher to handle the request. It assumes that any preceding URI cruft
+has been stripped
+
+
+
+
 ## <a name="HTTPWork">type</a> [HTTPWork](https://github.com/cognusion/go-jar/tree/master/worker-http.go?s=155:547#L12)
 ``` go
 type HTTPWork struct {
@@ -2481,7 +2548,7 @@ WriteHeader changes the response code
 
 
 
-## <a name="Path">type</a> [Path](https://github.com/cognusion/go-jar/tree/master/paths.go?s=482:3898#L24)
+## <a name="Path">type</a> [Path](https://github.com/cognusion/go-jar/tree/master/paths.go?s=482:4046#L24)
 ``` go
 type Path struct {
     // Name is an optional "name" for the path. Will be output in some logs. If not set, will use an index number
@@ -2545,6 +2612,8 @@ type Path struct {
     ErrorMessage string
     // ErrorCode is the HTTP response code that will be returned with ErrorMessage, IFF ErrorMessage is set. Defaults to StatusOK
     ErrorCode int
+    // HMACSigned is set if the URL will be signed and should be verified. Various Options need too be set in order for this to work.
+    HMACSigned bool
     // Options is a horrible, brittle map[string]interface{} that some handlers or finishers
     // use for per-path configuration. Avoid if possible.
     Options PathOptions
@@ -2590,7 +2659,7 @@ Handler is a middleware that injects the Path name, and any PathOptions into the
 
 
 
-## <a name="PathOptions">type</a> [PathOptions](https://github.com/cognusion/go-jar/tree/master/paths.go?s=3953:3992#L92)
+## <a name="PathOptions">type</a> [PathOptions](https://github.com/cognusion/go-jar/tree/master/paths.go?s=4101:4140#L94)
 ``` go
 type PathOptions map[string]interface{}
 ```
@@ -2605,7 +2674,7 @@ PathOptions is an MSI with a case-agnostic getter
 
 
 
-### <a name="PathOptions.Get">func</a> (\*PathOptions) [Get](https://github.com/cognusion/go-jar/tree/master/paths.go?s=4056:4105#L95)
+### <a name="PathOptions.Get">func</a> (\*PathOptions) [Get](https://github.com/cognusion/go-jar/tree/master/paths.go?s=4204:4253#L97)
 ``` go
 func (p *PathOptions) Get(key string) interface{}
 ```
@@ -2614,7 +2683,7 @@ Get returns an interface{} if *key* matches, otherwise nil
 
 
 
-### <a name="PathOptions.GetBool">func</a> (\*PathOptions) [GetBool](https://github.com/cognusion/go-jar/tree/master/paths.go?s=4622:4668#L124)
+### <a name="PathOptions.GetBool">func</a> (\*PathOptions) [GetBool](https://github.com/cognusion/go-jar/tree/master/paths.go?s=5123:5169#L141)
 ``` go
 func (p *PathOptions) GetBool(key string) bool
 ```
@@ -2623,7 +2692,16 @@ GetBool returns a bool value if *key* matches, otherwise false
 
 
 
-### <a name="PathOptions.GetString">func</a> (\*PathOptions) [GetString](https://github.com/cognusion/go-jar/tree/master/paths.go?s=4334:4384#L109)
+### <a name="PathOptions.GetDuration">func</a> (\*PathOptions) [GetDuration](https://github.com/cognusion/go-jar/tree/master/paths.go?s=4776:4844#L126)
+``` go
+func (p *PathOptions) GetDuration(key string) (time.Duration, error)
+```
+GetDuration returns a Duration if *key* matches, otherwise zero-time
+
+
+
+
+### <a name="PathOptions.GetString">func</a> (\*PathOptions) [GetString](https://github.com/cognusion/go-jar/tree/master/paths.go?s=4482:4532#L111)
 ``` go
 func (p *PathOptions) GetString(key string) string
 ```
@@ -2632,7 +2710,7 @@ GetString returns a string if *key* matches, otherwise empty string
 
 
 
-### <a name="PathOptions.GetStringSlice">func</a> (\*PathOptions) [GetStringSlice](https://github.com/cognusion/go-jar/tree/master/paths.go?s=4927:4984#L139)
+### <a name="PathOptions.GetStringSlice">func</a> (\*PathOptions) [GetStringSlice](https://github.com/cognusion/go-jar/tree/master/paths.go?s=5428:5485#L156)
 ``` go
 func (p *PathOptions) GetStringSlice(key string) []string
 ```
@@ -2756,7 +2834,7 @@ IsMaterialized return boolean on whether the pool has been materialized or not
 
 
 
-### <a name="Pool.Materialize">func</a> (\*Pool) [Materialize](https://github.com/cognusion/go-jar/tree/master/pool.go?s=9310:9360#L255)
+### <a name="Pool.Materialize">func</a> (\*Pool) [Materialize](https://github.com/cognusion/go-jar/tree/master/pool.go?s=9337:9387#L255)
 ``` go
 func (p *Pool) Materialize() (http.Handler, error)
 ```
@@ -3308,7 +3386,7 @@ Finisher writes a response of the set HTTP status code and text
 
 
 
-## <a name="SuiteMap">type</a> [SuiteMap](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=4092:4123#L122)
+## <a name="SuiteMap">type</a> [SuiteMap](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=4124:4155#L124)
 ``` go
 type SuiteMap map[string]uint16
 ```
@@ -3336,7 +3414,7 @@ var (
 
 
 
-### <a name="NewSuiteMapFromCipherSuites">func</a> [NewSuiteMapFromCipherSuites](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=4210:4284#L125)
+### <a name="NewSuiteMapFromCipherSuites">func</a> [NewSuiteMapFromCipherSuites](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=4242:4316#L127)
 ``` go
 func NewSuiteMapFromCipherSuites(cipherSuites []*tls.CipherSuite) SuiteMap
 ```
@@ -3346,7 +3424,7 @@ NewSuiteMapFromCipherSuites takes a []*CipherSuite and creates a SuiteMap from i
 
 
 
-### <a name="SuiteMap.AllSuites">func</a> (\*SuiteMap) [AllSuites](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=5073:5112#L155)
+### <a name="SuiteMap.AllSuites">func</a> (\*SuiteMap) [AllSuites](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=5105:5144#L157)
 ``` go
 func (s *SuiteMap) AllSuites() []uint16
 ```
@@ -3355,7 +3433,7 @@ AllSuites returns the hex codes for all of the cipher suites in an untrustable o
 
 
 
-### <a name="SuiteMap.CipherListToSuites">func</a> (\*SuiteMap) [CipherListToSuites](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=5281:5351#L161)
+### <a name="SuiteMap.CipherListToSuites">func</a> (\*SuiteMap) [CipherListToSuites](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=5313:5383#L163)
 ``` go
 func (s *SuiteMap) CipherListToSuites(list []string) ([]uint16, error)
 ```
@@ -3364,7 +3442,7 @@ CipherListToSuites takes an ordered list of cipher suite names, and returns thei
 
 
 
-### <a name="SuiteMap.List">func</a> (\*SuiteMap) [List](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=4853:4887#L144)
+### <a name="SuiteMap.List">func</a> (\*SuiteMap) [List](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=4885:4919#L146)
 ``` go
 func (s *SuiteMap) List() []string
 ```
@@ -3373,7 +3451,7 @@ List returns the names of the cipher suites in an untrustable order
 
 
 
-### <a name="SuiteMap.Suite">func</a> (\*SuiteMap) [Suite](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=5640:5686#L175)
+### <a name="SuiteMap.Suite">func</a> (\*SuiteMap) [Suite](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=5672:5718#L177)
 ``` go
 func (s *SuiteMap) Suite(number uint16) string
 ```

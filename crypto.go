@@ -8,7 +8,9 @@ import (
 	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/hmac"
 	"crypto/sha1"
+	"crypto/sha256"
 	"crypto/subtle"
 	"crypto/tls"
 	"encoding/base64"
@@ -331,4 +333,31 @@ func compareMD5HashAndPassword(hashedPassword, password []byte) error {
 		return errMismatchedHashAndPassword
 	}
 	return nil
+}
+
+// signHMAC is the primitive signer, using sha256 and returning a base64 URL-encoded string
+func signHMAC(msg, key, salt []byte) string {
+	mac := hmac.New(sha256.New, key)
+	if len(salt) > 0 {
+		mac.Write(salt)
+	}
+	mac.Write(msg)
+	macSum := mac.Sum(nil)
+	return base64.RawURLEncoding.EncodeToString(macSum)
+}
+
+// verifyHMAC returns true iff the base64-decoded hash matches the msg sum
+func verifyHMAC(msg, key, salt []byte, hash string) (bool, error) {
+	sig, err := base64.RawURLEncoding.DecodeString(hash)
+	if err != nil {
+		return false, err
+	}
+
+	mac := hmac.New(sha256.New, key)
+	if len(salt) > 0 {
+		mac.Write(salt)
+	}
+	mac.Write(msg)
+
+	return hmac.Equal(sig, mac.Sum(nil)), nil
 }

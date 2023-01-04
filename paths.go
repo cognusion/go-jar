@@ -83,6 +83,8 @@ type Path struct {
 	ErrorMessage string
 	// ErrorCode is the HTTP response code that will be returned with ErrorMessage, IFF ErrorMessage is set. Defaults to StatusOK
 	ErrorCode int
+	// HMACSigned is set if the URL will be signed and should be verified. Various Options need too be set in order for this to work.
+	HMACSigned bool
 	// Options is a horrible, brittle map[string]interface{} that some handlers or finishers
 	// use for per-path configuration. Avoid if possible.
 	Options PathOptions
@@ -118,6 +120,21 @@ func (p *PathOptions) GetString(key string) string {
 		}
 	}
 	return ""
+}
+
+// GetDuration returns a Duration if *key* matches, otherwise zero-time
+func (p *PathOptions) GetDuration(key string) (time.Duration, error) {
+	if p == nil {
+		return time.Duration(0), nil
+	}
+
+	lckey := strings.ToLower(key)
+	for k, v := range *p {
+		if lckey == strings.ToLower(k) {
+			return cast.ToDurationE(v)
+		}
+	}
+	return time.Duration(0), nil
 }
 
 // GetBool returns a bool value if *key* matches, otherwise false
@@ -334,6 +351,27 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 		DebugOut.Printf("\tAdding BodyByteLimit(%d) handler\n", path.BodyByteLimit)
 		bbl := NewBodyByteLimit(path.BodyByteLimit)
 		hchain = hchain.Append(bbl.Handler)
+	}
+
+	// Automatically load the HMAC verifier, maybe
+	if path.HMACSigned {
+		DebugOut.Print("\tAdding HMAC Verifier\n")
+		key := path.Options.GetString(ConfigHMACKey)
+		salt := path.Options.GetString(ConfigHMACSalt)
+		exp, durErr := path.Options.GetDuration(ConfigHMACExpiration)
+		expname := path.Options.GetString(ConfigHMACExpirationName)
+
+		if key == "" {
+			return 0, ErrConfigurationError{"HMACSigned requires at least a key"}
+		} else if durErr != nil {
+			return 0, ErrConfigurationError{"HMACSigned Expiration must be a valid duration string"}
+		}
+
+		verif := NewHMAC(key, salt, exp)
+		if expname != "" {
+			verif.ExpirationField = expname
+		}
+		hchain = hchain.Append(verif.Handler)
 	}
 
 	// Load global handlers
