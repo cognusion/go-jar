@@ -1,6 +1,8 @@
 package jar
 
 import (
+	"bytes"
+
 	"github.com/buraksezer/consistent"
 	"github.com/cespare/xxhash"
 	"github.com/vulcand/oxy/roundrobin"
@@ -15,7 +17,10 @@ const (
 	ErrConsistentHashNextServerUnsupported = Error("Consistent Hash Pools don't support NextServer")
 
 	// ErrConsistentHashInvalidSource is returned the source is not one of "request", "header", or "cookie"
-	ErrConsistentHashInvalidSource = Error("the source provided is not valid")
+	ErrConsistentHashInvalidSource = Error("the consistent hash source provided is not valid")
+
+	// ErrConsistentHashSourceNameImbalance is returned when the configured lists are not of the same lengths
+	ErrConsistentHashSourceNameImbalance = Error("ConsistentHashSources and ConsistentHashNames are not balanced lists")
 )
 
 const (
@@ -35,7 +40,12 @@ type hashKeySource int
 
 // materializeConsistent extends Pool to be able to create ConsistentHashPools
 func (p *Pool) materializeConsistent(next http.Handler) (PoolManager, error) {
-	DebugOut.Printf("\t\tConsistentHash with '%s'\n", p.Config.ConsistentHashName)
+	DebugOut.Printf("\t\tConsistentHash with '%+v'\n", p.Config.ConsistentHashNames)
+
+	hashSources, err := makeHashSources(p.Config.ConsistentHashSources, p.Config.ConsistentHashNames)
+	if err != nil {
+		return nil, err
+	}
 
 	// Set defaults
 	partitions := Conf.GetInt(ConfigPoolsDefaultConsistentHashPartitions)
@@ -55,31 +65,54 @@ func (p *Pool) materializeConsistent(next http.Handler) (PoolManager, error) {
 		load = v
 	}
 
-	return NewConsistentHashPoolOpts(p.Config.ConsistentHashSource, p.Config.ConsistentHashName, partitions, replication, load, p, next)
+	return NewConsistentHashPoolOpts(hashSources, partitions, replication, load, p, next)
+}
+
+type hashSource struct {
+	Source hashKeySource
+	Key    string
+}
+
+// makeHashSources takes lists of source and name strings, and returns a list of hashSources or an error
+// if a source is not valid or the lists are imbalanced.
+func makeHashSources(sources, names []string) ([]hashSource, error) {
+	if len(sources) < 1 {
+		return nil, ErrConsistentHashInvalidSource
+	} else if len(sources) != len(names) {
+		return nil, ErrConsistentHashSourceNameImbalance
+	}
+
+	var hs = make([]hashSource, len(sources))
+	for i, t := range sources {
+		s := stringToHashKeySource(strings.TrimSpace(t))
+		if s == invalidSource {
+			return nil, ErrConsistentHashInvalidSource
+		}
+		hs[i] = hashSource{s, strings.TrimSpace(names[i])}
+	}
+	return hs, nil
 }
 
 // ConsistentHashPool is a PoolManager that implements a consistent hash on a key to return
 // the proper member consistently
 type ConsistentHashPool struct {
-	conhash       *consistent.Consistent
-	hashKey       string
-	hashKeySource hashKeySource
-	pool          *Pool
-	next          http.Handler
+	conhash *consistent.Consistent
+	sources []hashSource
+	pool    *Pool
+	next    http.Handler
 }
 
 // NewConsistentHashPool returns a primed ConsistentHashPool
 func NewConsistentHashPool(source, key string, pool *Pool, next http.Handler) (*ConsistentHashPool, error) {
-	return NewConsistentHashPoolOpts(source, key, 7, 20, 1.25, pool, next)
+	sourceKeys, err := makeHashSources([]string{source}, []string{key})
+	if err != nil {
+		return nil, err
+	}
+	return NewConsistentHashPoolOpts(sourceKeys, 7, 20, 1.25, pool, next)
 }
 
 // NewConsistentHashPoolOpts exposes some internal tunables, but still returns a ConsistentHashPool
-func NewConsistentHashPoolOpts(source, key string, partitionCount, replicationFactor int, load float64, pool *Pool, next http.Handler) (*ConsistentHashPool, error) {
-
-	hSource := stringToHashKeySource(source)
-	if hSource == invalidSource {
-		return nil, ErrConsistentHashInvalidSource
-	}
+func NewConsistentHashPoolOpts(sourceKeys []hashSource, partitionCount, replicationFactor int, load float64, pool *Pool, next http.Handler) (*ConsistentHashPool, error) {
 
 	cfg := consistent.Config{
 		PartitionCount:    partitionCount,
@@ -90,11 +123,10 @@ func NewConsistentHashPoolOpts(source, key string, partitionCount, replicationFa
 	c := consistent.New(nil, cfg)
 
 	chp := ConsistentHashPool{
-		conhash:       c,
-		hashKey:       key,
-		pool:          pool,
-		next:          next,
-		hashKeySource: hSource,
+		conhash: c,
+		sources: sourceKeys,
+		pool:    pool,
+		next:    next,
 	}
 
 	return &chp, nil
@@ -120,7 +152,9 @@ func (ch *ConsistentHashPool) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 	// make shallow copy of request
 	newReq := *r
 
-	m := ch.conhash.LocateKey(getHashKeyFromReq(ch.hashKey, ch.hashKeySource, &newReq))
+	b := getAllHashKeysFromReq(ch.sources, &newReq)
+	DebugOut.Printf("CH: %s\n", string(b))
+	m := ch.conhash.LocateKey(b)
 	if m == nil {
 		// frick, pool is probably empty
 		RequestErrorResponse(r, w, "Pool faulted, and likely is empty", http.StatusServiceUnavailable)
@@ -182,14 +216,22 @@ func stringToHashKeySource(source string) hashKeySource {
 	}
 }
 
+// getAllHashKeysFromReq concatenates all of the values to return the proper []byte
+func getAllHashKeysFromReq(sourceKeys []hashSource, req *http.Request) []byte {
+	var b bytes.Buffer
+	for _, v := range sourceKeys {
+		b.Write(getHashKeyFromReq(v.Key, v.Source, req))
+	}
+	return b.Bytes()
+}
+
 // getHashKeyFromReq follows the hashKey rules to return the proper []byte
 func getHashKeyFromReq(key string, source hashKeySource, req *http.Request) []byte {
 	lkey := strings.ToLower(key)
-
 	switch source {
 	case requestSource:
 		if lkey == "remoteaddr" {
-			return []byte(req.RemoteAddr)
+			return []byte(strings.SplitN(req.RemoteAddr, ":", 2)[0])
 		} else if lkey == "url" {
 			return []byte(req.URL.String())
 		} else if lkey == "host" {

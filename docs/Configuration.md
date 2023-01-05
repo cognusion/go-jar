@@ -759,15 +759,29 @@ If **buffered** is set, this is the number of times a request may fail before gi
 **Default: false**
 If set, consistent hashing will be used on the pool, ensuring consistency and uniform distribution across pool members.
 
-### consistenthashname: [string]
+### consistenthashnames: [list of strings]
 
-If **consistenthashing** is set, this value will be the field whose value is used as a hash key.
+If **consistenthashing** is set, this value will be a list of fields whose values will be used as a hash key. **Must** be balanced with **consistenthashsources**!
 
-### consistenthashsource: [header|cookie|request]
+### consistenthashsources: [list of header|cookie|request]
 
-If **consistenthashing** is set, this value specifies where to pull the value, specified by **consistenthashname**, for the hash key. 
-For "header" and "cookie", it is paired with **consistenthashname** to choose which key from those maps is used.
-For "request" it is paired with **consistenthashname** to choose from one of "remoteaddr", "host", or "url".
+If **consistenthashing** is set, this value will be a list of sources to pull the value, specified by **consistenthashnames**, for the hash key.
+For `header` and `cookie`, it is paired with **consistenthashnames** to choose which key from those maps is used.
+For `request` it is paired with **consistenthashnames** to choose from one of `remoteaddr`, `host`, or `url`. For `remoteaddr` the source port is removed to keep the address stable. **Must** be balanced with **consistenthashnames**!
+
+```yaml
+pools:
+  echo:
+    prune: true
+    HealthCheckURI: /
+    ConsistentHashing: true
+    ConsistentHashSources: request,request
+    ConsistentHashNames: Host,remoteaddr
+    Members:
+      - http://localhost:8081/
+      - http://localhost:8082/
+      - http://localhost:8083/
+```
 
 ### ec2affinity: [true|false]
 

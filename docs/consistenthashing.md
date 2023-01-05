@@ -28,8 +28,45 @@ JAR allows for per-pool consistent-hashing configuration because different pools
 
 * ensuring that every request going into that pool *has* that source (i.e. don't pick an internal-use request header when few-if-any requests will have that header at all)
 * ensuring that the cardinality of that source is sufficiently diverse to allow for proper sharding (i.e. if 60% of your requests come from a single NAT/VPN address, don't use the IP address as your source)
-* if no single thing has both the necessary availability *and* cardinality, is there a combination that does? (unimplemented, but trivial (TODO))
+* if no single thing has both the necessary availability *and* cardinality, is there a combination that does? (because we totally support that)
 
 ### Convergence
 
 In theory, a request will have the material for the key which will be hashed, its partition located, and the request forwarded on for resolution. Every time. In practice, however, there are timing issues where a partition may be reassigned while there are requests in-flight (and thus lost), or just as partitions are being reassigned (and thus delayed). Many of these may be mitigated by Buffering, so that the lost request can be replayed, but that requires one to understand the possible risks of duplicating (or triplicating, etc.) requests to any given pool. Partition reassignment is extremely fast- generally sub-microsecond after a failure is detected or members are deliberately added or removed.
+
+### Configuration
+
+In any **Pool** that has **Members** you may specify:
+
+#### consistenthashing: [true|false]
+
+**Default: false**
+If set, consistent hashing will be used on the pool, ensuring consistency and uniform distribution across pool members.
+
+#### consistenthashnames: [list of strings]
+
+If **consistenthashing** is set, this value will be a list of fields whose values will be used as a hash key. **Must** be balanced with **consistenthashsources**!
+
+#### consistenthashsources: [list of header|cookie|request]
+
+If **consistenthashing** is set, this value will be a list of sources to pull the value, specified by **consistenthashnames**, for the hash key.
+For `header` and `cookie`, it is paired with **consistenthashnames** to choose which key from those maps is used.
+For `request` it is paired with **consistenthashnames** to choose from one of `remoteaddr`, `host`, or `url`. For `remoteaddr` the source port is removed to keep the address stable. **Must** be balanced with **consistenthashnames**!
+
+### Example
+
+The pool described below uses two request parts: The `Host` being requested, and the `remoteaddr` the request is coming from. For `remoteaddr` the source port is removed to keep the address stable.
+
+```yaml
+pools:
+  echo:
+    prune: true
+    HealthCheckURI: /
+    ConsistentHashing: true
+    ConsistentHashSources: request,request
+    ConsistentHashNames: Host,remoteaddr
+    Members:
+      - http://localhost:8081/
+      - http://localhost:8082/
+      - http://localhost:8083/
+```

@@ -24,12 +24,14 @@ type PoolConfig struct {
 	RemoveHeaders []string
 	// ConsistentHashing is mutually exclusive to Sticky, and enables automatic distributions
 	ConsistentHashing bool
-	// ConsistentHashSource is one of "header", "cookie", or "request".
+	// ConsistentHashSources is a list of "header", "cookie", or "request".
 	// For "header" and "cookie", it is paired with ConsistentHashName to choose which key from those maps is used.
 	// For "request" it is paired with ConsistentHashName to choose from one of "remoteaddr", "host", and "url".
-	ConsistentHashSource string
-	// ConsistentHashName sets the request part, header, or cookie name to pull the value from
-	ConsistentHashName string
+	// ConsistentHashSources ***must be balanced with ConsistentHashNames***.
+	ConsistentHashSources []string
+	// ConsistentHashNames is a list that sets the request part, header, or cookie name to pull the value from.
+	// ConsistentHashSources ***must be balanced with ConsistentHashSources***.
+	ConsistentHashNames []string
 	// Sticky is mutually exclusive to ConsistentHashing, and enables cookie-based session routing
 	Sticky bool
 	// StickyCookieName overrides the name of the cookie used to handle sticky sessions
