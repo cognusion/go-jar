@@ -308,9 +308,9 @@ func bootstrap() (done bool, servers []*http.Server) {
 	// Pools in jar, are groups of like-serving URIs.
 	// Pools must be built before Paths, else (boom)
 	{
-		var ok bool
-		if LoadBalancers, ok = BuildPools(); !ok {
-			panic(ErrPoolBuild)
+		var err error
+		if LoadBalancers, err = BuildPools(); err != nil {
+			panic(fmt.Errorf("%s: '%w'", ErrPoolBuild.Error(), err))
 		}
 	}
 

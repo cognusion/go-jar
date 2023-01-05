@@ -15,6 +15,8 @@ import (
 const (
 	// ErrNoSuchMemberError is returned if the member doesn't exist or has been removed from a Pool
 	ErrNoSuchMemberError = Error("member no longer exists in pool")
+	// NoPoolsError is returned if there are no pools, but a Build was requested
+	NoPoolsError = Error("there are no pools to build")
 )
 
 // Constants for configuration key strings
@@ -51,7 +53,7 @@ type Pools struct {
 
 // NewPools creates a functioning Pools struct, initialized with the pools, and a healthcheck interval.
 // Set the interval to 0 to disable healthchecks
-func NewPools(poolConfigs map[string]*PoolConfig, interval time.Duration) *Pools {
+func NewPools(poolConfigs map[string]*PoolConfig, interval time.Duration) (*Pools, error) {
 
 	pools := poolConfigMapToPoolMap(poolConfigs)
 
@@ -76,11 +78,14 @@ func NewPools(poolConfigs map[string]*PoolConfig, interval time.Duration) *Pools
 
 	if Conf.GetBool(ConfigPoolsPreMaterialize) {
 		for _, pool := range pools {
-			pool.GetPool() // discarding error info?! :(
+			_, err := pool.GetPool() // discard handler
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
-	return &p
+	return &p, nil
 }
 
 // healthTicker fires up a ticker to deal with healthchecks. Never call this twice unless you know what you're doing.
@@ -304,7 +309,7 @@ func poolConfigMapToPoolMap(poolConfigs map[string]*PoolConfig) map[string]*Pool
 // BuildPools unmarshalls the pools config, creates them, and updates the pool list
 // ConfigPoolsHealthcheckInterval will set the healthcheck interval for pool members.
 // Set to 0 to disable.
-func BuildPools() (*Pools, bool) {
+func BuildPools() (*Pools, error) {
 
 	if ipools := Conf.Get(ConfigPools); ipools != nil {
 		// We have pools in the config
@@ -312,10 +317,10 @@ func BuildPools() (*Pools, bool) {
 		Conf.UnmarshalKey(ConfigPools, &pools)
 		DebugOut.Printf("Pools %+v\n", pools)
 		hcDuration := Conf.GetDuration(ConfigPoolsHealthcheckInterval)
-		return NewPools(pools, hcDuration), true
+		return NewPools(pools, hcDuration)
 	}
 
-	return nil, false
+	return nil, NoPoolsError
 }
 
 // PruneFunc is a func that may add or remove Pool members
