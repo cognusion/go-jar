@@ -20,6 +20,14 @@ Usage of ./jar:
 
 A list of domains or hostname suffixes this instance will handle. Anything not matching will return 400. This also impact **tls.httpredirects**.
 
+```yaml
+authoritativedomains:
+  - .example.com
+  - .example.net
+  - .example.eu
+  - specifically.ahost.com
+```
+
 ### compression: [list]
 
 A list of MIME types that are eligible for wire-time compression if the client requests it
@@ -30,6 +38,7 @@ compression:
   - text/css
   - text/javascript
   - application/javascript
+  - application/json
 ```
 
 ### config: [configfile]
@@ -471,7 +480,7 @@ Handlers:
 
 ### headers: [list]
 
-This is a list of request headers, in "name value" format, that will be used when matching the **Path**. They can be absolute, or use simple matching. Header names are assumed to be everything *left* of the first space. Values are assumed to be everything *right* of the first space.
+This is a list of request headers, in "name value" format, that will be used when matching the **Path**. They can be absolute, or use simple matching. Header names are assumed to be everything *left* of the first space. Values are assumed to be everything *right* of the first space. There is also the global **headers** config if that is more appropriate.
 
 ### hmacsigned: [true|false]
 
@@ -479,6 +488,7 @@ This is a list of request headers, in "name value" format, that will be used whe
 If set, the request **path** must have a valid HMAC signature appended to it. the **Path** *must* also have at least **hmac.key** set in the **Options** (example below), which must be the key used to create the aforementioned HMAC signture. See the **HMACSigner** **Finisher** documentation below for more information.
 
 ```yaml
+hmacsigned: true
 Options:
    hmac.key: abcdefghijk123
    hmac.expiration: 3h
@@ -588,6 +598,19 @@ Redirect: https://www.google.com%1
 **Default: 301**
 By default, **redirect** requests use *301 Permanent*, but that can be changed here, within reason.
 
+### redirecthostmatch: [regular expression]
+
+Used with **redirect** to match groups, represented as `$1`, `$2`, etc. within the **redirect** value.
+
+```yaml
+  -
+    Path: /
+    Hosts:
+      - "{_:|.*}.example.com"
+    Redirect: https://$1.somewherelse.com%1
+    RedirectHostMatch: "(.*).example.com"
+```
+
 ### replacepath: [string]
 
 Simple string replacement of this string, for the path string, before the request is proxied. No regexps.
@@ -602,6 +625,13 @@ Simple string replacement of this string, for the path string, before the reques
 ### stripprefix: [prefix]
 
 Removes a the specified string from the beginning of a URI path, before it is forwarded on. Useful when remapping e.g. */files/folder/thefile.html* to */folder/thefile.html*
+
+```yaml
+  -
+    Path: /files
+    StripPrefix: /files
+    Pool: s3files
+```
 
 ### timeout: [duration]
 
@@ -629,6 +659,17 @@ pools:
     Members:
       - ws://192.168.0.10:8081
       - ws://192.168.0.11:8081
+  echo:
+    Name: echo
+    HealthCheckURI: /
+    ConsistentHashing: true
+    ConsistentHashSource: request
+    ConsistentHashName: Host
+    Members:
+      - http://localhost:8081/
+      - http://localhost:8082/
+      - http://localhost:8083/
+
   default:
     Name: www
     Sticky: true
@@ -682,7 +723,7 @@ The weight for a Pool member who is AZ-local to the JAR instance.
 
 **Default: false**
 If set, each Pool will be materialized during bootstrap, instead of as-requested. Pools generally materialize very quickly, but a materialized Pool takes up more
-memory (and goros) than a husk, so unless all of your Pools are used all of the time, leaving this alone is just fine.
+memory (and goros) than a husk. Unless all of your Pools are used all of the time, leaving this alone is just fine.
 
 ### stickycookie.aes.ttl: [duration] (*experimental*)
 
@@ -1111,9 +1152,7 @@ TestingFinisher reflects request headers, cookie information, etc for debugging.
 
 ### TUS
 
-The TUS finisher supports the [TUS](https://tus.io/) resumable upload protocol. Each **Path** needs a **tus.targeturi** set to a `file://` for local folder spooling or `s3://` for S3 spooling.
-
-If you do "parallel" uploads > 1 on the client, there will be multiple "part files" left behind, in addition to the final file. It is recommended that your upload area be cleaned periodically of files old files. Yes, we could keep track of those parts, and after the final file is finished, delete the "part files" for you. We aren't.
+The [TUS finisher](tus.md) supports the [TUS](https://tus.io/) resumable upload protocol. Each **Path** needs a **tus.targeturi** set to a `file://` for local folder spooling or `s3://` for S3 spooling.
 
 ```yaml
 -
@@ -1132,7 +1171,7 @@ If you do "parallel" uploads > 1 on the client, there will be multiple "part fil
 
 #### tus.targeturi: [file:// or s3:// URI for target]
 
-Please note the `file://` URIs need an extra `/` for fully-qualified paths.
+Please note the `file://` URIs need an extra `/` for fully-qualified paths (e.g. `file:///tmp/tus/`).
 
 Please note that only root-level S3 buckets are supported at this time (no "folders").
 
@@ -1163,6 +1202,14 @@ Additionally used as-is as the salt for the *hash* sticky type. The previous rul
 ### mapfiles: [key/value pairs]
 
 ### striprequestheaders: [list]
+
+List of request headers to remove before forwarding the request on.
+
+```yaml
+striprequestheaders:
+  - X-Forwarded-Port
+  - X-Forwarded-Server
+```
 
 ### zulip: [key/value pairs]
 
