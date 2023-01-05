@@ -110,6 +110,7 @@ Highlights include:
 * Request/Response logging (including "access log")
 * Request header mangling
 * CORS
+* [TUS](tus.md)
 * Browser/Device Detection
 * Configurable response headers
 * JWT verification
