@@ -662,6 +662,7 @@ pools:
   echo:
     Name: echo
     HealthCheckURI: /
+    Prune: true
     ConsistentHashing: true
     ConsistentHashSource: request
     ConsistentHashName: Host
@@ -1057,11 +1058,11 @@ URLswitch checks the *endpoint* context setting, and if a **Pool** is defined wi
 
 ### Forbidden
 
-Forbidden simply returns *403 Forbidden* when hit
+Forbidden simply returns *403 Forbidden* when hit.
 
 ### HealthCheck
 
-HealthCheck collects and reports health and metrics information in the HealthCheck schema
+HealthCheck reports collected health and metrics information in the HealthCheck schema.
 
 ### HMACSigner
 
@@ -1140,7 +1141,7 @@ Options are handled path-local, so different Paths may use different parameters.
       s3proxy.wrapsuccess: true
 ```
 
-TODO: Document better
+TODO: Document better. Relay to an S3 **Pool**.
 
 ### Stack
 
@@ -1181,7 +1182,7 @@ If `true` will append the original filename to the target filename, e.g. `hash-f
 
 ### Update
 
-Update will download a - we hope - update .zip from the configured **updatepath**, and replace our executable with its contents. If **hotupdate** is set, a graceful restart will be requested to handle subsequent requests with the new code.
+Update will download an update .zip from the configured **updatepath**, and replace our executable with its contents. If **hotupdate** is set, a graceful restart will be requested to handle subsequent requests with the new code.
 
 ## Other
 

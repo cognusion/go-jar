@@ -70,6 +70,7 @@ The heart of JAR are Paths- filters and options that describe containers for tra
 * Request handling and completion options
   * Handlers (middleware)
   * Finisher
+    * [TUS](tus.md)
   * Redirect
   * Pool
 * Pre-proxy URI prefix stripping
@@ -82,12 +83,11 @@ The heart of JAR are Paths- filters and options that describe containers for tra
 * Request buffering/retrying
 * Sticky sessions (cookie-based)
   * Plain, hashed, or AES-encrypted values
-* Consistent-hashing
+* [Consistent-hashing](consistenthashing.md)
 * Response-header stripping
 * Multiple protocols
   * HTTP/HTTPS
   * S3
-  * TUS
   * WebSocket
 * Healthchecks and membership management
 * EC2 awareness/affinity

@@ -4,7 +4,7 @@ The TUS finisher supports the [TUS](https://tus.io/) resumable upload protocol. 
 
 If you do "parallel" uploads > 1 on the client, there will be multiple "part files" left behind, in addition to the final file. It is recommended that your upload area be cleaned periodically of files old files. Yes, we could keep track of those parts, and after the final file is finished, delete the "part files" for you. We aren't.
 
-Also, if you're using `file://` with multiple JAR instances, ensure you're also pinning sessions to the same instance using consistent hashing or stickycookie.
+Also, if you're using `file://` with multiple JAR instances, ensure you're also pinning sessions to the same instance using [consistent hashing](consistenthashing.md) or stickycookie.
 
 ## Roadmap
 
