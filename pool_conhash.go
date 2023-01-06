@@ -40,12 +40,12 @@ type hashKeySource int
 
 // materializeConsistent extends Pool to be able to create ConsistentHashPools
 func (p *Pool) materializeConsistent(next http.Handler) (PoolManager, error) {
-	DebugOut.Printf("\t\tConsistentHash with '%+v'\n", p.Config.ConsistentHashNames)
-
 	hashSources, err := makeHashSources(p.Config.ConsistentHashSources, p.Config.ConsistentHashNames)
 	if err != nil {
 		return nil, err
 	}
+
+	DebugOut.Printf("\t\tConsistentHash with '%+v'\n", hashSources)
 
 	// Set defaults
 	partitions := Conf.GetInt(ConfigPoolsDefaultConsistentHashPartitions)
