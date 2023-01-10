@@ -17,6 +17,7 @@ import (
 func TestTUS(t *testing.T) {
 
 	//DebugOut = log.New(os.Stderr, "[DEBUG] ", 0)
+	//ErrorOut = log.New(os.Stderr, "[ERROR] ", 0)
 
 	Convey("When a TUS is created with an unsupported target prefix, the appropriate error is returned", t, func() {
 
@@ -35,8 +36,9 @@ func TestTUS(t *testing.T) {
 		defer os.RemoveAll(tdir)
 
 		tfile := fmt.Sprintf("file://%s/", tdir)
+		tfn := "test.txt"
 
-		tus, err := New("/tus/", Config{TargetURI: tfile})
+		tus, err := New("/tus/", Config{TargetURI: tfile, AppendFilename: true})
 		So(err, ShouldBeNil)
 		srv := httptest.NewServer(http.StripPrefix("/tus/", tus))
 		defer srv.Close()
@@ -50,7 +52,12 @@ func TestTUS(t *testing.T) {
 
 		DebugOut.Printf("Client: %+v\n", client)
 		// create an upload from the buffer.
-		upload := tusc.NewUploadFromBytes(buff.Bytes())
+		metadata := map[string]string{
+			"filename": tfn,
+		}
+		buffer := bytes.NewReader(buff.Bytes())
+		upload := tusc.NewUpload(buffer, buffer.Size(), metadata, "")
+		//upload := tusc.NewUploadFromBytes(buff.Bytes())
 		So(upload, ShouldNotBeNil)
 
 		// create the uploader.
@@ -64,13 +71,16 @@ func TestTUS(t *testing.T) {
 
 		// Check the result
 		uParts := strings.Split(uploader.Url(), "/")
-		fName := fmt.Sprintf("%s/%s", tdir, uParts[len(uParts)-1])
+		fName := fmt.Sprintf("%s/%s-%s", tdir, uParts[len(uParts)-1], tfn)
 		f, fErr := os.Stat(fName)
 		So(fErr, ShouldBeNil)
 		So(f.Size(), ShouldEqual, int64(1024*1024))
 
+		// correctURL is proper because of our renaming
+		correctURL := fmt.Sprintf("%s-%s", uploader.Url(), tfn)
+
 		Convey("... When a HEAD request is made to an existing TUS URI path, the value is congruent", func() {
-			req, err := http.NewRequest("HEAD", uploader.Url(), nil)
+			req, err := http.NewRequest("HEAD", correctURL, nil)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -85,7 +95,7 @@ func TestTUS(t *testing.T) {
 		})
 
 		Convey("... When a GET request is made to an existing TUS URI path, it is Forbidden", func() {
-			req, err := http.NewRequest("GET", uploader.Url(), nil)
+			req, err := http.NewRequest("GET", correctURL, nil)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -99,7 +109,7 @@ func TestTUS(t *testing.T) {
 		})
 
 		Convey("... When a DELETE request is made to an existing TUS URI path, it is Forbidden", func() {
-			req, err := http.NewRequest("DELETE", uploader.Url(), nil)
+			req, err := http.NewRequest("DELETE", correctURL, nil)
 			if err != nil {
 				t.Fatal(err)
 			}
