@@ -60,7 +60,6 @@ func (s3p *S3Pool) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	_, err := s3p.session.BucketToWriter(s3p.bucket, filepath, w)
 	if err != nil {
-		// TODO: don't scrape
 		if aerr, ok := err.(awserr.Error); ok {
 			switch aerr.Code() {
 			case s3.ErrCodeNoSuchBucket:

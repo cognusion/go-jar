@@ -138,8 +138,7 @@ func RealAddr(h http.Handler) http.Handler {
 
 		if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
 			ips := strings.Split(xff, ",")
-			//TODO: does this look like an IP? Header mangled?
-			rad := strings.TrimSpace(ips[len(ips)-1])
+			rad := strings.TrimSpace(ips[len(ips)-1]) // the last item in an XFF list is probably what we want
 			//DebugOut.Printf("RealAddr: %s\n", rad)
 			r.RemoteAddr = rad
 		}
@@ -495,7 +494,6 @@ func (p *PoolID) Handler(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
 		r = r.WithContext(context.WithValue(r.Context(), poolIDKey, p.Pool))
-		// TODO: The header key should be abstracted
 		r.Header.Set(Conf.GetString(ConfigPoolHeaderName), p.Pool)
 
 		next.ServeHTTP(w, r)

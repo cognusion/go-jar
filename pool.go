@@ -81,7 +81,7 @@ var (
 func init() {
 
 	InitFuncs.Add(func() {
-		// TODO: Tighten up these Defaults!
+		// Defaults for any subrequests
 		DefaultTransport := &http.Transport{
 			DialContext: (&net.Dialer{
 				Timeout:   Conf.GetDuration(ConfigTimeout),
