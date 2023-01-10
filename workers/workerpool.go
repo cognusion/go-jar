@@ -133,7 +133,6 @@ func (p *WorkerPool) CheckAndAdjust() {
 }
 
 // checkAndAdjust is the workhorse for CheckAndAdjust.
-// TODO: Reduce complexity
 func (p *WorkerPool) checkAndAdjust() {
 	select {
 	case <-p.adjustLock:
@@ -142,7 +141,7 @@ func (p *WorkerPool) checkAndAdjust() {
 		defer func() { p.adjustLock <- true }()
 	default:
 		// we do not, someone else is working here, skip on
-		DebugOut.Printf("checkAndAdjust2 detects another run, skipping\n")
+		DebugOut.Print("checkAndAdjust detects another run, skipping\n")
 		return
 	}
 
@@ -168,7 +167,7 @@ func (p *WorkerPool) checkAndAdjust() {
 		if ratefix == 0 && poolsize > p.minpool {
 			// No work, pool is way too big. Slam it down
 			diff := poolsize - p.minpool
-			DebugOut.Printf("\tNo work, pool is way too big. Slam it down\n")
+			DebugOut.Print("\tNo work, pool is way too big. Slam it down\n")
 			p.RemoveWorkers(diff)
 			return
 		} else if ratefix == 0 {
@@ -187,18 +186,15 @@ func (p *WorkerPool) checkAndAdjust() {
 		}
 	}
 
-	if qsize > ratefix {
-		// We have a somewhat valid qsize to diagnose
-		if qcount > 0 {
-			// Stuff sitting in the queue? Waaaat!?
-			if p.maxpool > 0 && poolsize+int64(qcount) > p.maxpool {
-				// We have a maxpool, and we'd bust it, so add up to it
-				qcount = int(p.maxpool - poolsize)
-			}
-			DebugOut.Printf("\tStuff sitting in the queue? Waaaat!?\n")
-			p.AddWorkers(int64(qcount))
-			return
+	if qsize > ratefix && qcount > 0 {
+		// Stuff sitting in the queue? Waaaat!?
+		if p.maxpool > 0 && poolsize+int64(qcount) > p.maxpool {
+			// We have a maxpool, and we'd bust it, so add up to it
+			qcount = int(p.maxpool - poolsize)
 		}
+		DebugOut.Print("\tStuff sitting in the queue? Waaaat!?\n")
+		p.AddWorkers(int64(qcount))
+		return
 	}
 
 	if int64(ratefix) > poolsize {
@@ -208,7 +204,7 @@ func (p *WorkerPool) checkAndAdjust() {
 			// We have a maxpool, and we'd bust it, so add up to it
 			diff = p.maxpool - poolsize
 		}
-		DebugOut.Printf("\tMore work than workers\n")
+		DebugOut.Print("\tMore work than workers!\n")
 		p.AddWorkers(diff * 2) // we add twice as many as we need, and will trickle them off later
 		return
 	}
