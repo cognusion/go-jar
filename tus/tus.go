@@ -119,10 +119,14 @@ func (t *TUS) eventHandlerS3() {
 	for {
 		event := <-t.handler.CompleteUploads
 		if event.Upload.IsFinal || !event.Upload.IsPartial {
-			DebugOut.Printf("TUS Upload of %s finished: %s/%s\n", event.Upload.MetaData["filename"], event.Upload.Storage["Bucket"], event.Upload.Storage["Key"])
-			err := t.rename(event.Upload.Storage["Bucket"], event.Upload.Storage["Key"], fmt.Sprintf("%s-%s", event.Upload.Storage["Key"], event.Upload.MetaData["filename"]))
-			if err != nil {
-				ErrorOut.Printf("TUS Rename error %+v : %+v\n", err, event)
+			if event.Upload.MetaData["filename"] == "" {
+				DebugOut.Print("TUS Upload finished, but no filename present\n")
+			} else {
+				DebugOut.Printf("TUS Upload of %s finished: %s/%s\n", event.Upload.MetaData["filename"], event.Upload.Storage["Bucket"], event.Upload.Storage["Key"])
+				err := t.rename(event.Upload.Storage["Bucket"], event.Upload.Storage["Key"], fmt.Sprintf("%s-%s", event.Upload.Storage["Key"], event.Upload.MetaData["filename"]))
+				if err != nil {
+					ErrorOut.Printf("TUS Rename error %+v : %+v\n", err, event)
+				}
 			}
 		}
 	}
@@ -134,10 +138,14 @@ func (t *TUS) eventHandlerFile() {
 		event := <-t.handler.CompleteUploads
 		if event.Upload.IsFinal || !event.Upload.IsPartial {
 			// File
-			DebugOut.Printf("TUS Upload of %s finished: %s\n", event.Upload.MetaData["filename"], event.Upload.Storage["Path"])
-			err := t.rename("", event.Upload.Storage["Path"], fmt.Sprintf("%s-%s", event.Upload.Storage["Path"], event.Upload.MetaData["filename"]))
-			if err != nil {
-				ErrorOut.Printf("TUS Rename error %+v : %+v\n", err, event)
+			if event.Upload.MetaData["filename"] == "" {
+				DebugOut.Print("TUS Upload finished, but no filename present\n")
+			} else {
+				DebugOut.Printf("TUS Upload of %s finished: %s\n", event.Upload.MetaData["filename"], event.Upload.Storage["Path"])
+				err := t.rename("", event.Upload.Storage["Path"], fmt.Sprintf("%s-%s", event.Upload.Storage["Path"], event.Upload.MetaData["filename"]))
+				if err != nil {
+					ErrorOut.Printf("TUS Rename error %+v : %+v\n", err, event)
+				}
 			}
 		}
 	}
@@ -155,19 +163,38 @@ func (t *TUS) rename(bucket, old, new string) error {
 			Key:        aws.String(new),
 		}
 
+		cpCfgInfo := s3.CopyObjectInput{
+			ACL:        aws.String(bofcACL),
+			Bucket:     aws.String(bucket),
+			CopySource: aws.String(fmt.Sprintf("%s/%s%s", bucket, old, ".info")),
+			Key:        aws.String(fmt.Sprintf("%s%s", new, ".info")),
+		}
+
 		delCfg := s3.DeleteObjectInput{
 			Bucket: aws.String(bucket),
 			Key:    aws.String(old),
 		}
 
-		if _, err := t.s3.CopyObject(&cpCfg); err != nil {
-			return err
-		} else if _, err = t.s3.DeleteObject(&delCfg); err != nil {
-			return err
+		delCfgInfo := s3.DeleteObjectInput{
+			Bucket: aws.String(bucket),
+			Key:    aws.String(fmt.Sprintf("%s%s", old, ".info")),
+		}
+
+		for i, c := range []s3.CopyObjectInput{cpCfg, cpCfgInfo} {
+			if _, err := t.s3.CopyObject(&c); err != nil {
+				return err
+			} else if _, err = t.s3.DeleteObject(&[]s3.DeleteObjectInput{delCfg, delCfgInfo}[i]); err != nil {
+				return err
+			}
 		}
 	} else {
 		// File
+		oldInfo := fmt.Sprintf("%s%s", old, ".info")
+		newInfo := fmt.Sprintf("%s%s", new, ".info")
 		if err := os.Rename(old, new); err != nil {
+			return err
+		}
+		if err := os.Rename(oldInfo, newInfo); err != nil {
 			return err
 		}
 	}
