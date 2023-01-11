@@ -67,6 +67,7 @@ The heart of JAR are Paths- filters and options that describe containers for tra
 * Per-source rate-limiting
 * Allow/Deny by IP address/range
 * HTTP Basic Auth (vs file)
+* [HMAC Signatures](hmacsign.md) of URIs, with optional time-based expiration
 * Request handling and completion options
   * Handlers (middleware)
   * Finisher
