@@ -359,6 +359,8 @@ func (p *Pool) materializeHTTP() (http.Handler, error) {
 		hook.AddLevels(logrus.AllLevels)
 		logrusLogger.AddHook(&hook)
 		logrusLogger.SetLevel(logrus.DebugLevel)
+		logrus.AddHook(&hook)
+		logrus.SetLevel(logrus.DebugLevel) // For things that don't use the provided logger :facepalm:
 	}
 
 	if p.Config.ReplacePath != "" {
