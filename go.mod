@@ -11,7 +11,6 @@ require (
 	github.com/cognusion/go-timings v1.0.0
 	github.com/cognusion/grace v0.0.0-20190209210431-75fe9244da10
 	github.com/davecgh/go-spew v1.1.1
-	github.com/didip/tollbooth/v6 v6.1.2
 	github.com/eapache/go-resiliency v1.3.0
 	github.com/facebookgo/clock v0.0.0-20150410010913-600d898af40a // indirect
 	github.com/facebookgo/ensure v0.0.0-20200202191622-63f1cf65ac4c // indirect
@@ -52,6 +51,7 @@ require (
 	github.com/cognusion/go-sequence v1.0.0
 	github.com/cognusion/go-zulipsend v1.0.0
 	github.com/cognusion/srvdisco v0.0.0-20180516035551-b4507d3e8282
+	github.com/didip/tollbooth/v7 v7.0.1
 	github.com/eventials/go-tus v0.0.0-20220610120217-05d0564bb571
 	github.com/spf13/pflag v1.0.5
 	github.com/tus/tusd v1.9.2
@@ -89,7 +89,6 @@ require (
 	golang.org/x/sys v0.0.0-20220818161305-2296e01440c6 // indirect
 	golang.org/x/term v0.0.0-20220722155259-a9ba230a4035 // indirect
 	golang.org/x/text v0.3.8 // indirect
-	golang.org/x/time v0.0.0-20220722155302-e5dcc9cfc0b9 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
