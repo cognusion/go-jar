@@ -15,5 +15,8 @@ Consumers will want to 'cd cmd/jard; go build; #enjoy'
 
 * [Configuration Docs](docs/Configuration.md)
 * [Features](docs/Features.md)
+  * [Consistent-Hashing Pools](docs/consistenthashing.md)
+  * [HMAC signature verification](docs/hmacsign.md)
+  * [TUS-compatible Uploads](docs/tus.md)
 * [GoDoc for embedding](docs/godoc.md)
 * [FAQ](docs/FAQ.md)
