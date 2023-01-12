@@ -40,6 +40,12 @@ const (
 	ConfigErrorHandlerURI      = ConfigKey("errorhandler.uri")
 )
 
+// Constants for miscellaneous conditions
+const (
+	StatusClientClosedRequest     = 499
+	StatusClientClosedRequestText = "Client Closed Request"
+)
+
 // Error is an error type
 type Error string
 

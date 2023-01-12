@@ -249,7 +249,7 @@ func Recoverer(next http.Handler) http.Handler {
 					// so we don't need to lose our poop, just clean it up and move on
 					ErrorOut.Printf("%s\n", ErrRequestError{r, ErrAborted.Error()})
 					DebugOut.Printf("ErrAbortHandler: %s\n", ErrRequestError{r, fmt.Sprintf("Panic occurred: %s", gerrors.Wrap(err, 2).ErrorStack())})
-					http.Error(w, ErrRequestError{r, ErrAborted.Error()}.Error(), http.StatusInternalServerError) // Machine-readable
+					http.Error(w, ErrRequestError{r, StatusClientClosedRequestText}.Error(), StatusClientClosedRequest) // Machine-readable
 					return
 				} else if Conf.GetBool(ConfigRecovererLogStackTraces) {
 					ErrorOut.Printf("%s\n", ErrRequestError{r, fmt.Sprintf("Panic occurred: %s", gerrors.Wrap(err, 2).ErrorStack())})

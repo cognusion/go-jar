@@ -94,8 +94,8 @@ func TestRecovererPanicErrAbortHandler(t *testing.T) {
 
 		handler.ServeHTTP(rr, req)
 
-		So(rr.Code, ShouldEqual, http.StatusInternalServerError)
-		So(rr.Body.String(), ShouldContainSubstring, ErrAborted.Error())
+		So(rr.Code, ShouldEqual, StatusClientClosedRequest)
+		So(rr.Body.String(), ShouldEndWith, StatusClientClosedRequestText+"\n")
 	})
 }
 
