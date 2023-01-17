@@ -5,9 +5,7 @@ import (
 
 	"github.com/cognusion/go-timings"
 	"github.com/vulcand/oxy/forward"
-	"github.com/vulcand/oxy/roundrobin/stickycookie"
 
-	"encoding/base64"
 	"fmt"
 	"io"
 	"net/http"
@@ -105,32 +103,6 @@ func TestFinisher(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(fmt.Sprintf("  %s: %s\n", v.Name, val)))
 	}
 
-	if Conf.GetBool(ConfigDebug) {
-		w.Write([]byte("\nRouteID: "))
-		if rid, err := r.Cookie("ROUTEID"); err == nil {
-			if sskey := Conf.GetString(ConfigKeysStickyCookie); sskey != "" {
-				var (
-					clearKey []byte
-					ao       stickycookie.CookieValue
-				)
-
-				if clearKey, err = base64.StdEncoding.DecodeString(sskey); err == nil {
-					if cookielife := Conf.GetDuration(ConfigStickyCookieAESTTL); cookielife > 0 {
-						if ao, err = stickycookie.NewAESValue(clearKey, cookielife); err == nil {
-							if aoV, aoErr := ao.FindURL(rid.Value, nil); aoErr == nil {
-								w.Write([]byte(aoV.String()))
-							}
-						}
-					} else if ao, err = stickycookie.NewAESValue(clearKey, time.Duration(0)); err == nil {
-						if aoV, aoErr := ao.FindURL(rid.Value, nil); aoErr == nil {
-							w.Write([]byte(aoV.String()))
-						}
-					}
-				}
-			}
-		}
-		w.Write([]byte("\n"))
-	}
 }
 
 // DumpHandler is a special handler that ships a ton of request output to DebugLog
