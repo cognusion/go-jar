@@ -1066,6 +1066,10 @@ SetupHandler is an always-embedded middleware, that adds important information t
 
 A single Finisher carries out the end request in lieu of a Pool
 
+### Date
+
+Date just returns *200 Ok* and a string of the current timestamp.
+
 ### EndpointDecider (urlswitch)
 
 URLswitch checks the *endpoint* context setting, and if a **Pool** is defined with the same name, hands the request off to it, otherwise returns *400 Bad Request*, which is arguably the wrong code, but I'm arrogant enough to believe I have properly defined a pool for every cluster, and this won't happen unless the request is indeed "bad".

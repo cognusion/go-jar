@@ -76,6 +76,9 @@ var (
 	// AWSSession is an aws.Session for use in various places
 	AWSSession *aws.Session
 
+	// Caches is a GroupCache used for various subsystems
+	Caches *CacheCluster
+
 	// Hostname is a local cache of os.Hostname
 	Hostname string
 )
@@ -300,6 +303,12 @@ func bootstrap() (done bool, servers []*http.Server) {
 	// Let's get Zulip out of the way
 	if Conf.GetString(ConfigZulipBaseURL) != "" {
 		ZulipClient = newZulipClient(Conf.GetString(ConfigZulipBaseURL), Conf.GetString(ConfigZulipUsername), Conf.GetString(ConfigZulipToken), Conf.GetInt(ConfigZulipRetryCount), Conf.GetDuration(ConfigZulipRetryInterval))
+	}
+
+	// GroupCache?
+	if Conf.GetString(ConfigGroupCachePeers) != "" {
+		Caches = NewCacheCluster(Conf.GetString(ConfigGroupCacheAddr), StringToCleanList(Conf.GetString(ConfigGroupCachePeers), ","))
+		Caches.SetDebugOut(DebugOut)
 	}
 
 	// r is our router. Long live r.

@@ -47,6 +47,8 @@ type Path struct {
 	Pool string
 	// Finisher is the final handler. Mutually exclusive with Pool
 	Finisher string
+	// CacheName is the name of the cache to use, and should match a CachePool
+	CacheName string
 	// RateLimit each IP to these many requests/second. Also must have the "RateLimiter" handler, or it will be appended to the chain
 	RateLimit float64
 	// RateLimitPurge is a duration where a limit gets dumped
@@ -135,6 +137,21 @@ func (p *PathOptions) GetDuration(key string) (time.Duration, error) {
 		}
 	}
 	return time.Duration(0), nil
+}
+
+// GetInt64 returns an int64 if *key* matches, otherwise zero
+func (p *PathOptions) GetInt64(key string) (int64, error) {
+	if p == nil {
+		return 0, nil
+	}
+
+	lckey := strings.ToLower(key)
+	for k, v := range *p {
+		if lckey == strings.ToLower(k) {
+			return cast.ToInt64E(v)
+		}
+	}
+	return 0, nil
 }
 
 // GetBool returns a bool value if *key* matches, otherwise false
@@ -509,6 +526,38 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 			DebugOut.Printf("\tAppending Timeout.Handler:Timeout (Global): %s\n", gt.String())
 			hchain = hchain.Append(t.Handler)
 		}
+	}
+
+	// Caching?
+	if path.CacheName != "" {
+		if Caches == nil {
+			DebugOut.Printf("\t\tWants to use cache '%s' but no cache configured!\n", path.CacheName)
+			return 0, NoCacheDefinedError
+		}
+
+		size, err := path.Options.GetInt64(ConfigCacheSizeMB)
+		if err != nil {
+			return 0, err
+		}
+		max, err := path.Options.GetInt64(ConfigCacheMaxItemSizeB)
+		if err != nil {
+			return 0, err
+		}
+		expire, err := path.Options.GetDuration(ConfigCacheExpiration)
+		if err != nil {
+			return 0, err
+		}
+		cacheControl := path.Options.GetString(ConfigCacheControlHeader)
+		if size == 0 {
+			// Sanity
+			size = 16
+		}
+		DebugOut.Printf("\tAppending Cache %s with size %dMB, maxsize %dB and expiration of %s\n", path.CacheName, size, max, expire.String())
+		pc, err := Caches.NewPageCache(path.CacheName, size<<20, max, expire, cacheControl)
+		if err != nil {
+			return 0, err
+		}
+		hchain = hchain.Append(pc.Handler)
 	}
 
 	// Load endpoint handlers

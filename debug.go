@@ -54,6 +54,7 @@ func init() {
 	Handlers["dumphandler"] = DumpHandler
 	Finishers["dumpfinisher"] = DumpFinisher
 	Finishers["ok"] = OkFinisher
+	Finishers["date"] = DateFinisher
 	Finishers["minutedelayer"] = MinuteDelayer
 	Finishers["test"] = TestFinisher
 	Finishers["minutestreamer"] = MinuteStreamer
@@ -129,6 +130,11 @@ func MinuteDelayer(w http.ResponseWriter, r *http.Request) {
 // OkFinisher is a Finisher that simply returns "Ok", for throughput testing.
 func OkFinisher(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Ok"))
+}
+
+// DateFinisher is a Finisher that simply returns the current system datestamp as a string, for cache testing.
+func DateFinisher(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte(time.Now().String()))
 }
 
 // MinuteStreamer is a special finisher that writes the next number, once a secondish, for 60 iterations

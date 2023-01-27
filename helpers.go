@@ -220,3 +220,14 @@ func (n *NoopResponseWriter) Write(bytes []byte) (int, error) {
 func (n *NoopResponseWriter) WriteHeader(statusCode int) {
 	n.code = statusCode
 }
+
+// StringToCleanList splits 'in' using 'sep'arator, trims
+// any leading/trailing space from each resulting string, and
+// returns the list
+func StringToCleanList(in, sep string) []string {
+	list := strings.Split(in, sep)
+	for i, item := range list {
+		list[i] = strings.TrimSpace(item)
+	}
+	return list
+}
