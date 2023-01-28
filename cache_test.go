@@ -23,16 +23,12 @@ func cacheTestSetup() {
 func Test_PageCache(t *testing.T) {
 	cacheTestSetup()
 
-	req, err := http.NewRequest("GET", "/", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-
 	cacheName := "tpc"
 	p, perr := cc.NewPageCache(cacheName, 128<<20, 0, 0, "private") // 128MB cache, no size limit, no expiration
 	if perr != nil {
 		panic(perr)
 	}
+	p.syncCacheIt = true // testing faster than the async cachewrites can hit
 
 	Convey("When a new Page is created it looks correct", t, func() {
 
@@ -44,6 +40,10 @@ func Test_PageCache(t *testing.T) {
 		handler := p.Handler(testHandler)
 
 		Convey("Cache miss looks correct", func() {
+			req, err := http.NewRequest("GET", "/", nil)
+			if err != nil {
+				t.Fatal(err)
+			}
 			rr := httptest.NewRecorder()
 
 			handler.ServeHTTP(rr, req)
@@ -53,6 +53,7 @@ func Test_PageCache(t *testing.T) {
 			So(rr.Header().Get("Cache-Control"), ShouldContainSubstring, "private")
 
 			Convey("And a manual look at the cache shows it's there", func() {
+				//time.Sleep(10 * time.Millisecond)
 				doc, ok := p.cluster.Get(cacheName, url.PathEscape("/"))
 				So(ok, ShouldBeTrue)
 				So(string(doc.([]byte)), ShouldContainSubstring, string([]byte("Hello world!!/")))
@@ -60,9 +61,12 @@ func Test_PageCache(t *testing.T) {
 		})
 
 		Convey("Cache hit looks correct", func() {
+			req, err := http.NewRequest("GET", "/", nil)
+			if err != nil {
+				t.Fatal(err)
+			}
 			rr := httptest.NewRecorder()
 			handler.ServeHTTP(rr, req)
-
 			So(rr.Code, ShouldEqual, http.StatusOK)
 			So(rr.Body.Bytes(), ShouldResemble, []byte("Hello world!!/"))
 			So(rr.Header().Get("Cache-Control"), ShouldContainSubstring, "private")
@@ -95,6 +99,7 @@ func Test_PageCacheTooBig(t *testing.T) {
 	if perr != nil {
 		panic(perr)
 	}
+	p.syncCacheIt = true // testing faster than the async cachewrites can hit
 
 	Convey("When a new Page is created it looks correct", t, func() {
 

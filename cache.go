@@ -66,6 +66,7 @@ type PageCache struct {
 	ItemExpiration     time.Duration
 	cluster            *CacheCluster
 	cacheControlHeader string
+	syncCacheIt        bool
 }
 
 // NewPageCache should be called at most once per unique "name", and returns an initialized PageCache
@@ -155,33 +156,50 @@ func (c *PageCache) Handler(next http.Handler) http.Handler {
 
 			// Cache it
 			buff := RecyclableBufferPool.Get().(*recyclablebuffer.RecyclableBuffer)
-			defer buff.Close()
 			buff.Reset([]byte{})
 			enc := gob.NewEncoder(buff)
 			if err := enc.Encode(rw); err != nil {
 				ErrorOut.Printf("{%s} Requested cache %s gob encoding went sideways: %+v\n", requestID, c.Name, err)
+				buff.Close()
 				return
 			}
 			DebugOut.Printf("{%s} Caching %s\n", requestID, saneURL)
 
-			var err error
-			if c.ItemExpiration == 0 {
-				err = c.cluster.Set(c.Name, saneURL, buff.Bytes())
-			} else {
-				err = c.cluster.SetToExpireAt(c.Name, saneURL, time.Now().Add(c.ItemExpiration), buff.Bytes())
-			}
-
-			if err != nil {
-				switch err {
-				case cache.CacheNotFoundError:
-					ErrorOut.Printf("{%s} Requested cache %s doesn't exist", requestID, c.Name)
-				default:
-					ErrorOut.Printf("{%s} Requested cache %s Set went sideways: %+v", requestID, c.Name, err)
-				}
+			// ... async
+			rchan := cacheIt(c, requestID, saneURL, buff)
+			if c.syncCacheIt {
+				<-rchan
 			}
 		}
 	}
 	return http.HandlerFunc(fn)
+}
+
+func cacheIt(c *PageCache, requestID, key string, buff *recyclablebuffer.RecyclableBuffer) <-chan bool {
+	rchan := make(chan bool, 1)
+
+	go func() {
+		defer buff.Close()
+
+		var err error
+		if c.ItemExpiration == 0 {
+			err = c.cluster.Set(c.Name, key, buff.Bytes())
+		} else {
+			err = c.cluster.SetToExpireAt(c.Name, key, time.Now().Add(c.ItemExpiration), buff.Bytes())
+		}
+
+		if err != nil {
+			switch err {
+			case cache.CacheNotFoundError:
+				ErrorOut.Printf("{%s} Requested cache %s doesn't exist", requestID, c.Name)
+			default:
+				ErrorOut.Printf("{%s} Requested cache %s Set went sideways: %+v", requestID, c.Name, err)
+			}
+		}
+		rchan <- true
+	}()
+
+	return rchan
 }
 
 // isCacheable is a simplifier for isCacheableReasons

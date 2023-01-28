@@ -47,7 +47,7 @@ require (
 	github.com/buraksezer/consistent v0.9.0
 	github.com/cespare/xxhash v1.1.0
 	github.com/cognusion/go-health v1.1.0
-	github.com/cognusion/go-prw v1.2.0
+	github.com/cognusion/go-prw v1.3.0
 	github.com/cognusion/go-sequence v1.0.0
 	github.com/cognusion/go-zulipsend v1.0.0
 	github.com/cognusion/srvdisco v0.0.0-20180516035551-b4507d3e8282
@@ -64,6 +64,7 @@ require (
 	github.com/HdrHistogram/hdrhistogram-go v1.1.2 // indirect
 	github.com/bmizerany/pat v0.0.0-20170815010413-6226ea591a40 // indirect
 	github.com/cognusion/go-bitmask v1.0.1 // indirect
+	github.com/cognusion/go-recyclable v1.0.0 // indirect
 	github.com/go-pkgz/expirable-cache v0.1.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1 // indirect

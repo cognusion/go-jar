@@ -207,8 +207,7 @@ func (e *ErrorWrapper) Handler(next http.Handler) http.Handler {
 				defer erw.Close()
 				erw.SetHeader(rw.Header())
 				if e.E(rw.Code(), r, erw, rw.Body.Bytes()) {
-					rw.Body.Reset()
-					rw.Body.ReadFrom(erw.Body)
+					rw.Body.ResetFromReader(erw.Body)
 				}
 			}
 
