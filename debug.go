@@ -4,6 +4,7 @@ import (
 	"github.com/cognusion/go-timings"
 	"github.com/vulcand/oxy/forward"
 
+	"crypto/rand"
 	"fmt"
 	"io"
 	"net/http"
@@ -56,6 +57,7 @@ func init() {
 	Finishers["minutedelayer"] = MinuteDelayer
 	Finishers["test"] = TestFinisher
 	Finishers["minutestreamer"] = MinuteStreamer
+	Finishers["requestid"] = RequestIDFinisher
 }
 
 // TestFinisher is a special finisher that outputs some detectables
@@ -133,6 +135,21 @@ func OkFinisher(w http.ResponseWriter, r *http.Request) {
 // DateFinisher is a Finisher that simply returns the current system datestamp as a string, for cache testing.
 func DateFinisher(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(time.Now().String()))
+}
+
+// RequestIDFinisher is a Finisher that simply returns the current requestID a random number of times, for grind testing.
+func RequestIDFinisher(w http.ResponseWriter, r *http.Request) {
+	var requestID string
+	if rid := r.Context().Value(requestIDKey); rid != nil {
+		requestID = rid.(string)
+	}
+	w.Header().Set(Conf.GetString(ConfigRequestIDHeaderName), requestID)
+	rnd, _ := rand.Int(rand.Reader, randMax)
+	rv := rnd.Int64()/2 + 1
+	out := []byte(fmt.Sprintf("%s %d\n", requestID, rv))
+	for i := int64(0); i < rv; i++ {
+		w.Write(out)
+	}
 }
 
 // MinuteStreamer is a special finisher that writes the next number, once a secondish, for 60 iterations
