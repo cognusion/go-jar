@@ -1,7 +1,6 @@
 package jar
 
 import (
-	"github.com/cognusion/go-jar/recyclablebuffer"
 	"github.com/cognusion/go-prw"
 	"github.com/cognusion/go-timings"
 	"github.com/davecgh/go-spew/spew"
@@ -519,7 +518,7 @@ func (b *BodyByteLimit) Handler(next http.Handler) http.Handler {
 			// Read at most 1 more byte than we allow, replacing
 			// the request body with a new body
 
-			buff := RecyclableBufferPool.Get().(*recyclablebuffer.RecyclableBuffer)
+			buff := RecyclableBufferPool.Get()
 			if err := buff.ResetFromLimitedReader(r.Body, b.byteLimit); err != nil {
 				r.Body.Close()
 				buff.Close()

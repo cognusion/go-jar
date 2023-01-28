@@ -3,7 +3,7 @@ package jar
 import (
 	"github.com/davecgh/go-spew/spew"
 
-	"github.com/cognusion/go-jar/recyclablebuffer"
+	"github.com/cognusion/go-recyclable"
 
 	"context"
 	"fmt"
@@ -12,7 +12,6 @@ import (
 	"net/url"
 	"os"
 	"strings"
-	"sync"
 )
 
 var (
@@ -22,9 +21,9 @@ var (
 	// and returns true if it matches or if "authoritativedomains" is not used
 	CheckAuthoritative = func(*http.Request) bool { return true }
 
-	// RecyclableBufferPool is a sync.Pool of RecyclableBuffers that are safe to Get() and use (after a reset), and then
+	// RecyclableBufferPool is a pool of recyclable.Buffers that are safe to Get() and use (after a reset), and then
 	// Close() them when you're done, to put them back in the Pool
-	RecyclableBufferPool sync.Pool
+	RecyclableBufferPool = recyclable.NewBufferPool()
 )
 
 func init() {
@@ -34,12 +33,6 @@ func init() {
 			CheckAuthoritative = checkAuthoritative
 		}
 	})
-
-	RecyclableBufferPool = sync.Pool{
-		New: func() interface{} {
-			return recyclablebuffer.NewRecyclableBuffer(&RecyclableBufferPool, make([]byte, 0))
-		},
-	}
 }
 
 // checkAuthoritative compares domain suffixes in the ConfigAuthoritativeDomains against the requested URL.Hostname()
@@ -181,8 +174,8 @@ func ReaderToString(r io.Reader) string {
 	if r == nil {
 		return ""
 	}
-	b := RecyclableBufferPool.Get().(*recyclablebuffer.RecyclableBuffer)
-	defer b.Close()
+	b := RecyclableBufferPool.Get()
+	// defer b.Close()
 	b.ResetFromReader(r)
 	return b.String()
 }

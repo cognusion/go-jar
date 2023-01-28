@@ -2,8 +2,8 @@ package jar
 
 import (
 	"github.com/cognusion/go-jar/cache"
-	"github.com/cognusion/go-jar/recyclablebuffer"
 	"github.com/cognusion/go-prw"
+	"github.com/cognusion/go-recyclable"
 	"github.com/cognusion/go-timings"
 	"github.com/pquerna/cachecontrol/cacheobject"
 
@@ -124,7 +124,7 @@ func (c *PageCache) Handler(next http.Handler) http.Handler {
 		if v, ok := c.cluster.Get(c.Name, saneURL); ok {
 			defer TimingOut.Printf("{%s} CacheHandler %s (hit) took %s\n", requestID, c.Name, t.Since().String())
 
-			hit := RecyclableBufferPool.Get().(*recyclablebuffer.RecyclableBuffer)
+			hit := RecyclableBufferPool.Get()
 			defer hit.Close()
 			hit.Reset(v.([]byte))
 
@@ -155,7 +155,7 @@ func (c *PageCache) Handler(next http.Handler) http.Handler {
 			}
 
 			// Cache it
-			buff := RecyclableBufferPool.Get().(*recyclablebuffer.RecyclableBuffer)
+			buff := RecyclableBufferPool.Get()
 			buff.Reset([]byte{})
 			enc := gob.NewEncoder(buff)
 			if err := enc.Encode(rw); err != nil {
@@ -175,7 +175,7 @@ func (c *PageCache) Handler(next http.Handler) http.Handler {
 	return http.HandlerFunc(fn)
 }
 
-func cacheIt(c *PageCache, requestID, key string, buff *recyclablebuffer.RecyclableBuffer) <-chan bool {
+func cacheIt(c *PageCache, requestID, key string, buff *recyclable.Buffer) <-chan bool {
 	rchan := make(chan bool, 1)
 
 	go func() {

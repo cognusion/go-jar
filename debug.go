@@ -1,8 +1,6 @@
 package jar
 
 import (
-	"github.com/cognusion/go-jar/recyclablebuffer"
-
 	"github.com/cognusion/go-timings"
 	"github.com/vulcand/oxy/forward"
 
@@ -42,7 +40,7 @@ var (
 			}
 
 			w.Status = http.StatusText(w.StatusCode)
-			buf := RecyclableBufferPool.Get().(*recyclablebuffer.RecyclableBuffer)
+			buf := RecyclableBufferPool.Get()
 			buf.Reset([]byte(b))
 			w.Body = buf
 			return &w, nil
