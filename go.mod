@@ -48,12 +48,14 @@ require (
 	github.com/cespare/xxhash v1.1.0
 	github.com/cognusion/go-health v1.1.0
 	github.com/cognusion/go-prw v1.3.0
+	github.com/cognusion/go-recyclable v1.0.0
 	github.com/cognusion/go-sequence v1.0.0
 	github.com/cognusion/go-zulipsend v1.0.0
 	github.com/cognusion/srvdisco v0.0.0-20180516035551-b4507d3e8282
 	github.com/didip/tollbooth/v7 v7.0.1
 	github.com/eventials/go-tus v0.0.0-20220610120217-05d0564bb571
 	github.com/mailgun/groupcache/v2 v2.4.1
+	github.com/pquerna/cachecontrol v0.1.0
 	github.com/spf13/pflag v1.0.5
 	github.com/tus/tusd v1.9.2
 	go.uber.org/atomic v1.10.0
@@ -63,8 +65,6 @@ require (
 	github.com/BurntSushi/toml v0.4.1 // indirect
 	github.com/HdrHistogram/hdrhistogram-go v1.1.2 // indirect
 	github.com/bmizerany/pat v0.0.0-20170815010413-6226ea591a40 // indirect
-	github.com/cognusion/go-bitmask v1.0.1 // indirect
-	github.com/cognusion/go-recyclable v1.0.0 // indirect
 	github.com/go-pkgz/expirable-cache v0.1.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1 // indirect
@@ -79,7 +79,6 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.3 // indirect
-	github.com/pquerna/cachecontrol v0.1.0 // indirect
 	github.com/segmentio/fasthash v1.0.3 // indirect
 	github.com/smartystreets/assertions v1.2.0 // indirect
 	github.com/speps/go-hashids/v2 v2.0.1 // indirect
@@ -94,7 +93,6 @@ require (
 	golang.org/x/sys v0.0.0-20220818161305-2296e01440c6 // indirect
 	golang.org/x/term v0.0.0-20220722155259-a9ba230a4035 // indirect
 	golang.org/x/text v0.3.8 // indirect
-	golang.org/x/time v0.0.0-20220722155302-e5dcc9cfc0b9 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
