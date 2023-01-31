@@ -24,7 +24,7 @@ HMACSigner redirects to a signed version of the URL specified (less the specifie
 -
     Path: /emery/
     hmacsigned: true
-    cache: group1
+    cachename: group1
     Options:
       hmac.key: abcdefghijk123
       hmac.expiration: 3h
