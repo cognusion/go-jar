@@ -5,6 +5,7 @@ import (
 	"github.com/cognusion/go-humanity"
 	"github.com/cognusion/go-recyclable"
 	"github.com/fatih/color"
+	"github.com/rcrowley/go-metrics"
 	"github.com/viki-org/dnscache"
 	"golang.org/x/net/context/ctxhttp"
 
@@ -33,7 +34,6 @@ var (
 	NoColor       bool          // Disable colorizing
 	NoDNSCache    bool          // Disable DNS caching
 	Summary       bool          // Output final stats
-	Save          bool          // Enable saving the file
 	useBar        bool          // Use progress bar
 	totalGuess    int           // Guesstimate of number of GETs (useful with -bar)
 	debug         bool          // Enable debugging
@@ -44,6 +44,7 @@ var (
 	DebugOut  = log.New(io.Discard, "[DEBUG] ", OutFormat)
 
 	BufferPool = recyclable.NewBufferPool()
+	Meter      = metrics.NewMeter()
 )
 
 type urlCode struct {
@@ -67,7 +68,7 @@ func init() {
 	flag.BoolVar(&NoDNSCache, "nodnscache", false, "Disable DNS caching")
 	flag.BoolVar(&useBar, "bar", false, "Use progress bar instead of printing lines, can still use -stats")
 	flag.IntVar(&totalGuess, "guess", 0, "Rough guess of how many GETs will be coming for -bar to start at. It will adjust")
-	flag.BoolVar(&Save, "save", false, "Save the content of the files. Into hostname/folders/file.ext files")
+
 	flag.Parse()
 
 	// Handle boring people
@@ -107,6 +108,8 @@ func main() {
 	error5s := 0
 	errors := 0
 	mismatches := 0
+
+	defer Meter.Stop()
 
 	// Set up the progress bar
 	if useBar {
@@ -197,7 +200,7 @@ func main() {
 		e4 := color.YellowString("%d", error4s)
 		e5 := color.RedString("%d", error5s)
 		eX := color.RedString("%d", mismatches)
-		fmt.Printf("\n\nGETs: %d\nErrors: %s\n500 Errors: %s\n400 Errors: %s\nMismatches: %s\nElapsed Time: %s\n", count, e, e5, e4, eX, elapsed.String())
+		fmt.Printf("\n\nGETs: %d\nErrors: %s\n500 Errors: %s\n400 Errors: %s\nMismatches: %s\nElapsed Time: %s\nRate: %.4f/s\n", count, e, e5, e4, eX, elapsed.String(), Meter.RateMean())
 	}
 }
 
@@ -295,32 +298,22 @@ func getter(getChan chan string, rChan chan urlCode, doneChan chan bool, abortCh
 		s := time.Now()
 		response, err := ctxhttp.Get(ctx, c, url)
 		d := time.Since(s)
+		Meter.Mark(1)
 
 		if err != nil {
 			// We assume code 0 to be a non-HTTP error
 			rChan <- urlCode{url, 0, 0, d, err}
 		} else {
-			/*
-				if ResponseDebug {
-					b, err := io.ReadAll(response.Body)
-					if err != nil {
-						DebugOut.Printf("Error reading response body: %s\n", err)
-					} else {
-						DebugOut.Printf("<-----\n%s\n----->\n", b)
-					}
 
-					if Save {
-						SaveFile(url, &b)
-					}
-				} else if Save {
-					b, err := io.ReadAll(response.Body)
-					if err != nil {
-						fmt.Printf("Error reading response body: '%s' not saving file '%s'\n", err, url)
-					} else {
-						SaveFile(url, &b)
-					}
+			if ResponseDebug {
+				b, err := io.ReadAll(response.Body)
+				if err != nil {
+					DebugOut.Printf("Error reading response body: %s\n", err)
+				} else {
+					DebugOut.Printf("<-----\n%s\n----->\n", b)
 				}
-			*/
+			}
+
 			cv := compare(response)
 			if !cv {
 				rChan <- urlCode{url, 611, response.ContentLength, d, nil}

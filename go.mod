@@ -38,7 +38,7 @@ require (
 	github.com/vulcand/oxy v1.4.1
 	github.com/xeipuuv/gojsonschema v1.2.0 // indirect
 	golang.org/x/crypto v0.0.0-20220817201139-bc19a97f63c8 // indirect
-	golang.org/x/net v0.0.0-20220812174116-3211cb980234 // indirect
+	golang.org/x/net v0.0.0-20220812174116-3211cb980234
 	golang.org/x/sync v0.0.0-20220819030929-7fc1605a5dde
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
@@ -46,7 +46,9 @@ require (
 require (
 	github.com/buraksezer/consistent v0.9.0
 	github.com/cespare/xxhash v1.1.0
+	github.com/cheggaaa/pb/v3 v3.1.0
 	github.com/cognusion/go-health v1.1.0
+	github.com/cognusion/go-humanity v1.3.0
 	github.com/cognusion/go-prw v1.3.0
 	github.com/cognusion/go-recyclable v1.0.0
 	github.com/cognusion/go-sequence v1.0.0
@@ -54,16 +56,19 @@ require (
 	github.com/cognusion/srvdisco v0.0.0-20180516035551-b4507d3e8282
 	github.com/didip/tollbooth/v7 v7.0.1
 	github.com/eventials/go-tus v0.0.0-20220610120217-05d0564bb571
+	github.com/fatih/color v1.13.0
 	github.com/mailgun/groupcache/v2 v2.4.1
 	github.com/pquerna/cachecontrol v0.1.0
 	github.com/spf13/pflag v1.0.5
 	github.com/tus/tusd v1.9.2
+	github.com/viki-org/dnscache v0.0.0-20130720023526-c70c1f23c5d8
 	go.uber.org/atomic v1.10.0
 )
 
 require (
 	github.com/BurntSushi/toml v0.4.1 // indirect
 	github.com/HdrHistogram/hdrhistogram-go v1.1.2 // indirect
+	github.com/VividCortex/ewma v1.1.1 // indirect
 	github.com/bmizerany/pat v0.0.0-20170815010413-6226ea591a40 // indirect
 	github.com/go-pkgz/expirable-cache v0.1.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
@@ -76,9 +81,13 @@ require (
 	github.com/jtolds/gls v4.20.0+incompatible // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
 	github.com/mailgun/multibuf v0.1.2 // indirect
+	github.com/mattn/go-colorable v0.1.12 // indirect
+	github.com/mattn/go-isatty v0.0.14 // indirect
+	github.com/mattn/go-runewidth v0.0.12 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.3 // indirect
+	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/segmentio/fasthash v1.0.3 // indirect
 	github.com/smartystreets/assertions v1.2.0 // indirect
 	github.com/speps/go-hashids/v2 v2.0.1 // indirect
@@ -90,6 +99,7 @@ require (
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
+	golang.org/x/exp v0.0.0-20220323121947-b445f275a754 // indirect
 	golang.org/x/sys v0.0.0-20220818161305-2296e01440c6 // indirect
 	golang.org/x/term v0.0.0-20220722155259-a9ba230a4035 // indirect
 	golang.org/x/text v0.3.8 // indirect
