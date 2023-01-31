@@ -18,6 +18,6 @@ Consumers will want to 'cd cmd/jard; go build; #enjoy'
   * [Consistent-Hashing Pools](docs/consistenthashing.md)
   * [HMAC signature verification](docs/hmacsign.md)
   * [TUS-compatible Uploads](docs/tus.md)
-  * [Content caching](docs/cache.md)
+  * [Distributed Content-caching](docs/cache.md)
 * [GoDoc for embedding](docs/godoc.md)
 * [FAQ](docs/FAQ.md)
