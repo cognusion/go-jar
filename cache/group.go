@@ -128,8 +128,14 @@ func (gc *GroupCache) Close() error {
 // Get will return the value of the cacheName'd key, asking other cache members or
 // backfilling as necessary.
 func (gc *GroupCache) Get(cacheName, key string) (value interface{}, ok bool) {
+	return gc.GetContext(context.Background(), cacheName, key)
+}
+
+// GetContext will return the value of the cacheName'd key, asking other cache members or
+// backfilling as necessary, honoring the provided context.
+func (gc *GroupCache) GetContext(ctx context.Context, cacheName, key string) (value interface{}, ok bool) {
 	gc.debugOut.Printf("Getting %s %s\n", cacheName, key)
-	return gc.get(context.TODO(), cacheName, key)
+	return gc.get(ctx, cacheName, key)
 }
 
 func (gc *GroupCache) get(ctx context.Context, cacheName, key string) (value interface{}, ok bool) {
@@ -147,38 +153,46 @@ func (gc *GroupCache) get(ctx context.Context, cacheName, key string) (value int
 
 // Set forces an item into the cache, following the configured expiration policy
 func (gc *GroupCache) Set(cacheName, key string, value []byte) error {
-	gc.debugOut.Printf("Setting %s %s\n", cacheName, key)
-	return gc.set(cacheName, key, value, true)
+	return gc.SetContext(context.Background(), cacheName, key, value, time.Time{})
+}
+
+// SetContext forces an item into the cache, following the specified expiration (unless a zero Time is provided
+// then falling back to the configured expiration policy) honoring the provided context.
+func (gc *GroupCache) SetContext(ctx context.Context, cacheName, key string, value []byte, expiration time.Time) error {
+	gc.debugOut.Printf("Setting %s %s @ %s\n", cacheName, key, expiration.String())
+	return gc.set(ctx, cacheName, key, value, expiration)
 }
 
 // set is an internal function for all of the Set* funcs. expirationOption is either “true“ (follow policy),
 // “false“ (no expiration), or a time.Time specifying when to expire the item
-func (gc *GroupCache) set(cacheName, key string, value []byte, expirationOption interface{}) error {
+func (gc *GroupCache) set(ctx context.Context, cacheName, key string, value []byte, expiration time.Time) error {
 	if cache, ok := gc.caches[cacheName]; ok {
-		switch t := expirationOption.(type) {
-		case bool:
-			if !t || gc.configs[cacheName].ItemExpiration == 0 {
-				return cache.Set(context.TODO(), key, value, time.Time{}, true)
-			}
-			return cache.Set(context.TODO(), key, value, time.Now().Add(gc.configs[cacheName].ItemExpiration), true)
-		case time.Time:
-			return cache.Set(context.TODO(), key, value, t, true)
+		if expiration.IsZero() && gc.configs[cacheName].ItemExpiration != 0 {
+			// Local expiration is zero, but the cache has an expiration
+			return cache.Set(ctx, key, value, time.Now().Add(gc.configs[cacheName].ItemExpiration), true)
 		}
+		return cache.Set(ctx, key, value, expiration, true)
 	}
 	return CacheNotFoundError
 }
 
-// SetToExpireAt forces an item into the cache, to expire at a specific time regardless of the cache configuration
+// SetToExpireAt forces an item into the cache, to expire at a specific time regardless of the cache configuration. Use
+// SetContext if you need to set the expiration and a context.
 func (gc *GroupCache) SetToExpireAt(cacheName, key string, expireAt time.Time, value []byte) error {
 	gc.debugOut.Printf("Setting %s %s @ %s\n", cacheName, key, expireAt.String())
-	return gc.set(cacheName, key, value, expireAt)
+	return gc.set(context.Background(), cacheName, key, value, expireAt)
 }
 
 // Remove makes a best effort to remove an item from the cache
 func (gc *GroupCache) Remove(cacheName, key string) error {
+	return gc.RemoveContext(context.Background(), cacheName, key)
+}
+
+// RemoveContext makes a best effort to remove an item from the cache, honoring the provided context.
+func (gc *GroupCache) RemoveContext(ctx context.Context, cacheName, key string) error {
 	if cache, ok := gc.caches[cacheName]; ok {
 		gc.debugOut.Printf("Removing %s %s\n", cacheName, key)
-		return cache.Remove(context.TODO(), key)
+		return cache.Remove(ctx, key)
 	}
 	return CacheNotFoundError
 }
