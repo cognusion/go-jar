@@ -246,9 +246,9 @@ func TestWorkerpoolCheckGrowMax(t *testing.T) {
 }
 
 func TestWorkerpoolCheckGrowBusyish(t *testing.T) {
-	workChan := make(chan Work, 10)
-
 	t.Skip("Slow...\n")
+
+	workChan := make(chan Work, 10)
 
 	Convey("When a Workerpool intializes, the pool size is correct", t, func() {
 		p := NewWorkerPool(workChan, 1, 0)
@@ -267,9 +267,9 @@ func TestWorkerpoolCheckGrowBusyish(t *testing.T) {
 }
 
 func TestWorkerpoolCheckShrinkBusyish(t *testing.T) {
-	workChan := make(chan Work, 10)
-
 	t.Skip("Slow...\n")
+
+	workChan := make(chan Work, 10)
 
 	Convey("When a Workerpool intializes, the pool size is correct", t, func() {
 		p := NewWorkerPool(workChan, 50, 0)
@@ -295,10 +295,10 @@ func TestWorkerpoolCheckShrinkBusyish(t *testing.T) {
 }
 
 func TestWorkerpoolCheckGrowAutomatic(t *testing.T) {
+	t.Skip("Slow....\n")
+
 	workChan := make(chan Work, 10)
 	rChan := make(chan interface{}, 1000)
-
-	t.Skip("Slow....\n")
 
 	Convey("When a Workerpool intializes, the pool size is correct", t, func() {
 		p := NewWorkerPool(workChan, 1, 2*time.Second)
