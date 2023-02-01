@@ -17,15 +17,14 @@ import (
 	"log"
 	"net"
 	"net/http"
-	"net/url"
 	"os"
 	"os/signal"
-	"path"
 	"strings"
 	"syscall"
 	"time"
 )
 
+// Various globals
 var (
 	MaxRequests   int           // maximum number of outstanding HTTP get requests allowed
 	Rounds        int           // How many times to hit it
@@ -335,32 +334,4 @@ func getter(getChan chan string, rChan chan urlCode, doneChan chan bool, abortCh
 		}
 	}
 
-}
-
-// SaveFile takes a URL and a pointer to a []byte containing the to-be-saved bytes,
-// and saves the full url as the path (sans scheme).
-// e.g. 'https://somewhere.com/1/2/3/4/5.html' will be saved as './somewhere.com/1/2/3/4/5.html'
-func SaveFile(saveAs string, contents *[]byte) error {
-	url, err := url.Parse(saveAs)
-	if err != nil {
-		return err
-	}
-
-	dirs := path.Dir(url.Path)
-	if !strings.HasPrefix(dirs, "/") {
-		// Sanity!
-		dirs = "/" + dirs
-	}
-
-	DebugOut.Printf("Saved File Path: '%s%s' full: '%s%s'\n", url.Hostname(), dirs, url.Hostname(), url.Path)
-	err = os.MkdirAll(fmt.Sprintf("%s%s", url.Hostname(), dirs), os.ModePerm)
-	if err != nil {
-		return err
-	}
-
-	err = os.WriteFile(fmt.Sprintf("%s%s", url.Hostname(), url.Path), *contents, os.ModePerm)
-	if err != nil {
-		return err
-	}
-	return nil
 }
