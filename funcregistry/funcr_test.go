@@ -30,18 +30,13 @@ func TestFuncr(t *testing.T) {
 
 		Convey("after Call()ing, all of the results are accounted for", func() {
 			returnCount := 0
-		OUT:
-			for {
-				select {
-				case b := <-fChan:
-					if b {
-						returnCount++
-					} else {
-						break OUT
-					}
+			for b := range fChan {
+				if b {
+					returnCount++
+				} else {
+					break
 				}
 			}
-
 			So(returnCount, ShouldEqual, 1000)
 		})
 	})
@@ -69,15 +64,12 @@ func TestFuncrCallOnce(t *testing.T) {
 		go fr.Call()
 		Convey("after Call()ing, all of the results are accounted for", func() {
 			returnCount := 0
-		OUT:
-			for {
-				select {
-				case b := <-fChan:
-					if b {
-						returnCount++
-					} else {
-						break OUT
-					}
+
+			for b := range fChan {
+				if b {
+					returnCount++
+				} else {
+					break
 				}
 			}
 
@@ -88,7 +80,7 @@ func TestFuncrCallOnce(t *testing.T) {
 
 				timeout := time.After(time.Second)
 				select {
-				case _ = <-fChan:
+				case <-fChan:
 					t.Errorf("Second Call() executed!\n")
 				case <-timeout:
 					// Success
@@ -125,15 +117,12 @@ func TestFuncrAddOnceCall(t *testing.T) {
 		go fr.Call()
 		Convey("after Call()ing once, all 1000 of the results are accounted for", func() {
 			returnCount := 0
-		OUT:
-			for {
-				select {
-				case b := <-fChan:
-					if b {
-						returnCount++
-					} else {
-						break OUT
-					}
+
+			for b := range fChan {
+				if b {
+					returnCount++
+				} else {
+					break
 				}
 			}
 
@@ -190,15 +179,12 @@ func TestFuncrCallTwice(t *testing.T) {
 
 		Convey("after Call()ing, all of the results are accounted for", func() {
 			returnCount := 0
-		OUT:
-			for {
-				select {
-				case b := <-fChan:
-					if b {
-						returnCount++
-					} else {
-						break OUT
-					}
+
+			for b := range fChan {
+				if b {
+					returnCount++
+				} else {
+					break
 				}
 			}
 
@@ -207,15 +193,11 @@ func TestFuncrCallTwice(t *testing.T) {
 			go fr.Call()
 			Convey("after Call()ing a second time, all of the results are accounted for", func() {
 
-			OUT2:
-				for {
-					select {
-					case b := <-fChan:
-						if b {
-							returnCount++
-						} else {
-							break OUT2
-						}
+				for b := range fChan {
+					if b {
+						returnCount++
+					} else {
+						break
 					}
 				}
 
