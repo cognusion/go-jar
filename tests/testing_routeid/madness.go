@@ -88,7 +88,7 @@ var (
 		w.Write(ok)
 	})
 
-	noroute = []byte("No Routeid")
-	ok      = []byte("ok")
-	gross   = []byte("gross")
+	//noroute = []byte("No Routeid")
+	ok    = []byte("ok")
+	gross = []byte("gross")
 )
