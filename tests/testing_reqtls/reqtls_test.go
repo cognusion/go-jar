@@ -64,8 +64,8 @@ func Test_Httpdown(t *testing.T) {
 		time.Sleep(1 * time.Second)
 		_, err := ts.Client().Get(ts.URL)
 		select {
-		case err := <-e:
-			So(err, ShouldBeNil)
+		case cerr := <-e:
+			So(cerr, ShouldBeNil)
 		default:
 		}
 		So(err, ShouldBeNil)
@@ -102,8 +102,8 @@ func Test_GraceServe(t *testing.T) {
 		time.Sleep(1 * time.Second)
 		_, err := ts.Client().Get(ts.URL)
 		select {
-		case err := <-e:
-			So(err, ShouldBeNil)
+		case cerr := <-e:
+			So(cerr, ShouldBeNil)
 		default:
 		}
 		So(err, ShouldBeNil)
@@ -140,8 +140,8 @@ func Test_GraceServeWithOptions(t *testing.T) {
 		time.Sleep(1 * time.Second)
 		_, err := ts.Client().Get(ts.URL)
 		select {
-		case err := <-e:
-			So(err, ShouldBeNil)
+		case cerr := <-e:
+			So(cerr, ShouldBeNil)
 		default:
 		}
 		So(err, ShouldBeNil)
