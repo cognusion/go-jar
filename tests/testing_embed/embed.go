@@ -46,10 +46,12 @@ func main() {
 
 }
 
+// AllDone is an example Finisher
 func AllDone(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "Request Received")
 }
 
+// LazyLogger is an example Handler that does logging lazily
 func LazyLogger(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("LAZY LOGGING: %+v\n", r)

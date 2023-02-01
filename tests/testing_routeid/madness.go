@@ -13,10 +13,10 @@ func PassThroughHandler(next http.Handler) http.Handler {
 	return http.HandlerFunc(fn)
 }
 
-// ParamInspection_FormValue_Handler uses the http.Request.FormValue facility to grab the ROUTEID off the paramlist.
+// ParamInspectionFormValueHandler uses the http.Request.FormValue facility to grab the ROUTEID off the paramlist.
 // This is by far the fastest way to do this, but alters the body, rendering application-level checksums invalid, and
 // breaking brittle destinations that make expectations about its condition.
-func ParamInspection_FormValue_Handler(next http.Handler) http.Handler {
+func ParamInspectionFormValueHandler(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
 		if rkey := r.FormValue("ROUTEID"); rkey != "" {
@@ -32,9 +32,9 @@ func ParamInspection_FormValue_Handler(next http.Handler) http.Handler {
 	return http.HandlerFunc(fn)
 }
 
-// ParamInspection_URLQuery_Handler uses the http.Request.URL.Query().Get facility to grab the ROUTEID off the paramlist.
+// ParamInspectionURLQueryHandler uses the http.Request.URL.Query().Get facility to grab the ROUTEID off the paramlist.
 // This is a very expensive operation regardless of whether the parameter exists or not.
-func ParamInspection_URLQuery_Handler(next http.Handler) http.Handler {
+func ParamInspectionURLQueryHandler(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
 		if rkey := r.URL.Query().Get("ROUTEID"); rkey != "" {
@@ -50,10 +50,10 @@ func ParamInspection_URLQuery_Handler(next http.Handler) http.Handler {
 	return http.HandlerFunc(fn)
 }
 
-// ParamInspection_URLQueryContains_Handler is a variation of ParamInspection_URLQuery_Handler, that first inspects the
+// ParamInspectionURLQueryContainsHandler is a variation of ParamInspection_URLQuery_Handler, that first inspects the
 // http.Request.URL.RawQuery string, to see if it Contains (or may contain) the ROUTEID, before decoding the Query, which
 // is a very expensive operation.
-func ParamInspection_URLQueryContains_Handler(next http.Handler) http.Handler {
+func ParamInspectionURLQueryContainsHandler(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
 		if strings.Contains(r.URL.RawQuery, "ROUTEID") {

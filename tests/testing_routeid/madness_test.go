@@ -8,7 +8,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func Test_Passthrough_Handler(t *testing.T) {
+func Test_PassthroughHandler(t *testing.T) {
 	req, err := http.NewRequest("GET", "/?ROUTEID=sdfsd8798s9df8ds", nil)
 	if err != nil {
 		t.Fatal(err)
@@ -31,7 +31,7 @@ func Test_Passthrough_Handler(t *testing.T) {
 	})
 }
 
-func Test_ParamInspection_FormValue_Handler(t *testing.T) {
+func Test_ParamInspectionFormValue_Handler(t *testing.T) {
 	req, err := http.NewRequest("GET", "/?ROUTEID=sdfsd8798s9df8ds", nil)
 	if err != nil {
 		t.Fatal(err)
@@ -40,7 +40,7 @@ func Test_ParamInspection_FormValue_Handler(t *testing.T) {
 	Convey("When a request is made, with the ROUTEID on the param list, it succeeds", t, func() {
 		rr := httptest.NewRecorder()
 
-		handler := ParamInspection_FormValue_Handler(CookieInspectionHandler)
+		handler := ParamInspectionFormValueHandler(CookieInspectionHandler)
 
 		handler.ServeHTTP(rr, req)
 
@@ -54,7 +54,7 @@ func Test_ParamInspection_FormValue_Handler(t *testing.T) {
 	})
 }
 
-func Test_ParamInspection_FormValue_Handler_Dupe(t *testing.T) {
+func Test_ParamInspectionFormValueHandlerDupe(t *testing.T) {
 	req, err := http.NewRequest("GET", "/?ROUTEID=sdfsd8798s9df8ds", nil)
 	if err != nil {
 		t.Fatal(err)
@@ -68,7 +68,7 @@ func Test_ParamInspection_FormValue_Handler_Dupe(t *testing.T) {
 	Convey("When a request is made, with the ROUTEID on the param list and a different ROUTEID in a cookie, the parse succeeds", t, func() {
 		rr := httptest.NewRecorder()
 
-		handler := ParamInspection_FormValue_Handler(CookieInspectionHandler)
+		handler := ParamInspectionFormValueHandler(CookieInspectionHandler)
 
 		handler.ServeHTTP(rr, req)
 
@@ -82,7 +82,7 @@ func Test_ParamInspection_FormValue_Handler_Dupe(t *testing.T) {
 	})
 }
 
-func Test_ParamInspection_URLQuery_Handler(t *testing.T) {
+func Test_ParamInspectionURLQueryHandler(t *testing.T) {
 	req, err := http.NewRequest("GET", "/?ROUTEID=sdfsd8798s9df8ds", nil)
 	if err != nil {
 		t.Fatal(err)
@@ -91,7 +91,7 @@ func Test_ParamInspection_URLQuery_Handler(t *testing.T) {
 	Convey("When a request is made, with the ROUTEID on the param list, it succeeds", t, func() {
 		rr := httptest.NewRecorder()
 
-		handler := ParamInspection_URLQuery_Handler(CookieInspectionHandler)
+		handler := ParamInspectionURLQueryHandler(CookieInspectionHandler)
 
 		handler.ServeHTTP(rr, req)
 
@@ -105,7 +105,7 @@ func Test_ParamInspection_URLQuery_Handler(t *testing.T) {
 	})
 }
 
-func Test_ParamInspection_URLQueryContains_Handler(t *testing.T) {
+func Test_ParamInspectionURLQueryContains_Handler(t *testing.T) {
 	req, err := http.NewRequest("GET", "/?ROUTEID=sdfsd8798s9df8ds", nil)
 	if err != nil {
 		t.Fatal(err)
@@ -114,7 +114,7 @@ func Test_ParamInspection_URLQueryContains_Handler(t *testing.T) {
 	Convey("When a request is made, with the ROUTEID on the param list, it succeeds", t, func() {
 		rr := httptest.NewRecorder()
 
-		handler := ParamInspection_URLQueryContains_Handler(CookieInspectionHandler)
+		handler := ParamInspectionURLQueryContainsHandler(CookieInspectionHandler)
 
 		handler.ServeHTTP(rr, req)
 
@@ -137,7 +137,7 @@ func Test_ParamInspection_URLQueryContains_Handler_None(t *testing.T) {
 	Convey("When a request is made, without the ROUTEID on the param list, it fails", t, func() {
 		rr := httptest.NewRecorder()
 
-		handler := ParamInspection_URLQueryContains_Handler(CookieInspectionHandler)
+		handler := ParamInspectionURLQueryContainsHandler(CookieInspectionHandler)
 
 		handler.ServeHTTP(rr, req)
 
@@ -169,7 +169,7 @@ func Benchmark_ParamInspection_FormValue_Handler_Negative(b *testing.B) {
 
 	rr := httptest.NewRecorder()
 
-	handler := ParamInspection_FormValue_Handler(TestHandler)
+	handler := ParamInspectionFormValueHandler(TestHandler)
 
 	handler.ServeHTTP(rr, req)
 
@@ -179,7 +179,7 @@ func Benchmark_ParamInspection_FormValue_Handler_Negative(b *testing.B) {
 	}
 }
 
-func Benchmark_ParamInspection_FormValue_Handler_Positive(b *testing.B) {
+func Benchmark_ParamInspectionFormValueHandlerPositive(b *testing.B) {
 	req, err := http.NewRequest("GET", "/?ROUTEID=dskjfskfhkseuhfkjsdkj", nil)
 	if err != nil {
 		b.Fatal(err)
@@ -187,7 +187,7 @@ func Benchmark_ParamInspection_FormValue_Handler_Positive(b *testing.B) {
 
 	rr := httptest.NewRecorder()
 
-	handler := ParamInspection_FormValue_Handler(TestHandler) //TestHandler) //CookieInspectionHandler)
+	handler := ParamInspectionFormValueHandler(TestHandler) //TestHandler) //CookieInspectionHandler)
 
 	handler.ServeHTTP(rr, req)
 
@@ -197,7 +197,7 @@ func Benchmark_ParamInspection_FormValue_Handler_Positive(b *testing.B) {
 	}
 }
 
-func Benchmark_ParamInspection_URLQuery_Handler_Negative(b *testing.B) {
+func Benchmark_ParamInspectionURLQueryHandlerNegative(b *testing.B) {
 	req, err := http.NewRequest("GET", "/?BLHBLAH=dskjfskfhkseuhfkjsdkj", nil)
 	if err != nil {
 		b.Fatal(err)
@@ -205,7 +205,7 @@ func Benchmark_ParamInspection_URLQuery_Handler_Negative(b *testing.B) {
 
 	rr := httptest.NewRecorder()
 
-	handler := ParamInspection_URLQuery_Handler(TestHandler)
+	handler := ParamInspectionURLQueryHandler(TestHandler)
 
 	handler.ServeHTTP(rr, req)
 
@@ -215,7 +215,7 @@ func Benchmark_ParamInspection_URLQuery_Handler_Negative(b *testing.B) {
 	}
 }
 
-func Benchmark_ParamInspection_URLQuery_Handler_Positive(b *testing.B) {
+func Benchmark_ParamInspectionURLQueryHandlerPositive(b *testing.B) {
 	req, err := http.NewRequest("GET", "/?ROUTEID=dskjfskfhkseuhfkjsdkj", nil)
 	if err != nil {
 		b.Fatal(err)
@@ -223,7 +223,7 @@ func Benchmark_ParamInspection_URLQuery_Handler_Positive(b *testing.B) {
 
 	rr := httptest.NewRecorder()
 
-	handler := ParamInspection_URLQuery_Handler(TestHandler) //TestHandler) //CookieInspectionHandler)
+	handler := ParamInspectionURLQueryHandler(TestHandler) //TestHandler) //CookieInspectionHandler)
 
 	handler.ServeHTTP(rr, req)
 
@@ -233,7 +233,7 @@ func Benchmark_ParamInspection_URLQuery_Handler_Positive(b *testing.B) {
 	}
 }
 
-func Benchmark_ParamInspection_URLQueryContains_Handler_Negative(b *testing.B) {
+func Benchmark_ParamInspectionURLQueryContainsHandlerNegative(b *testing.B) {
 	req, err := http.NewRequest("GET", "/?BLHBLAH=dskjfskfhkseuhfkjsdkj", nil)
 	if err != nil {
 		b.Fatal(err)
@@ -241,7 +241,7 @@ func Benchmark_ParamInspection_URLQueryContains_Handler_Negative(b *testing.B) {
 
 	rr := httptest.NewRecorder()
 
-	handler := ParamInspection_URLQueryContains_Handler(TestHandler)
+	handler := ParamInspectionURLQueryContainsHandler(TestHandler)
 
 	handler.ServeHTTP(rr, req)
 
@@ -251,7 +251,7 @@ func Benchmark_ParamInspection_URLQueryContains_Handler_Negative(b *testing.B) {
 	}
 }
 
-func Benchmark_ParamInspection_URLQueryContains_Handler_Positive(b *testing.B) {
+func Benchmark_ParamInspectionURLQueryContainsHandler_Positive(b *testing.B) {
 	req, err := http.NewRequest("GET", "/?ROUTEID=dskjfskfhkseuhfkjsdkj", nil)
 	if err != nil {
 		b.Fatal(err)
@@ -259,7 +259,7 @@ func Benchmark_ParamInspection_URLQueryContains_Handler_Positive(b *testing.B) {
 
 	rr := httptest.NewRecorder()
 
-	handler := ParamInspection_URLQueryContains_Handler(TestHandler) //TestHandler) //CookieInspectionHandler)
+	handler := ParamInspectionURLQueryContainsHandler(TestHandler) //TestHandler) //CookieInspectionHandler)
 
 	handler.ServeHTTP(rr, req)
 
