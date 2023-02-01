@@ -45,7 +45,6 @@ type CacheCluster struct {
 
 // NewCacheCluster should be called at most once, and returns an initialized CacheCluster
 func NewCacheCluster(address string, peers []string) *CacheCluster {
-	// TODO Should we defend against multiple calls?
 	DebugOut.Printf("Adding cache cluster. Listening on %s with peers: %+v\n", address, peers)
 	conf := cache.Config{
 		ListenAddress: address,

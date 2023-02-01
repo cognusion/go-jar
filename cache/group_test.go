@@ -251,7 +251,7 @@ func Benchmark_SplitHasYes(b *testing.B) {
 func Benchmark_SplitContextNo(b *testing.B) {
 	key := "123"
 	sep := "\t"
-	ctx := context.TODO()
+	ctx := context.Background()
 	for i := 0; i < b.N; i++ {
 		if x := ctx.Value(prefixKey); x != nil {
 			prefix := x.(string)
@@ -263,7 +263,7 @@ func Benchmark_SplitContextNo(b *testing.B) {
 func Benchmark_SplitContextYes(b *testing.B) {
 	key := "456\t123"
 	sep := "\t"
-	ctx := context.WithValue(context.TODO(), prefixKey, "456")
+	ctx := context.WithValue(context.Background(), prefixKey, "456")
 	for i := 0; i < b.N; i++ {
 		if x := ctx.Value("prefix"); x != nil {
 			prefix := x.(string)
