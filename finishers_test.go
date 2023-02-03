@@ -1,13 +1,13 @@
 package jar
 
 import (
-	"github.com/glenn-brown/golang-pkg-pcre/src/pkg/pcre"
 	. "github.com/smartystreets/goconvey/convey"
 
 	"io"
 	"log"
 	"net/http"
 	"net/http/httptest"
+	"regexp"
 	"testing"
 )
 
@@ -118,7 +118,7 @@ func TestFinisherRedirect(t *testing.T) {
 	})
 }
 
-func TestFinisherRedirectPCRE(t *testing.T) {
+func TestFinisherRedirectRegexp(t *testing.T) {
 
 	req, err := http.NewRequest("GET", "http://elsewhere.com/files.html", nil)
 	if err != nil {
@@ -130,13 +130,13 @@ func TestFinisherRedirectPCRE(t *testing.T) {
 
 		rr := httptest.NewRecorder()
 
-		re, rerr := pcre.Compile("(.*)where", pcre.CASELESS)
+		re, rerr := regexp.Compile("(?i)(.*)where")
 		So(rerr, ShouldBeNil)
 
 		red := Redirect{
-			URL:  "http://somewhere$1.com%1",
-			Code: http.StatusMovedPermanently,
-			PCRE: &re,
+			URL:    "http://somewhere$1.com%1",
+			Code:   http.StatusMovedPermanently,
+			Regexp: re,
 		}
 		handler := http.HandlerFunc(red.Finisher)
 

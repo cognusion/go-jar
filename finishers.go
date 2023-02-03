@@ -1,12 +1,12 @@
 package jar
 
 import (
-	"github.com/glenn-brown/golang-pkg-pcre/src/pkg/pcre"
 	"github.com/gorilla/mux"
 
 	"encoding/base64"
 	"fmt"
 	"net/http"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -114,9 +114,9 @@ func Forbidden(w http.ResponseWriter, r *http.Request) {
 
 // Redirect is a Finisher that returns 301 for the requested Path
 type Redirect struct {
-	URL  string
-	Code int
-	PCRE *pcre.Regexp
+	URL    string
+	Code   int
+	Regexp *regexp.Regexp
 }
 
 // Finisher is a ... Finisher for the instantiated Redirect
@@ -125,11 +125,16 @@ func (rd *Redirect) Finisher(w http.ResponseWriter, r *http.Request) {
 	if rd.Code < 300 || rd.Code >= 400 {
 		rd.Code = http.StatusMovedPermanently
 	}
-	if rd.PCRE != nil && rd.PCRE.Groups() > 0 {
+
+	if rd.Regexp != nil && rd.Regexp.NumSubexp() > 0 {
 		// there are submatch groups to care about
-		m := rd.PCRE.MatcherString(r.Host, 0) // create a matcher
-		for i := 0; i < rd.PCRE.Groups(); i++ {
-			if g := m.GroupString(i + 1); g != "" {
+		m := rd.Regexp.FindStringSubmatch(r.Host)
+		if m == nil || len(m) < rd.Regexp.NumSubexp()+1 {
+			RequestErrorResponse(r, w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+		for i := 0; i < rd.Regexp.NumSubexp(); i++ {
+			if g := m[i+1]; g != "" {
 				s := fmt.Sprintf("$%d", i+1) // $1 $2 $3 etc
 				u = strings.Replace(u, s, g, 1)
 			}

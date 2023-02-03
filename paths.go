@@ -1,13 +1,13 @@
 package jar
 
 import (
-	"github.com/glenn-brown/golang-pkg-pcre/src/pkg/pcre"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 	"github.com/spf13/cast"
 
 	"fmt"
 	"net/http"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -568,30 +568,30 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 		// path will be redirected
 		DebugOut.Printf("\tAdding Redirect %s\n", path.Redirect)
 
-		p := Redirect{URL: path.Redirect, Code: path.RedirectCode, PCRE: nil}
+		p := Redirect{URL: path.Redirect, Code: path.RedirectCode, Regexp: nil}
 		if path.RedirectHostMatch != "" {
-			DebugOut.Printf("\t\tPCRE: %s\n", path.RedirectHostMatch)
-			// Test the PCRE
-			re, rerr := pcre.Compile(path.RedirectHostMatch, pcre.CASELESS)
+			DebugOut.Printf("\tRegexp: %s\n", path.RedirectHostMatch)
+			// Test the Regexp
+			re, rerr := regexp.Compile("(?i)" + path.RedirectHostMatch) // case-insensitive
 			if rerr != nil {
 				DebugOut.Printf("\t\tFailed: %s\n", rerr)
-				return 0, ErrConfigurationError{rerr.String()}
+				return 0, ErrConfigurationError{rerr.Error()}
 			}
-			if re.Groups() < 1 {
+			if re.NumSubexp() < 1 {
 				return 0, ErrConfigurationError{"RedirectHostMatch has no groups"}
 			}
 			gcount := 0
-			for i := 0; i < re.Groups(); i++ {
+			for i := 0; i < re.NumSubexp(); i++ {
 				s := fmt.Sprintf("$%d", i+1) // $1 $2 $3 etc
 				if strings.Contains(path.Redirect, s) {
 					gcount++
 				}
 			}
-			if gcount != re.Groups() {
-				return 0, ErrConfigurationError{fmt.Sprintf("RedirectHostMatch has %d groups, but Redirect has %d", re.Groups(), gcount)}
+			if gcount != re.NumSubexp() {
+				return 0, ErrConfigurationError{fmt.Sprintf("RedirectHostMatch has %d groups, but Redirect has %d", re.NumSubexp(), gcount)}
 			}
 
-			p = Redirect{URL: path.Redirect, Code: path.RedirectCode, PCRE: &re}
+			p = Redirect{URL: path.Redirect, Code: path.RedirectCode, Regexp: re}
 		}
 
 		pathHandler = hchain.ThenFunc(p.Finisher)

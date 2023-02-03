@@ -83,6 +83,7 @@ Consumers will want to 'cd cmd/jard; go build; #enjoy'
 * [func ReplaceURI(r *http.Request, urlPath, requestURI string)](#ReplaceURI)
 * [func RequestErrorResponse(r *http.Request, w http.ResponseWriter, Message string, code int)](#RequestErrorResponse)
 * [func RequestErrorString(Request *http.Request, Message string) string](#RequestErrorString)
+* [func RequestIDFinisher(w http.ResponseWriter, r *http.Request)](#RequestIDFinisher)
 * [func ResponseHeaders(next http.Handler) http.Handler](#ResponseHeaders)
 * [func Restart(w http.ResponseWriter, r *http.Request)](#Restart)
 * [func RouteIDInspectionHandler(next http.Handler) http.Handler](#RouteIDInspectionHandler)
@@ -937,7 +938,7 @@ BootstrapChan doesn't return unless the server exits or the passed chan is close
 
 
 
-## <a name="BuildPath">func</a> [BuildPath](https://github.com/cognusion/go-jar/tree/master/paths.go?s=6850:6919#L212)
+## <a name="BuildPath">func</a> [BuildPath](https://github.com/cognusion/go-jar/tree/master/paths.go?s=6805:6874#L212)
 ``` go
 func BuildPath(path Path, index int, router *mux.Router) (int, error)
 ```
@@ -945,7 +946,7 @@ BuildPath does the heavy lifting to build a single path (which may result in mul
 
 
 
-## <a name="BuildPaths">func</a> [BuildPaths](https://github.com/cognusion/go-jar/tree/master/paths.go?s=6173:6214#L188)
+## <a name="BuildPaths">func</a> [BuildPaths](https://github.com/cognusion/go-jar/tree/master/paths.go?s=6128:6169#L188)
 ``` go
 func BuildPaths(router *mux.Router) error
 ```
@@ -1015,7 +1016,7 @@ CopyURL provides update safe copy by avoiding shallow copying User field
 
 
 
-## <a name="DateFinisher">func</a> [DateFinisher](https://github.com/cognusion/go-jar/tree/master/debug.go?s=3498:3555#L134)
+## <a name="DateFinisher">func</a> [DateFinisher](https://github.com/cognusion/go-jar/tree/master/debug.go?s=3557:3614#L136)
 ``` go
 func DateFinisher(w http.ResponseWriter, r *http.Request)
 ```
@@ -1023,7 +1024,7 @@ DateFinisher is a Finisher that simply returns the current system datestamp as a
 
 
 
-## <a name="DumpFinisher">func</a> [DumpFinisher](https://github.com/cognusion/go-jar/tree/master/debug.go?s=2846:2903#L118)
+## <a name="DumpFinisher">func</a> [DumpFinisher](https://github.com/cognusion/go-jar/tree/master/debug.go?s=2905:2962#L120)
 ``` go
 func DumpFinisher(w http.ResponseWriter, r *http.Request)
 ```
@@ -1031,7 +1032,7 @@ DumpFinisher is a special finisher that reflects a ton of request output
 
 
 
-## <a name="DumpHandler">func</a> [DumpHandler](https://github.com/cognusion/go-jar/tree/master/debug.go?s=2493:2538#L108)
+## <a name="DumpHandler">func</a> [DumpHandler](https://github.com/cognusion/go-jar/tree/master/debug.go?s=2552:2597#L110)
 ``` go
 func DumpHandler(h http.Handler) http.Handler
 ```
@@ -1093,7 +1094,7 @@ FolderExists returns true if the provided path exists, and is a directory
 
 
 
-## <a name="Forbidden">func</a> [Forbidden](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=2986:3040#L110)
+## <a name="Forbidden">func</a> [Forbidden](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=2941:2995#L110)
 ``` go
 func Forbidden(w http.ResponseWriter, r *http.Request)
 ```
@@ -1141,7 +1142,7 @@ GetSwitchName is a function to return the switch name in a request's context, if
 
 
 
-## <a name="HandleFinisher">func</a> [HandleFinisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=1397:1470#L54)
+## <a name="HandleFinisher">func</a> [HandleFinisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=1352:1425#L54)
 ``` go
 func HandleFinisher(handler string, path *Path) (http.HandlerFunc, error)
 ```
@@ -1215,7 +1216,7 @@ LogInit initializes all of the loggers based on Conf settings
 
 
 
-## <a name="MinuteDelayer">func</a> [MinuteDelayer](https://github.com/cognusion/go-jar/tree/master/debug.go?s=3113:3171#L123)
+## <a name="MinuteDelayer">func</a> [MinuteDelayer](https://github.com/cognusion/go-jar/tree/master/debug.go?s=3172:3230#L125)
 ``` go
 func MinuteDelayer(w http.ResponseWriter, r *http.Request)
 ```
@@ -1223,7 +1224,7 @@ MinuteDelayer is a special finisher that waits for 60s before returning
 
 
 
-## <a name="MinuteStreamer">func</a> [MinuteStreamer](https://github.com/cognusion/go-jar/tree/master/debug.go?s=3704:3763#L139)
+## <a name="MinuteStreamer">func</a> [MinuteStreamer](https://github.com/cognusion/go-jar/tree/master/debug.go?s=4305:4364#L156)
 ``` go
 func MinuteStreamer(w http.ResponseWriter, r *http.Request)
 ```
@@ -1255,7 +1256,7 @@ NewStickyPool returns a primed RoundRobin that honors pinning based on a cookie 
 
 
 
-## <a name="OkFinisher">func</a> [OkFinisher](https://github.com/cognusion/go-jar/tree/master/debug.go?s=3303:3358#L129)
+## <a name="OkFinisher">func</a> [OkFinisher](https://github.com/cognusion/go-jar/tree/master/debug.go?s=3362:3417#L131)
 ``` go
 func OkFinisher(w http.ResponseWriter, r *http.Request)
 ```
@@ -1263,7 +1264,7 @@ OkFinisher is a Finisher that simply returns "Ok", for throughput testing.
 
 
 
-## <a name="PoolLister">func</a> [PoolLister](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=4415:4470#L157)
+## <a name="PoolLister">func</a> [PoolLister](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=4538:4593#L162)
 ``` go
 func PoolLister(w http.ResponseWriter, r *http.Request)
 ```
@@ -1271,7 +1272,7 @@ PoolLister is a finisher to list the pools
 
 
 
-## <a name="PoolMemberAdder">func</a> [PoolMemberAdder](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=5597:5657#L205)
+## <a name="PoolMemberAdder">func</a> [PoolMemberAdder](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=5720:5780#L210)
 ``` go
 func PoolMemberAdder(w http.ResponseWriter, r *http.Request)
 ```
@@ -1279,7 +1280,7 @@ PoolMemberAdder is a finisher to add a member to an existing pool
 
 
 
-## <a name="PoolMemberLister">func</a> [PoolMemberLister](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=4654:4715#L167)
+## <a name="PoolMemberLister">func</a> [PoolMemberLister](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=4777:4838#L172)
 ``` go
 func PoolMemberLister(w http.ResponseWriter, r *http.Request)
 ```
@@ -1287,7 +1288,7 @@ PoolMemberLister is a finisher to list the members of an existing pool
 
 
 
-## <a name="PoolMemberLoser">func</a> [PoolMemberLoser](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=7094:7154#L260)
+## <a name="PoolMemberLoser">func</a> [PoolMemberLoser](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=7217:7277#L265)
 ``` go
 func PoolMemberLoser(w http.ResponseWriter, r *http.Request)
 ```
@@ -1348,6 +1349,14 @@ RequestErrorResponse is the functional equivalent of ErrRequestError .WrappedRes
 func RequestErrorString(Request *http.Request, Message string) string
 ```
 RequestErrorString is the functional equivalent of ErrRequestError .String()
+
+
+
+## <a name="RequestIDFinisher">func</a> [RequestIDFinisher](https://github.com/cognusion/go-jar/tree/master/debug.go?s=3780:3842#L141)
+``` go
+func RequestIDFinisher(w http.ResponseWriter, r *http.Request)
+```
+RequestIDFinisher is a Finisher that simply returns the current requestID a random number of times, for grind testing.
 
 
 
@@ -1426,7 +1435,7 @@ SwitchHandler adds URL switching information to the request context
 
 
 
-## <a name="TestFinisher">func</a> [TestFinisher](https://github.com/cognusion/go-jar/tree/master/debug.go?s=1226:1283#L62)
+## <a name="TestFinisher">func</a> [TestFinisher](https://github.com/cognusion/go-jar/tree/master/debug.go?s=1285:1342#L64)
 ``` go
 func TestFinisher(w http.ResponseWriter, r *http.Request)
 ```
@@ -1771,7 +1780,7 @@ NewCacheCluster should be called at most once, and returns an initialized CacheC
 
 
 
-### <a name="CacheCluster.NewPageCache">func</a> (\*CacheCluster) [NewPageCache](https://github.com/cognusion/go-jar/tree/master/cache.go?s=2774:2930#L73)
+### <a name="CacheCluster.NewPageCache">func</a> (\*CacheCluster) [NewPageCache](https://github.com/cognusion/go-jar/tree/master/cache.go?s=2724:2880#L72)
 ``` go
 func (cc *CacheCluster) NewPageCache(name string, cacheSize, maxItemSize int64, itemExpiration time.Duration, cacheControlHeader string) (*PageCache, error)
 ```
@@ -1960,7 +1969,7 @@ CorsString is a string type for static string consistency
 
 
 
-## <a name="DebugTrip">type</a> [DebugTrip](https://github.com/cognusion/go-jar/tree/master/debug.go?s=4145:4351#L158)
+## <a name="DebugTrip">type</a> [DebugTrip](https://github.com/cognusion/go-jar/tree/master/debug.go?s=4746:4952#L175)
 ``` go
 type DebugTrip struct {
     // RTFunc is executed when RoundTrip() is called on a request.
@@ -1980,7 +1989,7 @@ DebugTrip is an http.RoundTripper with a pluggable core func to aid in debugging
 
 
 
-### <a name="DebugTrip.RoundTrip">func</a> (\*DebugTrip) [RoundTrip](https://github.com/cognusion/go-jar/tree/master/debug.go?s=4390:4460#L165)
+### <a name="DebugTrip.RoundTrip">func</a> (\*DebugTrip) [RoundTrip](https://github.com/cognusion/go-jar/tree/master/debug.go?s=4991:5061#L182)
 ``` go
 func (d *DebugTrip) RoundTrip(r *http.Request) (*http.Response, error)
 ```
@@ -2128,7 +2137,7 @@ Handler is the chainable handler that will wrap the error
 
 
 
-## <a name="FinisherMap">type</a> [FinisherMap](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=912:956#L37)
+## <a name="FinisherMap">type</a> [FinisherMap](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=867:911#L37)
 ``` go
 type FinisherMap map[string]http.HandlerFunc
 ```
@@ -2143,7 +2152,7 @@ FinisherMap maps Finisher names to their HandlerFuncs
 
 
 
-### <a name="FinisherMap.List">func</a> (\*FinisherMap) [List](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=1008:1045#L40)
+### <a name="FinisherMap.List">func</a> (\*FinisherMap) [List](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=963:1000#L40)
 ``` go
 func (h *FinisherMap) List() []string
 ```
@@ -2152,7 +2161,7 @@ List returns the names of all of the Finishers
 
 
 
-## <a name="FinisherSetupFunc">type</a> [FinisherSetupFunc](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=1220:1280#L51)
+## <a name="FinisherSetupFunc">type</a> [FinisherSetupFunc](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=1175:1235#L51)
 ``` go
 type FinisherSetupFunc func(*Path) (http.HandlerFunc, error)
 ```
@@ -2203,7 +2212,7 @@ Handler is a middleware that checks the request URI against regexps and 403's if
 
 
 
-## <a name="GenericResponse">type</a> [GenericResponse](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=4072:4132#L143)
+## <a name="GenericResponse">type</a> [GenericResponse](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=4195:4255#L148)
 ``` go
 type GenericResponse struct {
     Message string
@@ -2222,7 +2231,7 @@ GenericResponse is a Finisher that returns a possibly-wrapped response
 
 
 
-### <a name="GenericResponse.Finisher">func</a> (\*GenericResponse) [Finisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=4201:4276#L149)
+### <a name="GenericResponse.Finisher">func</a> (\*GenericResponse) [Finisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=4324:4399#L154)
 ``` go
 func (gr *GenericResponse) Finisher(w http.ResponseWriter, r *http.Request)
 ```
@@ -2647,7 +2656,7 @@ WriteHeader changes the response code
 
 
 
-## <a name="PageCache">type</a> [PageCache](https://github.com/cognusion/go-jar/tree/master/cache.go?s=2368:2670#L62)
+## <a name="PageCache">type</a> [PageCache](https://github.com/cognusion/go-jar/tree/master/cache.go?s=2318:2620#L61)
 ``` go
 type PageCache struct {
     Name           string
@@ -2669,7 +2678,7 @@ PageCache is a cache that is specific to caching responses
 
 
 
-### <a name="PageCache.Handler">func</a> (\*PageCache) [Handler](https://github.com/cognusion/go-jar/tree/master/cache.go?s=3729:3788#L106)
+### <a name="PageCache.Handler">func</a> (\*PageCache) [Handler](https://github.com/cognusion/go-jar/tree/master/cache.go?s=3679:3738#L105)
 ``` go
 func (c *PageCache) Handler(next http.Handler) http.Handler
 ```
@@ -2679,7 +2688,7 @@ returned and caches it if appropriate.
 
 
 
-## <a name="Path">type</a> [Path](https://github.com/cognusion/go-jar/tree/master/paths.go?s=482:4140#L24)
+## <a name="Path">type</a> [Path](https://github.com/cognusion/go-jar/tree/master/paths.go?s=437:4095#L24)
 ``` go
 type Path struct {
     // Name is an optional "name" for the path. Will be output in some logs. If not set, will use an index number
@@ -2792,7 +2801,7 @@ Handler is a middleware that injects the Path name, and any PathOptions into the
 
 
 
-## <a name="PathOptions">type</a> [PathOptions](https://github.com/cognusion/go-jar/tree/master/paths.go?s=4195:4234#L96)
+## <a name="PathOptions">type</a> [PathOptions](https://github.com/cognusion/go-jar/tree/master/paths.go?s=4150:4189#L96)
 ``` go
 type PathOptions map[string]interface{}
 ```
@@ -2807,7 +2816,7 @@ PathOptions is an MSI with a case-agnostic getter
 
 
 
-### <a name="PathOptions.Get">func</a> (\*PathOptions) [Get](https://github.com/cognusion/go-jar/tree/master/paths.go?s=4298:4347#L99)
+### <a name="PathOptions.Get">func</a> (\*PathOptions) [Get](https://github.com/cognusion/go-jar/tree/master/paths.go?s=4253:4302#L99)
 ``` go
 func (p *PathOptions) Get(key string) interface{}
 ```
@@ -2816,7 +2825,7 @@ Get returns an interface{} if *key* matches, otherwise nil
 
 
 
-### <a name="PathOptions.GetBool">func</a> (\*PathOptions) [GetBool](https://github.com/cognusion/go-jar/tree/master/paths.go?s=5516:5562#L158)
+### <a name="PathOptions.GetBool">func</a> (\*PathOptions) [GetBool](https://github.com/cognusion/go-jar/tree/master/paths.go?s=5471:5517#L158)
 ``` go
 func (p *PathOptions) GetBool(key string) bool
 ```
@@ -2825,7 +2834,7 @@ GetBool returns a bool value if *key* matches, otherwise false
 
 
 
-### <a name="PathOptions.GetDuration">func</a> (\*PathOptions) [GetDuration](https://github.com/cognusion/go-jar/tree/master/paths.go?s=4870:4938#L128)
+### <a name="PathOptions.GetDuration">func</a> (\*PathOptions) [GetDuration](https://github.com/cognusion/go-jar/tree/master/paths.go?s=4825:4893#L128)
 ``` go
 func (p *PathOptions) GetDuration(key string) (time.Duration, error)
 ```
@@ -2834,7 +2843,7 @@ GetDuration returns a Duration if *key* matches, otherwise zero-time
 
 
 
-### <a name="PathOptions.GetInt64">func</a> (\*PathOptions) [GetInt64](https://github.com/cognusion/go-jar/tree/master/paths.go?s=5213:5270#L143)
+### <a name="PathOptions.GetInt64">func</a> (\*PathOptions) [GetInt64](https://github.com/cognusion/go-jar/tree/master/paths.go?s=5168:5225#L143)
 ``` go
 func (p *PathOptions) GetInt64(key string) (int64, error)
 ```
@@ -2843,7 +2852,7 @@ GetInt64 returns an int64 if *key* matches, otherwise zero
 
 
 
-### <a name="PathOptions.GetString">func</a> (\*PathOptions) [GetString](https://github.com/cognusion/go-jar/tree/master/paths.go?s=4576:4626#L113)
+### <a name="PathOptions.GetString">func</a> (\*PathOptions) [GetString](https://github.com/cognusion/go-jar/tree/master/paths.go?s=4531:4581#L113)
 ``` go
 func (p *PathOptions) GetString(key string) string
 ```
@@ -2852,7 +2861,7 @@ GetString returns a string if *key* matches, otherwise empty string
 
 
 
-### <a name="PathOptions.GetStringSlice">func</a> (\*PathOptions) [GetStringSlice](https://github.com/cognusion/go-jar/tree/master/paths.go?s=5821:5878#L173)
+### <a name="PathOptions.GetStringSlice">func</a> (\*PathOptions) [GetStringSlice](https://github.com/cognusion/go-jar/tree/master/paths.go?s=5776:5833#L173)
 ``` go
 func (p *PathOptions) GetStringSlice(key string) []string
 ```
@@ -3443,12 +3452,12 @@ Handler is the middleware for the RateLimiter
 
 
 
-## <a name="Redirect">type</a> [Redirect](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=3283:3349#L116)
+## <a name="Redirect">type</a> [Redirect](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=3238:3312#L116)
 ``` go
 type Redirect struct {
-    URL  string
-    Code int
-    PCRE *pcre.Regexp
+    URL    string
+    Code   int
+    Regexp *regexp.Regexp
 }
 
 ```
@@ -3463,7 +3472,7 @@ Redirect is a Finisher that returns 301 for the requested Path
 
 
 
-### <a name="Redirect.Finisher">func</a> (\*Redirect) [Finisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=3411:3479#L123)
+### <a name="Redirect.Finisher">func</a> (\*Redirect) [Finisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=3374:3442#L123)
 ``` go
 func (rd *Redirect) Finisher(w http.ResponseWriter, r *http.Request)
 ```
@@ -3506,7 +3515,7 @@ ServeHTTP is a proper http.Handler for authenticated S3 requests
 
 
 
-## <a name="StatusFinisher">type</a> [StatusFinisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=2673:2696#L100)
+## <a name="StatusFinisher">type</a> [StatusFinisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=2628:2651#L100)
 ``` go
 type StatusFinisher int
 ```
@@ -3521,7 +3530,7 @@ StatusFinisher is an abstracted type to dynamically provide Finishers of standar
 
 
 
-### <a name="StatusFinisher.Finisher">func</a> (StatusFinisher) [Finisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=2765:2838#L103)
+### <a name="StatusFinisher.Finisher">func</a> (StatusFinisher) [Finisher](https://github.com/cognusion/go-jar/tree/master/finishers.go?s=2720:2793#L103)
 ``` go
 func (sf StatusFinisher) Finisher(w http.ResponseWriter, r *http.Request)
 ```
