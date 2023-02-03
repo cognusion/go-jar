@@ -908,7 +908,7 @@ AddStatuses ranges over the supplied StatusRegistry, adding each as a Service to
 
 
 
-## <a name="AuthoritativeDomainsHandler">func</a> [AuthoritativeDomainsHandler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=2161:2225#L84)
+## <a name="AuthoritativeDomainsHandler">func</a> [AuthoritativeDomainsHandler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=2116:2180#L84)
 ``` go
 func AuthoritativeDomainsHandler(next http.Handler) http.Handler
 ```
@@ -1158,7 +1158,7 @@ HandleGenericWrapper is essentially a noop for when no tempate or remote errorha
 
 
 
-## <a name="HandleHandler">func</a> [HandleHandler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=1743:1818#L72)
+## <a name="HandleHandler">func</a> [HandleHandler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=1698:1773#L72)
 ``` go
 func HandleHandler(handler string, hchain alice.Chain) (alice.Chain, error)
 ```
@@ -1312,7 +1312,7 @@ ReaderToString reads from a Reader into a Buffer, and then returns the string va
 
 
 
-## <a name="RealAddr">func</a> [RealAddr](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=3916:3958#L132)
+## <a name="RealAddr">func</a> [RealAddr](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=3871:3913#L132)
 ``` go
 func RealAddr(h http.Handler) http.Handler
 ```
@@ -1320,7 +1320,7 @@ RealAddr is a special handler to grab the most probable "real" client address
 
 
 
-## <a name="Recoverer">func</a> [Recoverer](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=6929:6975#L230)
+## <a name="Recoverer">func</a> [Recoverer](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=6884:6930#L230)
 ``` go
 func Recoverer(next http.Handler) http.Handler
 ```
@@ -1360,7 +1360,7 @@ RequestIDFinisher is a Finisher that simply returns the current requestID a rand
 
 
 
-## <a name="ResponseHeaders">func</a> [ResponseHeaders](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=10355:10407#L333)
+## <a name="ResponseHeaders">func</a> [ResponseHeaders](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=10310:10362#L333)
 ``` go
 func ResponseHeaders(next http.Handler) http.Handler
 ```
@@ -1376,7 +1376,7 @@ Restart signals the server to restart itself
 
 
 
-## <a name="RouteIDInspectionHandler">func</a> [RouteIDInspectionHandler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=4547:4608#L151)
+## <a name="RouteIDInspectionHandler">func</a> [RouteIDInspectionHandler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=4502:4563#L151)
 ``` go
 func RouteIDInspectionHandler(next http.Handler) http.Handler
 ```
@@ -1392,7 +1392,7 @@ S3StreamProxyFinisher is a finisher that streams a POSTd file to an S3 bucket
 
 
 
-## <a name="SetupHandler">func</a> [SetupHandler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=5257:5306#L175)
+## <a name="SetupHandler">func</a> [SetupHandler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=5212:5261#L175)
 ``` go
 func SetupHandler(next http.Handler) http.Handler
 ```
@@ -1451,7 +1451,7 @@ TrimPrefixURI standardizes the prefix trimming of the Request.URL.Path and Reque
 
 
 
-## <a name="URLCaptureHandler">func</a> [URLCaptureHandler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=2942:2996#L103)
+## <a name="URLCaptureHandler">func</a> [URLCaptureHandler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=2897:2951#L103)
 ``` go
 func URLCaptureHandler(next http.Handler) http.Handler
 ```
@@ -1485,7 +1485,7 @@ All functions will be run, so an array of errors may be returned
 
 
 
-## <a name="WithRqID">func</a> [WithRqID](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=16553:16621#L540)
+## <a name="WithRqID">func</a> [WithRqID](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=16512:16580#L540)
 ``` go
 func WithRqID(ctx context.Context, requestID string) context.Context
 ```
@@ -1493,7 +1493,7 @@ WithRqID returns a context which knows its request ID
 
 
 
-## <a name="WithSessionID">func</a> [WithSessionID](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=16745:16818#L545)
+## <a name="WithSessionID">func</a> [WithSessionID](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=16704:16777#L545)
 ``` go
 func WithSessionID(ctx context.Context, sessionID string) context.Context
 ```
@@ -1646,7 +1646,7 @@ VerifySource checks that the requested authentication source is valid, and acces
 
 
 
-## <a name="BodyByteLimit">type</a> [BodyByteLimit](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=15502:15548#L504)
+## <a name="BodyByteLimit">type</a> [BodyByteLimit](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=15461:15507#L504)
 ``` go
 type BodyByteLimit struct {
     // contains filtered or unexported fields
@@ -1661,7 +1661,7 @@ BodyByteLimit is a Request.Body size limiter
 
 
 
-### <a name="NewBodyByteLimit">func</a> [NewBodyByteLimit](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=15607:15655#L509)
+### <a name="NewBodyByteLimit">func</a> [NewBodyByteLimit](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=15566:15614#L509)
 ``` go
 func NewBodyByteLimit(limit int64) BodyByteLimit
 ```
@@ -1671,7 +1671,7 @@ NewBodyByteLimit returns an initialized BodyByteLimit
 
 
 
-### <a name="BodyByteLimit.Handler">func</a> (\*BodyByteLimit) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=15733:15796#L514)
+### <a name="BodyByteLimit.Handler">func</a> (\*BodyByteLimit) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=15692:15755#L514)
 ``` go
 func (b *BodyByteLimit) Handler(next http.Handler) http.Handler
 ```
@@ -1680,7 +1680,7 @@ Handler limits the size of Request.Body
 
 
 
-## <a name="CORS">type</a> [CORS](https://github.com/cognusion/go-jar/tree/master/cors.go?s=2838:3070#L70)
+## <a name="CORS">type</a> [CORS](https://github.com/cognusion/go-jar/tree/master/cors.go?s=2793:3027#L70)
 ``` go
 type CORS struct {
     AllowCredentials string
@@ -1702,14 +1702,14 @@ and thus need to either be added via AddOrigins() or supplied to NewCORSFromConf
 
 
 
-### <a name="NewCORS">func</a> [NewCORS](https://github.com/cognusion/go-jar/tree/master/cors.go?s=3119:3139#L82)
+### <a name="NewCORS">func</a> [NewCORS](https://github.com/cognusion/go-jar/tree/master/cors.go?s=3076:3096#L82)
 ``` go
 func NewCORS() *CORS
 ```
 NewCORS returns an initialized CORS struct.
 
 
-### <a name="NewCORSFromConfig">func</a> [NewCORSFromConfig](https://github.com/cognusion/go-jar/tree/master/cors.go?s=3305:3384#L90)
+### <a name="NewCORSFromConfig">func</a> [NewCORSFromConfig](https://github.com/cognusion/go-jar/tree/master/cors.go?s=3264:3343#L90)
 ``` go
 func NewCORSFromConfig(origins []string, conf map[string]string) (*CORS, error)
 ```
@@ -1719,7 +1719,7 @@ NewCORSFromConfig returns an initialized CORS struct from a list of origins and 
 
 
 
-### <a name="CORS.AddOrigin">func</a> (\*CORS) [AddOrigin](https://github.com/cognusion/go-jar/tree/master/cors.go?s=3742:3790#L105)
+### <a name="CORS.AddOrigin">func</a> (\*CORS) [AddOrigin](https://github.com/cognusion/go-jar/tree/master/cors.go?s=3701:3749#L105)
 ``` go
 func (c *CORS) AddOrigin(origins []string) error
 ```
@@ -1728,7 +1728,7 @@ AddOrigin adds an origin expression to the CORS struct
 
 
 
-### <a name="CORS.Handler">func</a> (\*CORS) [Handler](https://github.com/cognusion/go-jar/tree/master/cors.go?s=4233:4287#L121)
+### <a name="CORS.Handler">func</a> (\*CORS) [Handler](https://github.com/cognusion/go-jar/tree/master/cors.go?s=4187:4241#L121)
 ``` go
 func (c *CORS) Handler(next http.Handler) http.Handler
 ```
@@ -1738,7 +1738,7 @@ a whitelist of expressions, and may change the response headers accordingly
 
 
 
-### <a name="CORS.ResponseModifier">func</a> (\*CORS) [ResponseModifier](https://github.com/cognusion/go-jar/tree/master/cors.go?s=5804:5862#L174)
+### <a name="CORS.ResponseModifier">func</a> (\*CORS) [ResponseModifier](https://github.com/cognusion/go-jar/tree/master/cors.go?s=5758:5816#L174)
 ``` go
 func (c *CORS) ResponseModifier(resp *http.Response) error
 ```
@@ -1747,7 +1747,7 @@ ResponseModifier is an oxy/forward opsetter to remove CORS headers from response
 
 
 
-### <a name="CORS.String">func</a> (\*CORS) [String](https://github.com/cognusion/go-jar/tree/master/cors.go?s=5394:5424#L163)
+### <a name="CORS.String">func</a> (\*CORS) [String](https://github.com/cognusion/go-jar/tree/master/cors.go?s=5348:5378#L163)
 ``` go
 func (c *CORS) String() string
 ```
@@ -1954,7 +1954,7 @@ UpsertServer adds or updates the member to the pool
 
 
 
-## <a name="CorsString">type</a> [CorsString](https://github.com/cognusion/go-jar/tree/master/cors.go?s=1191:1215#L35)
+## <a name="CorsString">type</a> [CorsString](https://github.com/cognusion/go-jar/tree/master/cors.go?s=1146:1170#L35)
 ``` go
 type CorsString = string
 ```
@@ -2176,11 +2176,11 @@ FinisherSetupFunc is declared for Finishers that need exec-time setup checks
 
 
 
-## <a name="ForbiddenPaths">type</a> [ForbiddenPaths](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=11679:11786#L374)
+## <a name="ForbiddenPaths">type</a> [ForbiddenPaths](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=11634:11743#L374)
 ``` go
 type ForbiddenPaths struct {
     // Paths is a list of compiled Regexps, because speed
-    Paths []*pcre.Regexp
+    Paths []*regexp.Regexp
 }
 
 ```
@@ -2192,7 +2192,7 @@ ForbiddenPaths is a struct to assist in the expedient resolution of determining 
 
 
 
-### <a name="NewForbiddenPaths">func</a> [NewForbiddenPaths](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=11965:12028#L381)
+### <a name="NewForbiddenPaths">func</a> [NewForbiddenPaths](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=11922:11985#L381)
 ``` go
 func NewForbiddenPaths(paths []string) (*ForbiddenPaths, error)
 ```
@@ -2203,7 +2203,7 @@ or an error if a regexp could not be compiled
 
 
 
-### <a name="ForbiddenPaths.Handler">func</a> (\*ForbiddenPaths) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=12448:12512#L399)
+### <a name="ForbiddenPaths.Handler">func</a> (\*ForbiddenPaths) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=12422:12486#L399)
 ``` go
 func (f *ForbiddenPaths) Handler(next http.Handler) http.Handler
 ```
@@ -2335,7 +2335,7 @@ Work is called to do work
 
 
 
-## <a name="HandlerMap">type</a> [HandlerMap](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=1405:1463#L58)
+## <a name="HandlerMap">type</a> [HandlerMap](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=1360:1418#L58)
 ``` go
 type HandlerMap map[string]func(http.Handler) http.Handler
 ```
@@ -2350,7 +2350,7 @@ HandlerMap maps handler names to their funcs
 
 
 
-### <a name="HandlerMap.List">func</a> (\*HandlerMap) [List](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=1514:1550#L61)
+### <a name="HandlerMap.List">func</a> (\*HandlerMap) [List](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=1469:1505#L61)
 ``` go
 func (h *HandlerMap) List() []string
 ```
@@ -2773,7 +2773,7 @@ Path is an extensible struct, detailing its configuration
 
 
 
-## <a name="PathHandler">type</a> [PathHandler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=14473:14537#L467)
+## <a name="PathHandler">type</a> [PathHandler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=14432:14496#L467)
 ``` go
 type PathHandler struct {
     Path    string
@@ -2792,7 +2792,7 @@ PathHandler is a wrapping struct to inject the Path name, and any PathOptions in
 
 
 
-### <a name="PathHandler.Handler">func</a> (\*PathHandler) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=14631:14692#L473)
+### <a name="PathHandler.Handler">func</a> (\*PathHandler) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=14590:14651#L473)
 ``` go
 func (p *PathHandler) Handler(next http.Handler) http.Handler
 ```
@@ -2870,7 +2870,7 @@ GetStringSlice returns a []string if *key* matches, otherwise an empty []string
 
 
 
-## <a name="PathReplacer">type</a> [PathReplacer](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=13849:13903#L446)
+## <a name="PathReplacer">type</a> [PathReplacer](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=13808:13862#L446)
 ``` go
 type PathReplacer struct {
     From string
@@ -2889,7 +2889,7 @@ PathReplacer is a wrapping struct to replace the Request path
 
 
 
-### <a name="PathReplacer.Handler">func</a> (\*PathReplacer) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=13963:14025#L452)
+### <a name="PathReplacer.Handler">func</a> (\*PathReplacer) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=13922:13984#L452)
 ``` go
 func (p *PathReplacer) Handler(next http.Handler) http.Handler
 ```
@@ -2898,7 +2898,7 @@ Handler is a middleware that replaces the Request path
 
 
 
-## <a name="PathStripper">type</a> [PathStripper](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=13350:13393#L426)
+## <a name="PathStripper">type</a> [PathStripper](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=13309:13352#L426)
 ``` go
 type PathStripper struct {
     Prefix string
@@ -2916,7 +2916,7 @@ PathStripper is a wrapping struct to remove the prefix from the Request path
 
 
 
-### <a name="PathStripper.Handler">func</a> (\*PathStripper) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=13453:13515#L431)
+### <a name="PathStripper.Handler">func</a> (\*PathStripper) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=13412:13474#L431)
 ``` go
 func (p *PathStripper) Handler(next http.Handler) http.Handler
 ```
@@ -3062,7 +3062,7 @@ PoolConfig is type exposing expected configuration for a pool, abstracted for pa
 
 
 
-## <a name="PoolID">type</a> [PoolID](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=15062:15097#L487)
+## <a name="PoolID">type</a> [PoolID](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=15021:15056#L487)
 ``` go
 type PoolID struct {
     Pool string
@@ -3080,7 +3080,7 @@ PoolID is a wrapping struct to inject the Pool name into the Context
 
 
 
-### <a name="PoolID.Handler">func</a> (\*PoolID) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=15149:15205#L492)
+### <a name="PoolID.Handler">func</a> (\*PoolID) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=15108:15164#L492)
 ``` go
 func (p *PoolID) Handler(next http.Handler) http.Handler
 ```
@@ -3410,7 +3410,7 @@ PruneFunc is a func that may add or remove Pool members
 
 
 
-## <a name="RateLimiter">type</a> [RateLimiter](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=8437:8500#L267)
+## <a name="RateLimiter">type</a> [RateLimiter](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=8392:8455#L267)
 ``` go
 type RateLimiter struct {
     *limiter.Limiter
@@ -3426,14 +3426,14 @@ RateLimiter is a wrapper around limiter.Limiter
 
 
 
-### <a name="NewRateLimiter">func</a> [NewRateLimiter](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=8591:8664#L273)
+### <a name="NewRateLimiter">func</a> [NewRateLimiter](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=8546:8619#L273)
 ``` go
 func NewRateLimiter(max float64, purgeDuration time.Duration) RateLimiter
 ```
 NewRateLimiter returns a RateLimiter based on the specified max rps and purgeDuration
 
 
-### <a name="NewRateLimiterCollector">func</a> [NewRateLimiterCollector](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=9119:9201#L294)
+### <a name="NewRateLimiterCollector">func</a> [NewRateLimiterCollector](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=9074:9156#L294)
 ``` go
 func NewRateLimiterCollector(max float64, purgeDuration time.Duration) RateLimiter
 ```
@@ -3443,7 +3443,7 @@ NewRateLimiterCollector returns a RateLimiter based on the specified max rps and
 
 
 
-### <a name="RateLimiter.Handler">func</a> (\*RateLimiter) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=9333:9395#L302)
+### <a name="RateLimiter.Handler">func</a> (\*RateLimiter) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=9288:9350#L302)
 ``` go
 func (rl *RateLimiter) Handler(next http.Handler) http.Handler
 ```
@@ -3639,7 +3639,7 @@ TemplateError is a static structure to pass into error-wrapping templates
 
 
 
-## <a name="Timeout">type</a> [Timeout](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=3511:3575#L118)
+## <a name="Timeout">type</a> [Timeout](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=3466:3530#L118)
 ``` go
 type Timeout struct {
     Duration time.Duration
@@ -3658,7 +3658,7 @@ Timeout is a middleware that causes a 503 Service Unavailable message to be hand
 
 
 
-### <a name="Timeout.Handler">func</a> (\*Timeout) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=3615:3672#L124)
+### <a name="Timeout.Handler">func</a> (\*Timeout) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=3570:3627#L124)
 ``` go
 func (t *Timeout) Handler(next http.Handler) http.Handler
 ```

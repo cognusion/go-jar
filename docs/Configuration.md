@@ -80,7 +80,7 @@ Backfills the X-Forwarded-For field in the access log, if it isn't already occup
 
 ### forbiddenpaths: [list]
 
-List of regular expressions (PCRE) that if matched against a URI path, will result in a 403. Barewords will match anywhere in the path. Remember to escape your fore-slashes. *Case-insensitive*.  If you want to limit these to only certain **Paths**, see **Path.ForbiddenPaths**
+List of regular expressions that if matched against a URI path, will result in a 403. Barewords will match anywhere in the path. Remember to escape your fore-slashes. *Case-insensitive*.  If you want to limit these to only certain **Paths**, see **Path.ForbiddenPaths**
 
 ```yaml
 forbiddenpaths:
@@ -466,7 +466,7 @@ The name of a Finisher used to complete requests to this Path. Mutually exclusiv
 
 ### forbiddenpaths: [list]
 
-List of regular expressions (PCRE) that if matched against a URI path, will result in a 403. Barewords will match anywhere in the path. Remember to escape your fore-slashes. *Case-insensitive*. There is also the global **forbiddenpaths** config if that is more appropriate.
+List of regular expressions that if matched against a URI path, will result in a 403. Barewords will match anywhere in the path. Remember to escape your fore-slashes. *Case-insensitive*. There is also the global **forbiddenpaths** config if that is more appropriate.
 
 ### handlers: [list]
 
@@ -1000,7 +1000,7 @@ type TemplateError struct {
 
 ### ForbiddenPaths.Handler
 
-ForbiddenPaths.Handler is a middleware that is automatically added to a chain if the **forbiddenpaths** and/or **Path.forbiddenpaths** config directive/s is/are used. It ranges over pre-compiled PCREs to check the URI path and returns *403 Forbidden* if matched.
+ForbiddenPaths.Handler is a middleware that is automatically added to a chain if the **forbiddenpaths** and/or **Path.forbiddenpaths** config directive/s is/are used. It ranges over pre-compiled regular expressions to check the URI path and returns *403 Forbidden* if matched.
 You cannot explicitly set or place this handler.
 
 ### OauthHandler (OAuth)
