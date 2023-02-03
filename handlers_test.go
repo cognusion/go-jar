@@ -568,7 +568,7 @@ func TestForbiddenPathsHandlerNot(t *testing.T) {
 
 // TestForbiddenPathsHandlerForbidden tests ForbiddenPathsHandler when the path is forbidden
 func TestForbiddenPathsHandlerForbidden(t *testing.T) {
-	req, err := http.NewRequest("GET", "/banned", nil)
+	req, err := http.NewRequest("GET", "/bAnNeD", nil) // check case-senstivity
 	if err != nil {
 		t.Fatal(err)
 	}

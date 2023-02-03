@@ -6,7 +6,6 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/didip/tollbooth/v7"
 	"github.com/didip/tollbooth/v7/limiter"
-	"github.com/glenn-brown/golang-pkg-pcre/src/pkg/pcre"
 	gerrors "github.com/go-errors/errors"
 	"github.com/justinas/alice"
 
@@ -15,6 +14,7 @@ import (
 	"fmt"
 	"math"
 	"net/http"
+	"regexp"
 	"strings"
 	"time"
 )
@@ -373,7 +373,7 @@ func ResponseHeaders(next http.Handler) http.Handler {
 // ForbiddenPaths is a struct to assist in the expedient resolution of determining if a Request is destined to a forbidden path
 type ForbiddenPaths struct {
 	// Paths is a list of compiled Regexps, because speed
-	Paths []*pcre.Regexp
+	Paths []*regexp.Regexp
 }
 
 // NewForbiddenPaths takes a list of regexp-compatible strings, and returns the analogous ForbiddenPaths with compiled regexps,
@@ -381,15 +381,15 @@ type ForbiddenPaths struct {
 func NewForbiddenPaths(paths []string) (*ForbiddenPaths, error) {
 
 	fp := ForbiddenPaths{
-		Paths: make([]*pcre.Regexp, len(paths)),
+		Paths: make([]*regexp.Regexp, len(paths)),
 	}
 
 	for i, f := range paths {
-		re, err := pcre.Compile(f, pcre.CASELESS)
+		re, err := regexp.Compile("(?i)" + f) // case-insensitive
 		if err != nil {
 			return nil, ErrConfigurationError{fmt.Sprintf("could not compile forbidden path %d regexp: '%s': %s\n", i, f, err)}
 		}
-		fp.Paths[i] = &re
+		fp.Paths[i] = re
 	}
 
 	return &fp, nil
@@ -404,7 +404,7 @@ func (f *ForbiddenPaths) Handler(next http.Handler) http.Handler {
 
 		matched := false
 		for i, f := range f.Paths {
-			if f.MatcherString(r.URL.Path, 0).Matches() {
+			if f.MatchString(r.URL.Path) {
 				DebugOut.Printf("ForbiddenPath '%s' matched #%d\n", r.URL.Path, i)
 				matched = true
 				break
