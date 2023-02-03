@@ -2,10 +2,10 @@ package jar
 
 import (
 	"github.com/cognusion/go-prw"
-	"github.com/glenn-brown/golang-pkg-pcre/src/pkg/pcre"
 
 	"fmt"
 	"net/http"
+	"regexp"
 )
 
 // Constants for configuration key strings
@@ -75,13 +75,13 @@ type CORS struct {
 	PrivateNetwork   string
 
 	// originRes is a list of compiled Regexps, because faster
-	originRes []*pcre.Regexp
+	originRes []*regexp.Regexp
 }
 
 // NewCORS returns an initialized CORS struct.
 func NewCORS() *CORS {
 	c := CORS{
-		originRes: make([]*pcre.Regexp, 0),
+		originRes: make([]*regexp.Regexp, 0),
 	}
 	return &c
 }
@@ -106,11 +106,11 @@ func (c *CORS) AddOrigin(origins []string) error {
 
 	// Compile the CORS.origins expressions, for speed
 	for _, o := range origins {
-		re, err := pcre.Compile(o, pcre.CASELESS)
+		re, err := regexp.Compile("(?i)" + o)
 		if err != nil {
 			return fmt.Errorf("could not compile CORS.origins regexp: '%s': %s", o, err)
 		}
-		c.originRes = append(c.originRes, &re)
+		c.originRes = append(c.originRes, re)
 	}
 
 	return nil
@@ -204,7 +204,7 @@ func (c *CORS) handle(rw *prw.PluggableResponseWriter, origin, Method, requestID
 	if !matched {
 		// Check the origin
 		for _, o := range c.originRes {
-			if o.MatcherString(origin, 0).Matches() {
+			if o.MatchString(origin) {
 				DebugOut.Printf("{%s} Origin '%s' matched whitelist\n", requestID, origin)
 				matched = true
 				break
