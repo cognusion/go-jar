@@ -55,11 +55,11 @@ func TestPathHost(t *testing.T) {
 		Finisher: "Forbidden",
 	}
 
-	if _, err := BuildPath(pathw, 0, router); err != nil {
-		t.Errorf("Error creating pathw: %s\n", err)
+	if _, err := BuildPath(&pathw, 0, router); err != nil {
+		t.Fatalf("Error creating pathw: %s\n", err)
 	}
-	if _, err := BuildPath(pathd, 1, router); err != nil {
-		t.Errorf("Error creating pathd: %s\n", err)
+	if _, err := BuildPath(&pathd, 1, router); err != nil {
+		t.Fatalf("Error creating pathd: %s\n", err)
 	}
 
 	Convey("When a request is made, with a host specified, a the correct match is found", t, func() {
@@ -88,34 +88,30 @@ func TestPathHost(t *testing.T) {
 func TestPathForbidden(t *testing.T) {
 	router := mux.NewRouter()
 
-	cback := *Conf                   // back it up
-	defer func() { *Conf = cback }() // restore it
-
-	Conf.Set(ConfigForbiddenPaths, []string{
-		"/.*/thing",
-	})
-
 	pathw := Path{
-		Name:     "TestPathWidget",
-		Path:     "/something",
-		Finisher: "Ok",
+		Name:           "TestPathWidget",
+		Path:           "/something",
+		ForbiddenPaths: []string{"/.*/thing"},
+		Finisher:       "Ok",
 	}
 
 	pathd := Path{
-		Name:     "AForbiddenPath",
-		Path:     "/some/thing",
-		Finisher: "Ok",
+		Name:           "AForbiddenPath",
+		Path:           "/some/thing",
+		ForbiddenPaths: []string{"/.*/thing"},
+		Finisher:       "Ok",
 	}
 
 	Convey("When a Path is built that does not match a ForbiddenPath, it creates without an error", t, func() {
-		_, err := BuildPath(pathw, 0, router)
+		_, err := BuildPath(&pathw, 0, router)
 		So(err, ShouldBeNil)
+		So(len(pathw.ForbiddenPaths), ShouldEqual, 1)
 	})
 
-	Convey("When a Path is built that matches a ForbiddenPath, it fails with the correct error", t, func() {
-		_, err := BuildPath(pathd, 1, router)
-		So(err, ShouldNotBeNil)
-		So(err.Error(), ShouldContainSubstring, "matches a stated ForbiddenPath")
+	Convey("When a Path is built that matches a ForbiddenPath, it passes as well", t, func() {
+		_, err := BuildPath(&pathd, 1, router)
+		So(err, ShouldBeNil)
+		So(len(pathd.ForbiddenPaths), ShouldEqual, 0)
 	})
 }
 
@@ -130,8 +126,8 @@ func TestPathHostNope(t *testing.T) {
 		Finisher: "Ok",
 	}
 
-	if _, err := BuildPath(pathw, 0, router); err != nil {
-		t.Errorf("Error creating pathw: %s\n", err)
+	if _, err := BuildPath(&pathw, 0, router); err != nil {
+		t.Fatalf("Error creating pathw: %s\n", err)
 	}
 
 	Convey("When a request is made, with a host specified, no match is found", t, func() {
@@ -170,11 +166,11 @@ func TestPathHostPortUnset(t *testing.T) {
 		Finisher: "Forbidden",
 	}
 
-	if _, err := BuildPath(pathw, 0, router); err != nil {
-		t.Errorf("Error creating pathw: %s\n", err)
+	if _, err := BuildPath(&pathw, 0, router); err != nil {
+		t.Fatalf("Error creating pathw: %s\n", err)
 	}
-	if _, err := BuildPath(pathd, 1, router); err != nil {
-		t.Errorf("Error creating pathd: %s\n", err)
+	if _, err := BuildPath(&pathd, 1, router); err != nil {
+		t.Fatalf("Error creating pathd: %s\n", err)
 	}
 
 	Convey("When a request is made, with a host and port specified, the correct match is found (no port specified)", t, func() {
@@ -211,8 +207,8 @@ func TestPathHostPortSet(t *testing.T) {
 		Finisher: "Ok",
 	}
 
-	if _, err := BuildPath(pathw, 0, router); err != nil {
-		t.Errorf("Error creating pathw: %s\n", err)
+	if _, err := BuildPath(&pathw, 0, router); err != nil {
+		t.Fatalf("Error creating pathw: %s\n", err)
 	}
 
 	Convey("When a request is made, with a host and port specified, and the port does match, a match is found", t, func() {
@@ -249,8 +245,8 @@ func TestPathHostPortSetNope(t *testing.T) {
 		Finisher: "Ok",
 	}
 
-	if _, err := BuildPath(pathw, 0, router); err != nil {
-		t.Errorf("Error creating pathw: %s\n", err)
+	if _, err := BuildPath(&pathw, 0, router); err != nil {
+		t.Fatalf("Error creating pathw: %s\n", err)
 	}
 
 	Convey("When a request is made, with a host and port specified, and the port does not match, a match is NOT found", t, func() {

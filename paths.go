@@ -193,7 +193,7 @@ func BuildPaths(router *mux.Router) error {
 		// Range over the paths
 		pcount := 0
 		for _, path := range paths {
-			lastindex, err := BuildPath(path, pcount, router)
+			lastindex, err := BuildPath(&path, pcount, router)
 			if err != nil {
 				return err
 			}
@@ -209,7 +209,7 @@ func BuildPaths(router *mux.Router) error {
 }
 
 // BuildPath does the heavy lifting to build a single path (which may result in multiple paths, but that's just bookkeeping)
-func BuildPath(path Path, index int, router *mux.Router) (int, error) {
+func BuildPath(path *Path, index int, router *mux.Router) (int, error) {
 
 	if len(path.Hosts) > 0 {
 		DebugOut.Printf("Multihost Path %s: %+v\n", path.Path, path.Hosts)
@@ -448,11 +448,26 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 			if err != nil {
 				return 0, err
 			}
-			if fp.match(path.Path) {
-				// :(
-				return 0, fmt.Errorf("path '%s' (index %d) matches a stated ForbiddenPath", path.Path, index)
+
+			for {
+				// We keep retesting until none of the ForbiddenPaths match, as more than one could match.
+				if i, matches := fp.match(path.Path); matches {
+					DebugOut.Printf("\t\tPath '%s' (index %d) matches a stated ForbiddenPath %d\n", path.Path, index, i)
+					ErrorOut.Printf("Path '%s' (index %d) matches a stated ForbiddenPath %d\n", path.Path, index, i)
+					fp.remove(i)
+					continue
+				}
+				break
 			}
-			hchain = hchain.Append(fp.Handler)
+			path.ForbiddenPaths = fp.strings() // This is so we can inspect which ForbiddenPaths apply to *this* path
+
+			// Because we prune, we may no longer have any ForbiddenPaths, in which case
+			// we can exclude this handler altogether
+			if len(fp.Paths) > 0 {
+				hchain = hchain.Append(fp.Handler)
+			} else {
+				DebugOut.Print("\tSkipping ForbiddenPaths as pruning removed all elements\n")
+			}
 		}
 	}
 
@@ -622,7 +637,7 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 
 	case path.Finisher != "":
 		// path will be handled by Finisher
-		if l, err := HandleFinisher(path.Finisher, &path); err == nil {
+		if l, err := HandleFinisher(path.Finisher, path); err == nil {
 			DebugOut.Printf("\tAdding Finisher %s\n", path.Finisher)
 			pathHandler = hchain.Then(l)
 		} else if err == ErrFinisher404 {
