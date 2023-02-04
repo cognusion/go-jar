@@ -452,8 +452,8 @@ func BuildPath(path *Path, index int, router *mux.Router) (int, error) {
 			for {
 				// We keep retesting until none of the ForbiddenPaths match, as more than one could match.
 				if i, matches := fp.match(path.Path); matches {
-					DebugOut.Printf("\t\tPath '%s' (index %d) matches a stated ForbiddenPath %d\n", path.Path, index, i)
-					ErrorOut.Printf("Path '%s' (index %d) matches a stated ForbiddenPath %d\n", path.Path, index, i)
+					DebugOut.Printf("\t\tPath '%s' (index %d) matches a stated ForbiddenPath (index %d)\n", path.Path, index, i)
+					ErrorOut.Printf("Path '%s' (index %d) matches a stated ForbiddenPath (index %d)\n", path.Path, index, i)
 					fp.remove(i)
 					continue
 				}
