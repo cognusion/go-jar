@@ -395,13 +395,33 @@ func NewForbiddenPaths(paths []string) (*ForbiddenPaths, error) {
 	return &fp, nil
 }
 
-func (f *ForbiddenPaths) match(path string) bool {
-	for _, fp := range f.Paths {
+func (f *ForbiddenPaths) match(path string) (int, bool) {
+	for i, fp := range f.Paths {
 		if fp.MatchString(path) {
-			return true
+			return i, true
 		}
 	}
-	return false
+	return -1, false
+}
+
+func (f *ForbiddenPaths) remove(index int) {
+	if len(f.Paths) == 0 || index+1 > len(f.Paths) {
+		// WTF?!
+		return
+	} else if index == 0 {
+		// Base
+		f.Paths = make([]*regexp.Regexp, 0)
+		return
+	}
+	f.Paths = append(f.Paths[:index], f.Paths[index+1:]...)
+}
+
+func (f *ForbiddenPaths) strings() []string {
+	slist := make([]string, len(f.Paths))
+	for i, p := range f.Paths {
+		slist[i] = p.String()
+	}
+	return slist
 }
 
 // Handler is a middleware that checks the request URI against regexps and 403's if match
