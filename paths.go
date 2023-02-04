@@ -448,6 +448,10 @@ func BuildPath(path Path, index int, router *mux.Router) (int, error) {
 			if err != nil {
 				return 0, err
 			}
+			if fp.match(path.Path) {
+				// :(
+				return 0, fmt.Errorf("path '%s' (index %d) matches a stated ForbiddenPath", path.Path, index)
+			}
 			hchain = hchain.Append(fp.Handler)
 		}
 	}

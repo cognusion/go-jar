@@ -395,6 +395,15 @@ func NewForbiddenPaths(paths []string) (*ForbiddenPaths, error) {
 	return &fp, nil
 }
 
+func (f *ForbiddenPaths) match(path string) bool {
+	for _, fp := range f.Paths {
+		if fp.MatchString(path) {
+			return true
+		}
+	}
+	return false
+}
+
 // Handler is a middleware that checks the request URI against regexps and 403's if match
 func (f *ForbiddenPaths) Handler(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
@@ -402,21 +411,15 @@ func (f *ForbiddenPaths) Handler(next http.Handler) http.Handler {
 		t := timings.Tracker{}
 		t.Start()
 
-		matched := false
 		for i, f := range f.Paths {
 			if f.MatchString(r.URL.Path) {
 				DebugOut.Printf("ForbiddenPath '%s' matched #%d\n", r.URL.Path, i)
-				matched = true
-				break
+				RequestErrorResponse(r, w, ErrForbiddenError.Error(), http.StatusForbidden)
+				TimingOut.Printf("ForbiddenPathsHandler handler (matched) took %s\n", t.Since().String())
+				return
 			}
 		}
-		if matched {
-			//http.Error(w, ErrRequestError{r, "you do not have access to that resource"}.Error(), http.StatusForbidden)
-			RequestErrorResponse(r, w, ErrForbiddenError.Error(), http.StatusForbidden)
-			TimingOut.Printf("ForbiddenPathsHandler handler took %s\n", t.Since().String())
-			return
-		}
-		TimingOut.Printf("ForbiddenPathsHandler handler took %s\n", t.Since().String())
+		TimingOut.Printf("ForbiddenPathsHandler handler (no match) took %s\n", t.Since().String())
 		next.ServeHTTP(w, r)
 	}
 	return http.HandlerFunc(fn)
