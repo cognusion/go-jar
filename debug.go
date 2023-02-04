@@ -6,7 +6,6 @@ import (
 
 	"crypto/rand"
 	"fmt"
-	"io"
 	"net/http"
 	"os"
 	"sort"
@@ -14,6 +13,9 @@ import (
 )
 
 var (
+/*
+// defaultDebugTrip is a very useful debugging RoundTripper
+
 	defaultDebugTrip = DebugTrip{
 		RTFunc: func(r *http.Request) (*http.Response, error) {
 			if r == nil {
@@ -47,6 +49,7 @@ var (
 			return &w, nil
 		},
 	}
+*/
 )
 
 func init() {
