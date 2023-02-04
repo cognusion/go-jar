@@ -33,7 +33,7 @@ Consumers will want to 'cd cmd/jard; go build; #enjoy'
 * [func AuthoritativeDomainsHandler(next http.Handler) http.Handler](#AuthoritativeDomainsHandler)
 * [func Bootstrap()](#Bootstrap)
 * [func BootstrapChan(closer chan struct{})](#BootstrapChan)
-* [func BuildPath(path Path, index int, router *mux.Router) (int, error)](#BuildPath)
+* [func BuildPath(path *Path, index int, router *mux.Router) (int, error)](#BuildPath)
 * [func BuildPaths(router *mux.Router) error](#BuildPaths)
 * [func ChanBootstrap() chan error](#ChanBootstrap)
 * [func ConnectionCounterAdd()](#ConnectionCounterAdd)
@@ -938,9 +938,9 @@ BootstrapChan doesn't return unless the server exits or the passed chan is close
 
 
 
-## <a name="BuildPath">func</a> [BuildPath](https://github.com/cognusion/go-jar/tree/master/paths.go?s=6805:6874#L212)
+## <a name="BuildPath">func</a> [BuildPath](https://github.com/cognusion/go-jar/tree/master/paths.go?s=6806:6876#L212)
 ``` go
-func BuildPath(path Path, index int, router *mux.Router) (int, error)
+func BuildPath(path *Path, index int, router *mux.Router) (int, error)
 ```
 BuildPath does the heavy lifting to build a single path (which may result in multiple paths, but that's just bookkeeping)
 
@@ -1485,7 +1485,7 @@ All functions will be run, so an array of errors may be returned
 
 
 
-## <a name="WithRqID">func</a> [WithRqID](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=16512:16580#L540)
+## <a name="WithRqID">func</a> [WithRqID](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=16936:17004#L563)
 ``` go
 func WithRqID(ctx context.Context, requestID string) context.Context
 ```
@@ -1493,7 +1493,7 @@ WithRqID returns a context which knows its request ID
 
 
 
-## <a name="WithSessionID">func</a> [WithSessionID](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=16704:16777#L545)
+## <a name="WithSessionID">func</a> [WithSessionID](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=17128:17201#L568)
 ``` go
 func WithSessionID(ctx context.Context, sessionID string) context.Context
 ```
@@ -1646,7 +1646,7 @@ VerifySource checks that the requested authentication source is valid, and acces
 
 
 
-## <a name="BodyByteLimit">type</a> [BodyByteLimit](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=15461:15507#L504)
+## <a name="BodyByteLimit">type</a> [BodyByteLimit](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=15885:15931#L527)
 ``` go
 type BodyByteLimit struct {
     // contains filtered or unexported fields
@@ -1661,7 +1661,7 @@ BodyByteLimit is a Request.Body size limiter
 
 
 
-### <a name="NewBodyByteLimit">func</a> [NewBodyByteLimit](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=15566:15614#L509)
+### <a name="NewBodyByteLimit">func</a> [NewBodyByteLimit](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=15990:16038#L532)
 ``` go
 func NewBodyByteLimit(limit int64) BodyByteLimit
 ```
@@ -1671,7 +1671,7 @@ NewBodyByteLimit returns an initialized BodyByteLimit
 
 
 
-### <a name="BodyByteLimit.Handler">func</a> (\*BodyByteLimit) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=15692:15755#L514)
+### <a name="BodyByteLimit.Handler">func</a> (\*BodyByteLimit) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=16116:16179#L537)
 ``` go
 func (b *BodyByteLimit) Handler(next http.Handler) http.Handler
 ```
@@ -2203,7 +2203,7 @@ or an error if a regexp could not be compiled
 
 
 
-### <a name="ForbiddenPaths.Handler">func</a> (\*ForbiddenPaths) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=12422:12486#L399)
+### <a name="ForbiddenPaths.Handler">func</a> (\*ForbiddenPaths) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=13001:13065#L428)
 ``` go
 func (f *ForbiddenPaths) Handler(next http.Handler) http.Handler
 ```
@@ -2773,7 +2773,7 @@ Path is an extensible struct, detailing its configuration
 
 
 
-## <a name="PathHandler">type</a> [PathHandler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=14432:14496#L467)
+## <a name="PathHandler">type</a> [PathHandler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=14856:14920#L490)
 ``` go
 type PathHandler struct {
     Path    string
@@ -2792,7 +2792,7 @@ PathHandler is a wrapping struct to inject the Path name, and any PathOptions in
 
 
 
-### <a name="PathHandler.Handler">func</a> (\*PathHandler) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=14590:14651#L473)
+### <a name="PathHandler.Handler">func</a> (\*PathHandler) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=15014:15075#L496)
 ``` go
 func (p *PathHandler) Handler(next http.Handler) http.Handler
 ```
@@ -2870,7 +2870,7 @@ GetStringSlice returns a []string if *key* matches, otherwise an empty []string
 
 
 
-## <a name="PathReplacer">type</a> [PathReplacer](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=13808:13862#L446)
+## <a name="PathReplacer">type</a> [PathReplacer](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=14232:14286#L469)
 ``` go
 type PathReplacer struct {
     From string
@@ -2889,7 +2889,7 @@ PathReplacer is a wrapping struct to replace the Request path
 
 
 
-### <a name="PathReplacer.Handler">func</a> (\*PathReplacer) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=13922:13984#L452)
+### <a name="PathReplacer.Handler">func</a> (\*PathReplacer) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=14346:14408#L475)
 ``` go
 func (p *PathReplacer) Handler(next http.Handler) http.Handler
 ```
@@ -2898,7 +2898,7 @@ Handler is a middleware that replaces the Request path
 
 
 
-## <a name="PathStripper">type</a> [PathStripper](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=13309:13352#L426)
+## <a name="PathStripper">type</a> [PathStripper](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=13733:13776#L449)
 ``` go
 type PathStripper struct {
     Prefix string
@@ -2916,7 +2916,7 @@ PathStripper is a wrapping struct to remove the prefix from the Request path
 
 
 
-### <a name="PathStripper.Handler">func</a> (\*PathStripper) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=13412:13474#L431)
+### <a name="PathStripper.Handler">func</a> (\*PathStripper) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=13836:13898#L454)
 ``` go
 func (p *PathStripper) Handler(next http.Handler) http.Handler
 ```
@@ -3062,7 +3062,7 @@ PoolConfig is type exposing expected configuration for a pool, abstracted for pa
 
 
 
-## <a name="PoolID">type</a> [PoolID](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=15021:15056#L487)
+## <a name="PoolID">type</a> [PoolID](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=15445:15480#L510)
 ``` go
 type PoolID struct {
     Pool string
@@ -3080,7 +3080,7 @@ PoolID is a wrapping struct to inject the Pool name into the Context
 
 
 
-### <a name="PoolID.Handler">func</a> (\*PoolID) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=15108:15164#L492)
+### <a name="PoolID.Handler">func</a> (\*PoolID) [Handler](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=15532:15588#L515)
 ``` go
 func (p *PoolID) Handler(next http.Handler) http.Handler
 ```
