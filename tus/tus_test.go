@@ -12,6 +12,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestTUS(t *testing.T) {
@@ -70,6 +71,7 @@ func TestTUS(t *testing.T) {
 		So(uErr, ShouldBeNil)
 
 		// Check the result
+		time.Sleep(2 * time.Millisecond) // The file may not be there immediately. So we wait a sec
 		uParts := strings.Split(uploader.Url(), "/")
 		fName := fmt.Sprintf("%s/%s-%s", tdir, uParts[len(uParts)-1], tfn)
 		f, fErr := os.Stat(fName)
