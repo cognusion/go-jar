@@ -39,14 +39,16 @@ func init() {
 // and returns true if it matches or if ConfigAuthoritativeDomains is not used
 func checkAuthoritative(r *http.Request) bool {
 
+	reqid := GetRequestID(r.Context())
 	comphost := r.URL.Hostname()
-	DebugOut.Printf("CheckAuthoritative '%s'\n", comphost)
+
+	DebugOut.Printf("{%s} CheckAuthoritative '%s'\n", reqid, comphost)
 	if comphost == "" {
 		comphost = r.Host
 		if strings.Contains(comphost, ":") {
 			comphost = strings.Split(comphost, ":")[0]
 		}
-		DebugOut.Printf("\tAdjusted '%s'\n", comphost)
+		DebugOut.Printf("{%s} CheckAuthoritative Adjusted '%s'\n", reqid, comphost)
 	}
 
 	comphost = strings.ToLower(comphost) // case-insensitive
