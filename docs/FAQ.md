@@ -125,3 +125,12 @@ If a pool has a member of ``s3://bucket`` then the Pool type is automatically se
 ## Q: How do websockets work?
 
 If a pool has a member of ``ws://host:port/path`` then the Pool type is automatically set to WS, and websockets should be properly proxied. Not all Handlers may be websocket-safe, however, so less is more.
+
+## Q: What about dynamic plugins using Yaegi?
+
+[Yaegi](https://github.com/traefik/yaegi) is awesome for short-lived and carefully-tailored applications, but unfortunately doesn't participate in GC, is too slow for request/response actions, leaks heap, and has a bunch of interface-related gotchas that preclude its use. Below are the results from a trivial http.HandlerFunc that outputs a static `[]byte` implemented natively and `Eval`d by Yaegi:
+
+```
+Benchmark_Native-8   	77224213	        15.55 ns/op	      27 B/op	       0 allocs/op
+Benchmark_Yaegi-8    	  565527	      1913 ns/op	     829 B/op	      20 allocs/op
+```
