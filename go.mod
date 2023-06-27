@@ -52,7 +52,7 @@ require (
 	github.com/cognusion/go-recyclable v1.0.0
 	github.com/cognusion/go-sequence v1.0.0
 	github.com/cognusion/go-zulipsend v1.0.1
-	github.com/cognusion/srvdisco v0.0.0-20180516035551-b4507d3e8282
+	github.com/cognusion/srvdisco v1.0.0
 	github.com/didip/tollbooth/v7 v7.0.1
 	github.com/eventials/go-tus v0.0.0-20220610120217-05d0564bb571
 	github.com/fatih/color v1.13.0

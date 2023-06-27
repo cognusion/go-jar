@@ -617,8 +617,8 @@ github.com/cognusion/go-zulipsend v1.0.1 h1:dLLoWAuRR/Rd6iBe4KRprNYKzQXWMeU4wOcj
 github.com/cognusion/go-zulipsend v1.0.1/go.mod h1:QaQwnmbLN7Ol1IrVXv2mEgH57SNsdQJHUzKFAskoNII=
 github.com/cognusion/grace v0.0.0-20190209210431-75fe9244da10 h1:Mla1DkztbNV/rO3SJfnGTf8IKMZpzUSUhj+7G6EK6R0=
 github.com/cognusion/grace v0.0.0-20190209210431-75fe9244da10/go.mod h1:9Q6C0L9gJeCiQxyFrQpkN4zl353jtMI+bQGOmOvZnYs=
-github.com/cognusion/srvdisco v0.0.0-20180516035551-b4507d3e8282 h1:aEvtWZIq0jJPb0yVb1DOeIlTtGSjM9eEYqxCoSHG90c=
-github.com/cognusion/srvdisco v0.0.0-20180516035551-b4507d3e8282/go.mod h1:KQeAgDmBGOS0mT65InN3wcUvaEtF1WdqwnpUF1M4I9Q=
+github.com/cognusion/srvdisco v1.0.0 h1:c/c92qcYGrvTf7Z65WDfFJ/UlM+ovwOH9E/3ro3uXtU=
+github.com/cognusion/srvdisco v1.0.0/go.mod h1:Z/gC6PbS5K5GjJLSZpCAtVQixpOR3ZqC3eTZV/BY+BI=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
