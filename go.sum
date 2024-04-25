@@ -615,8 +615,8 @@ github.com/cognusion/go-timings v1.0.0 h1:BIJH9nj46an/bp3L6FCXeeRwTDeKNxu7uSE8xd
 github.com/cognusion/go-timings v1.0.0/go.mod h1:M2IjK6Sr6/YTlm3Jws1wL7NUdn+28XVEkTac529GlbY=
 github.com/cognusion/go-zulipsend v1.0.1 h1:dLLoWAuRR/Rd6iBe4KRprNYKzQXWMeU4wOcj62Mbs0k=
 github.com/cognusion/go-zulipsend v1.0.1/go.mod h1:QaQwnmbLN7Ol1IrVXv2mEgH57SNsdQJHUzKFAskoNII=
-github.com/cognusion/grace v0.0.0-20190209210431-75fe9244da10 h1:Mla1DkztbNV/rO3SJfnGTf8IKMZpzUSUhj+7G6EK6R0=
-github.com/cognusion/grace v0.0.0-20190209210431-75fe9244da10/go.mod h1:9Q6C0L9gJeCiQxyFrQpkN4zl353jtMI+bQGOmOvZnYs=
+github.com/cognusion/grace v0.1.0 h1:2db0SpB/Akjcu5u9HY9njPuhNGXlPm4jracKNDiIAoo=
+github.com/cognusion/grace v0.1.0/go.mod h1:mktX+D04vk7vswmFiQJqQ0oIgXk7f3UAISusVR5bSa0=
 github.com/cognusion/srvdisco v1.0.0 h1:c/c92qcYGrvTf7Z65WDfFJ/UlM+ovwOH9E/3ro3uXtU=
 github.com/cognusion/srvdisco v1.0.0/go.mod h1:Z/gC6PbS5K5GjJLSZpCAtVQixpOR3ZqC3eTZV/BY+BI=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
@@ -650,8 +650,6 @@ github.com/facebookgo/ensure v0.0.0-20200202191622-63f1cf65ac4c h1:8ISkoahWXwZR4
 github.com/facebookgo/ensure v0.0.0-20200202191622-63f1cf65ac4c/go.mod h1:Yg+htXGokKKdzcwhuNDwVvN+uBxDGXJ7G/VN1d8fa64=
 github.com/facebookgo/freeport v0.0.0-20150612182905-d4adf43b75b9 h1:wWke/RUCl7VRjQhwPlR/v0glZXNYzBHdNUzf/Am2Nmg=
 github.com/facebookgo/freeport v0.0.0-20150612182905-d4adf43b75b9/go.mod h1:uPmAp6Sws4L7+Q/OokbWDAK1ibXYhB3PXFP1kol5hPg=
-github.com/facebookgo/grace v0.0.0-20180706040059-75cf19382434 h1:mOp33BLbcbJ8fvTAmZacbBiOASfxN+MLcLxymZCIrGE=
-github.com/facebookgo/grace v0.0.0-20180706040059-75cf19382434/go.mod h1:KigFdumBXUPSwzLDbeuzyt0elrL7+CP7TKuhrhT4bcU=
 github.com/facebookgo/httpdown v0.0.0-20180706035922-5979d39b15c2 h1:nXeeRHmgNgjLxi+7dY9l9aDvSS1uwVlNLqUWIY4Ath0=
 github.com/facebookgo/httpdown v0.0.0-20180706035922-5979d39b15c2/go.mod h1:TUV/fX3XrTtBQb5+ttSUJzcFgLNpILONFTKmBuk5RSw=
 github.com/facebookgo/stack v0.0.0-20160209184415-751773369052 h1:JWuenKqqX8nojtoVVWjGfOF9635RETekkoH6Cc9SX0A=
