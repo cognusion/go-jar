@@ -346,7 +346,8 @@ func bootstrap() (done bool, servers []*http.Server) {
 
 		if Conf.GetBool(ConfigACMEEnabled) {
 			// we are using ACME
-			tlscfg = boostrapAcme()
+			acmeManager = boostrapAcme()
+			tlscfg = acmeManager.TLSConfig()
 		} else {
 			// we are not using ACME
 			tlscfg = &tls.Config{}

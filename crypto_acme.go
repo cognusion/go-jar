@@ -1,8 +1,6 @@
 package jar
 
 import (
-	"crypto/tls"
-
 	"golang.org/x/crypto/acme/autocert"
 )
 
@@ -15,17 +13,14 @@ const (
 	ConfigACMERenewBefore    = ConfigKey("acme.renewbefore")
 )
 
-func boostrapAcme() *tls.Config {
+var acmeManager *autocert.Manager
 
-	// TODO: Implement HostPolicy, RenewBefore!
-
-	manager := &autocert.Manager{
+func boostrapAcme() *autocert.Manager {
+	return &autocert.Manager{
 		Cache:       autocert.DirCache(Conf.GetString(ConfigACMECacheDirectory)),
 		Prompt:      autocert.AcceptTOS,
 		Email:       Conf.GetString(ConfigACMEEmailAddress),
 		RenewBefore: Conf.GetDuration(ConfigACMERenewBefore),
 		HostPolicy:  autocert.HostWhitelist(Conf.GetStringSlice(ConfigACMEHostWhiteList)...),
 	}
-	return manager.TLSConfig()
-
 }
