@@ -812,9 +812,9 @@ var (
     // LocalMemberWeight is the weight assigned to each member that is AZ-local
     LocalMemberWeight int
 
-    // ResponseModiferChain is a ProxyResponseModifierChain to handle sequences of modifications
-    // use ``ResponseModiferChain.Add()`` to add your own
-    ResponseModiferChain ProxyResponseModifierChain
+    // ResponseModifierChain is a ProxyResponseModifierChain to handle sequences of modifications
+    // use ``ResponseModifierChain.Add()`` to add your own
+    ResponseModifierChain ProxyResponseModifierChain
 )
 ```
 ``` go
@@ -884,7 +884,7 @@ ZulipClient is a global Zulip client to use for messaging, or nil if not
 
 
 
-## <a name="AccessLogHandler">func</a> [AccessLogHandler](https://github.com/cognusion/go-jar/tree/master/log.go?s=8638:8691#L277)
+## <a name="AccessLogHandler">func</a> [AccessLogHandler](https://github.com/cognusion/go-jar/tree/master/log.go?s=8649:8702#L272)
 ``` go
 func AccessLogHandler(next http.Handler) http.Handler
 ```
@@ -991,7 +991,7 @@ ConnectionCounterRemove atomically adds -1 to the ConnectionCounter
 
 
 
-## <a name="CopyHeaders">func</a> [CopyHeaders](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=3209:3259#L122)
+## <a name="CopyHeaders">func</a> [CopyHeaders](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=3287:3337#L124)
 ``` go
 func CopyHeaders(dst http.Header, src http.Header)
 ```
@@ -1000,7 +1000,7 @@ does not overide, but adds multiple headers
 
 
 
-## <a name="CopyRequest">func</a> [CopyRequest](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=2696:2745#L101)
+## <a name="CopyRequest">func</a> [CopyRequest](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=2774:2823#L103)
 ``` go
 func CopyRequest(req *http.Request) *http.Request
 ```
@@ -1008,7 +1008,7 @@ CopyRequest provides a safe copy of a bodyless request into a new request
 
 
 
-## <a name="CopyURL">func</a> [CopyURL](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=2977:3010#L111)
+## <a name="CopyURL">func</a> [CopyURL](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=3055:3088#L113)
 ``` go
 func CopyURL(i *url.URL) *url.URL
 ```
@@ -1016,7 +1016,7 @@ CopyURL provides update safe copy by avoiding shallow copying User field
 
 
 
-## <a name="DateFinisher">func</a> [DateFinisher](https://github.com/cognusion/go-jar/tree/master/debug.go?s=3557:3614#L136)
+## <a name="DateFinisher">func</a> [DateFinisher](https://github.com/cognusion/go-jar/tree/master/debug.go?s=3621:3678#L139)
 ``` go
 func DateFinisher(w http.ResponseWriter, r *http.Request)
 ```
@@ -1024,7 +1024,7 @@ DateFinisher is a Finisher that simply returns the current system datestamp as a
 
 
 
-## <a name="DumpFinisher">func</a> [DumpFinisher](https://github.com/cognusion/go-jar/tree/master/debug.go?s=2905:2962#L120)
+## <a name="DumpFinisher">func</a> [DumpFinisher](https://github.com/cognusion/go-jar/tree/master/debug.go?s=2969:3026#L123)
 ``` go
 func DumpFinisher(w http.ResponseWriter, r *http.Request)
 ```
@@ -1032,7 +1032,7 @@ DumpFinisher is a special finisher that reflects a ton of request output
 
 
 
-## <a name="DumpHandler">func</a> [DumpHandler](https://github.com/cognusion/go-jar/tree/master/debug.go?s=2552:2597#L110)
+## <a name="DumpHandler">func</a> [DumpHandler](https://github.com/cognusion/go-jar/tree/master/debug.go?s=2616:2661#L113)
 ``` go
 func DumpHandler(h http.Handler) http.Handler
 ```
@@ -1069,7 +1069,7 @@ will result in unrecoverable errors
 
 
 
-## <a name="FileExists">func</a> [FileExists](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=2070:2107#L77)
+## <a name="FileExists">func</a> [FileExists](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=2148:2185#L79)
 ``` go
 func FileExists(filePath string) bool
 ```
@@ -1077,7 +1077,7 @@ FileExists returns true if the provided path exists, and is not a directory
 
 
 
-## <a name="FlashEncoding">func</a> [FlashEncoding](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=4602:4639#L158)
+## <a name="FlashEncoding">func</a> [FlashEncoding](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=4680:4717#L160)
 ``` go
 func FlashEncoding(src string) string
 ```
@@ -1086,7 +1086,7 @@ with "+" additionally converted to "%2B"
 
 
 
-## <a name="FolderExists">func</a> [FolderExists](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=2277:2316#L85)
+## <a name="FolderExists">func</a> [FolderExists](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=2355:2394#L87)
 ``` go
 func FolderExists(filePath string) bool
 ```
@@ -1102,7 +1102,7 @@ Forbidden is a Finisher that returns 403 for the requested Path
 
 
 
-## <a name="GetErrorLog">func</a> [GetErrorLog](https://github.com/cognusion/go-jar/tree/master/log.go?s=3405:3490#L104)
+## <a name="GetErrorLog">func</a> [GetErrorLog](https://github.com/cognusion/go-jar/tree/master/log.go?s=3476:3561#L106)
 ``` go
 func GetErrorLog(filename, prefix string, format, size, backups, age int) *log.Logger
 ```
@@ -1110,7 +1110,7 @@ GetErrorLog gets an error-type log
 
 
 
-## <a name="GetLog">func</a> [GetLog](https://github.com/cognusion/go-jar/tree/master/log.go?s=2971:3051#L92)
+## <a name="GetLog">func</a> [GetLog](https://github.com/cognusion/go-jar/tree/master/log.go?s=3042:3122#L94)
 ``` go
 func GetLog(filename, prefix string, format, size, backups, age int) *log.Logger
 ```
@@ -1118,7 +1118,7 @@ GetLog gets a standard-type log
 
 
 
-## <a name="GetLogOrDiscard">func</a> [GetLogOrDiscard](https://github.com/cognusion/go-jar/tree/master/log.go?s=3198:3287#L98)
+## <a name="GetLogOrDiscard">func</a> [GetLogOrDiscard](https://github.com/cognusion/go-jar/tree/master/log.go?s=3269:3358#L100)
 ``` go
 func GetLogOrDiscard(filename, prefix string, format, size, backups, age int) *log.Logger
 ```
@@ -1126,7 +1126,7 @@ GetLogOrDiscard gets a standard-type log, or discards the output
 
 
 
-## <a name="GetRequestID">func</a> [GetRequestID](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=2483:2528#L93)
+## <a name="GetRequestID">func</a> [GetRequestID](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=2561:2606#L95)
 ``` go
 func GetRequestID(ctx context.Context) string
 ```
@@ -1208,7 +1208,7 @@ LoadConfig read the config file and returns a config object or an error
 
 
 
-## <a name="LogInit">func</a> [LogInit](https://github.com/cognusion/go-jar/tree/master/log.go?s=1653:1673#L60)
+## <a name="LogInit">func</a> [LogInit](https://github.com/cognusion/go-jar/tree/master/log.go?s=1724:1744#L62)
 ``` go
 func LogInit() error
 ```
@@ -1216,7 +1216,7 @@ LogInit initializes all of the loggers based on Conf settings
 
 
 
-## <a name="MinuteDelayer">func</a> [MinuteDelayer](https://github.com/cognusion/go-jar/tree/master/debug.go?s=3172:3230#L125)
+## <a name="MinuteDelayer">func</a> [MinuteDelayer](https://github.com/cognusion/go-jar/tree/master/debug.go?s=3236:3294#L128)
 ``` go
 func MinuteDelayer(w http.ResponseWriter, r *http.Request)
 ```
@@ -1224,7 +1224,7 @@ MinuteDelayer is a special finisher that waits for 60s before returning
 
 
 
-## <a name="MinuteStreamer">func</a> [MinuteStreamer](https://github.com/cognusion/go-jar/tree/master/debug.go?s=4305:4364#L156)
+## <a name="MinuteStreamer">func</a> [MinuteStreamer](https://github.com/cognusion/go-jar/tree/master/debug.go?s=4369:4428#L159)
 ``` go
 func MinuteStreamer(w http.ResponseWriter, r *http.Request)
 ```
@@ -1248,7 +1248,7 @@ NewECBEncrypter should never be used unless you know what you're doing
 
 
 
-## <a name="NewStickyPool">func</a> [NewStickyPool](https://github.com/cognusion/go-jar/tree/master/pool_sticky.go?s=550:689#L20)
+## <a name="NewStickyPool">func</a> [NewStickyPool](https://github.com/cognusion/go-jar/tree/master/pool_sticky.go?s=556:695#L20)
 ``` go
 func NewStickyPool(poolName, cookieName, cookieType string, next http.Handler, opts ...roundrobin.LBOption) (*roundrobin.RoundRobin, error)
 ```
@@ -1256,7 +1256,7 @@ NewStickyPool returns a primed RoundRobin that honors pinning based on a cookie 
 
 
 
-## <a name="OkFinisher">func</a> [OkFinisher](https://github.com/cognusion/go-jar/tree/master/debug.go?s=3362:3417#L131)
+## <a name="OkFinisher">func</a> [OkFinisher](https://github.com/cognusion/go-jar/tree/master/debug.go?s=3426:3481#L134)
 ``` go
 func OkFinisher(w http.ResponseWriter, r *http.Request)
 ```
@@ -1296,7 +1296,7 @@ PoolMemberLoser is a finisher to remove a member from an existing pool
 
 
 
-## <a name="PrettyPrint">func</a> [PrettyPrint](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=4421:4459#L152)
+## <a name="PrettyPrint">func</a> [PrettyPrint](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=4499:4537#L154)
 ``` go
 func PrettyPrint(v interface{}) string
 ```
@@ -1304,7 +1304,7 @@ PrettyPrint returns the a JSONified version of the string, or %+v if that's not 
 
 
 
-## <a name="ReaderToString">func</a> [ReaderToString](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=4950:4989#L173)
+## <a name="ReaderToString">func</a> [ReaderToString](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=5028:5067#L175)
 ``` go
 func ReaderToString(r io.Reader) string
 ```
@@ -1328,7 +1328,7 @@ Recoverer is a wrapping handler to make panic-capable handlers safer
 
 
 
-## <a name="ReplaceURI">func</a> [ReplaceURI](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=3727:3787#L134)
+## <a name="ReplaceURI">func</a> [ReplaceURI](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=3805:3865#L136)
 ``` go
 func ReplaceURI(r *http.Request, urlPath, requestURI string)
 ```
@@ -1352,7 +1352,7 @@ RequestErrorString is the functional equivalent of ErrRequestError .String()
 
 
 
-## <a name="RequestIDFinisher">func</a> [RequestIDFinisher](https://github.com/cognusion/go-jar/tree/master/debug.go?s=3780:3842#L141)
+## <a name="RequestIDFinisher">func</a> [RequestIDFinisher](https://github.com/cognusion/go-jar/tree/master/debug.go?s=3844:3906#L144)
 ``` go
 func RequestIDFinisher(w http.ResponseWriter, r *http.Request)
 ```
@@ -1408,7 +1408,7 @@ Stack is a Finisher that dumps the current stack to the request
 
 
 
-## <a name="StringIfCtx">func</a> [StringIfCtx](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=1848:1906#L69)
+## <a name="StringIfCtx">func</a> [StringIfCtx](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=1926:1984#L71)
 ``` go
 func StringIfCtx(r *http.Request, name interface{}) string
 ```
@@ -1417,7 +1417,7 @@ has a Context.WithValue() of the specified name
 
 
 
-## <a name="StringToCleanList">func</a> [StringToCleanList](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=6191:6238#L220)
+## <a name="StringToCleanList">func</a> [StringToCleanList](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=6269:6316#L222)
 ``` go
 func StringToCleanList(in, sep string) []string
 ```
@@ -1435,7 +1435,7 @@ SwitchHandler adds URL switching information to the request context
 
 
 
-## <a name="TestFinisher">func</a> [TestFinisher](https://github.com/cognusion/go-jar/tree/master/debug.go?s=1285:1342#L64)
+## <a name="TestFinisher">func</a> [TestFinisher](https://github.com/cognusion/go-jar/tree/master/debug.go?s=1349:1406#L67)
 ``` go
 func TestFinisher(w http.ResponseWriter, r *http.Request)
 ```
@@ -1443,7 +1443,7 @@ TestFinisher is a special finisher that outputs some detectables
 
 
 
-## <a name="TrimPrefixURI">func</a> [TrimPrefixURI](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=3454:3504#L129)
+## <a name="TrimPrefixURI">func</a> [TrimPrefixURI](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=3532:3582#L131)
 ``` go
 func TrimPrefixURI(r *http.Request, prefix string)
 ```
@@ -1561,7 +1561,7 @@ returning boolean
 
 
 
-## <a name="AccessLog">type</a> [AccessLog](https://github.com/cognusion/go-jar/tree/master/log.go?s=4656:5216#L151)
+## <a name="AccessLog">type</a> [AccessLog](https://github.com/cognusion/go-jar/tree/master/log.go?s=4667:5227#L146)
 ``` go
 type AccessLog interface {
     // CommonLogFormat will return the contents as a CLF-compatible string. If combined is set, a "combined" CLF is included (adds referer and user-agent)
@@ -1680,7 +1680,7 @@ Handler limits the size of Request.Body
 
 
 
-## <a name="CORS">type</a> [CORS](https://github.com/cognusion/go-jar/tree/master/cors.go?s=2793:3027#L70)
+## <a name="CORS">type</a> [CORS](https://github.com/cognusion/go-jar/tree/master/cors.go?s=2794:3028#L70)
 ``` go
 type CORS struct {
     AllowCredentials string
@@ -1702,14 +1702,14 @@ and thus need to either be added via AddOrigins() or supplied to NewCORSFromConf
 
 
 
-### <a name="NewCORS">func</a> [NewCORS](https://github.com/cognusion/go-jar/tree/master/cors.go?s=3076:3096#L82)
+### <a name="NewCORS">func</a> [NewCORS](https://github.com/cognusion/go-jar/tree/master/cors.go?s=3077:3097#L82)
 ``` go
 func NewCORS() *CORS
 ```
 NewCORS returns an initialized CORS struct.
 
 
-### <a name="NewCORSFromConfig">func</a> [NewCORSFromConfig](https://github.com/cognusion/go-jar/tree/master/cors.go?s=3264:3343#L90)
+### <a name="NewCORSFromConfig">func</a> [NewCORSFromConfig](https://github.com/cognusion/go-jar/tree/master/cors.go?s=3265:3344#L90)
 ``` go
 func NewCORSFromConfig(origins []string, conf map[string]string) (*CORS, error)
 ```
@@ -1719,7 +1719,7 @@ NewCORSFromConfig returns an initialized CORS struct from a list of origins and 
 
 
 
-### <a name="CORS.AddOrigin">func</a> (\*CORS) [AddOrigin](https://github.com/cognusion/go-jar/tree/master/cors.go?s=3701:3749#L105)
+### <a name="CORS.AddOrigin">func</a> (\*CORS) [AddOrigin](https://github.com/cognusion/go-jar/tree/master/cors.go?s=3702:3750#L105)
 ``` go
 func (c *CORS) AddOrigin(origins []string) error
 ```
@@ -1728,7 +1728,7 @@ AddOrigin adds an origin expression to the CORS struct
 
 
 
-### <a name="CORS.Handler">func</a> (\*CORS) [Handler](https://github.com/cognusion/go-jar/tree/master/cors.go?s=4187:4241#L121)
+### <a name="CORS.Handler">func</a> (\*CORS) [Handler](https://github.com/cognusion/go-jar/tree/master/cors.go?s=4188:4242#L121)
 ``` go
 func (c *CORS) Handler(next http.Handler) http.Handler
 ```
@@ -1738,7 +1738,7 @@ a whitelist of expressions, and may change the response headers accordingly
 
 
 
-### <a name="CORS.ResponseModifier">func</a> (\*CORS) [ResponseModifier](https://github.com/cognusion/go-jar/tree/master/cors.go?s=5758:5816#L174)
+### <a name="CORS.ResponseModifier">func</a> (\*CORS) [ResponseModifier](https://github.com/cognusion/go-jar/tree/master/cors.go?s=5759:5817#L174)
 ``` go
 func (c *CORS) ResponseModifier(resp *http.Response) error
 ```
@@ -1747,7 +1747,7 @@ ResponseModifier is an oxy/forward opsetter to remove CORS headers from response
 
 
 
-### <a name="CORS.String">func</a> (\*CORS) [String](https://github.com/cognusion/go-jar/tree/master/cors.go?s=5348:5378#L163)
+### <a name="CORS.String">func</a> (\*CORS) [String](https://github.com/cognusion/go-jar/tree/master/cors.go?s=5349:5379#L163)
 ``` go
 func (c *CORS) String() string
 ```
@@ -1858,7 +1858,7 @@ ConfigKey is a string type for static config key name consistency
 
 
 
-## <a name="ConsistentHashPool">type</a> [ConsistentHashPool](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=2983:3108#L98)
+## <a name="ConsistentHashPool">type</a> [ConsistentHashPool](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=2986:3111#L98)
 ``` go
 type ConsistentHashPool struct {
     // contains filtered or unexported fields
@@ -1874,14 +1874,14 @@ the proper member consistently
 
 
 
-### <a name="NewConsistentHashPool">func</a> [NewConsistentHashPool](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=3171:3277#L106)
+### <a name="NewConsistentHashPool">func</a> [NewConsistentHashPool](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=3174:3280#L106)
 ``` go
 func NewConsistentHashPool(source, key string, pool *Pool, next http.Handler) (*ConsistentHashPool, error)
 ```
 NewConsistentHashPool returns a primed ConsistentHashPool
 
 
-### <a name="NewConsistentHashPoolOpts">func</a> [NewConsistentHashPoolOpts](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=3561:3729#L115)
+### <a name="NewConsistentHashPoolOpts">func</a> [NewConsistentHashPoolOpts](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=3564:3732#L115)
 ``` go
 func NewConsistentHashPoolOpts(sourceKeys []hashSource, partitionCount, replicationFactor int, load float64, pool *Pool, next http.Handler) (*ConsistentHashPool, error)
 ```
@@ -1891,7 +1891,7 @@ NewConsistentHashPoolOpts exposes some internal tunables, but still returns a Co
 
 
 
-### <a name="ConsistentHashPool.Next">func</a> (\*ConsistentHashPool) [Next](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=5812:5861#L201)
+### <a name="ConsistentHashPool.Next">func</a> (\*ConsistentHashPool) [Next](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=5815:5864#L201)
 ``` go
 func (ch *ConsistentHashPool) Next() http.Handler
 ```
@@ -1900,7 +1900,7 @@ Next returns the specified next Handler
 
 
 
-### <a name="ConsistentHashPool.NextServer">func</a> (\*ConsistentHashPool) [NextServer](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=5651:5711#L196)
+### <a name="ConsistentHashPool.NextServer">func</a> (\*ConsistentHashPool) [NextServer](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=5654:5714#L196)
 ``` go
 func (ch *ConsistentHashPool) NextServer() (*url.URL, error)
 ```
@@ -1909,7 +1909,7 @@ NextServer is an error-causing noop to implement PoolManager
 
 
 
-### <a name="ConsistentHashPool.RemoveServer">func</a> (\*ConsistentHashPool) [RemoveServer](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=5101:5161#L174)
+### <a name="ConsistentHashPool.RemoveServer">func</a> (\*ConsistentHashPool) [RemoveServer](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=5104:5164#L174)
 ``` go
 func (ch *ConsistentHashPool) RemoveServer(u *url.URL) error
 ```
@@ -1918,7 +1918,7 @@ RemoveServer removes the specified member from the pool
 
 
 
-### <a name="ConsistentHashPool.ServeHTTP">func</a> (\*ConsistentHashPool) [ServeHTTP](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=4429:4508#L151)
+### <a name="ConsistentHashPool.ServeHTTP">func</a> (\*ConsistentHashPool) [ServeHTTP](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=4432:4511#L151)
 ``` go
 func (ch *ConsistentHashPool) ServeHTTP(w http.ResponseWriter, r *http.Request)
 ```
@@ -1927,7 +1927,7 @@ ServeHTTP handles its part of the request
 
 
 
-### <a name="ConsistentHashPool.ServerWeight">func</a> (\*ConsistentHashPool) [ServerWeight](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=4953:5019#L169)
+### <a name="ConsistentHashPool.ServerWeight">func</a> (\*ConsistentHashPool) [ServerWeight](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=4956:5022#L169)
 ``` go
 func (ch *ConsistentHashPool) ServerWeight(u *url.URL) (int, bool)
 ```
@@ -1936,7 +1936,7 @@ ServerWeight is a noop to implement PoolManager
 
 
 
-### <a name="ConsistentHashPool.Servers">func</a> (\*ConsistentHashPool) [Servers](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=4200:4250#L141)
+### <a name="ConsistentHashPool.Servers">func</a> (\*ConsistentHashPool) [Servers](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=4203:4253#L141)
 ``` go
 func (ch *ConsistentHashPool) Servers() []*url.URL
 ```
@@ -1945,7 +1945,7 @@ Servers returns a list of member URLs
 
 
 
-### <a name="ConsistentHashPool.UpsertServer">func</a> (\*ConsistentHashPool) [UpsertServer](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=5265:5361#L180)
+### <a name="ConsistentHashPool.UpsertServer">func</a> (\*ConsistentHashPool) [UpsertServer](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=5268:5364#L180)
 ``` go
 func (ch *ConsistentHashPool) UpsertServer(u *url.URL, options ...roundrobin.ServerOption) error
 ```
@@ -1969,7 +1969,7 @@ CorsString is a string type for static string consistency
 
 
 
-## <a name="DebugTrip">type</a> [DebugTrip](https://github.com/cognusion/go-jar/tree/master/debug.go?s=4746:4952#L175)
+## <a name="DebugTrip">type</a> [DebugTrip](https://github.com/cognusion/go-jar/tree/master/debug.go?s=4810:5016#L178)
 ``` go
 type DebugTrip struct {
     // RTFunc is executed when RoundTrip() is called on a request.
@@ -1989,7 +1989,7 @@ DebugTrip is an http.RoundTripper with a pluggable core func to aid in debugging
 
 
 
-### <a name="DebugTrip.RoundTrip">func</a> (\*DebugTrip) [RoundTrip](https://github.com/cognusion/go-jar/tree/master/debug.go?s=4991:5061#L182)
+### <a name="DebugTrip.RoundTrip">func</a> (\*DebugTrip) [RoundTrip](https://github.com/cognusion/go-jar/tree/master/debug.go?s=5055:5125#L185)
 ``` go
 func (d *DebugTrip) RoundTrip(r *http.Request) (*http.Response, error)
 ```
@@ -2500,7 +2500,7 @@ Work executes the HealthCheck and returns HealthCheckResult or HealthCheckError
 
 
 
-## <a name="JSONAccessLog">type</a> [JSONAccessLog](https://github.com/cognusion/go-jar/tree/master/log.go?s=5286:6015#L163)
+## <a name="JSONAccessLog">type</a> [JSONAccessLog](https://github.com/cognusion/go-jar/tree/master/log.go?s=5297:6026#L158)
 ``` go
 type JSONAccessLog struct {
     Timestamp     string `json:"timestamp"`
@@ -2535,7 +2535,7 @@ JSONAccessLog is an AccessLog uberstruct for JSONifying log data
 
 
 
-### <a name="JSONAccessLog.CommonLogFormat">func</a> (\*JSONAccessLog) [CommonLogFormat](https://github.com/cognusion/go-jar/tree/master/log.go?s=6168:6229#L185)
+### <a name="JSONAccessLog.CommonLogFormat">func</a> (\*JSONAccessLog) [CommonLogFormat](https://github.com/cognusion/go-jar/tree/master/log.go?s=6179:6240#L180)
 ``` go
 func (a *JSONAccessLog) CommonLogFormat(combined bool) string
 ```
@@ -2544,7 +2544,7 @@ CommonLogFormat will return the contents as a CLF-compatible string. If combined
 
 
 
-### <a name="JSONAccessLog.RequestFiller">func</a> (\*JSONAccessLog) [RequestFiller](https://github.com/cognusion/go-jar/tree/master/log.go?s=7745:7799#L245)
+### <a name="JSONAccessLog.RequestFiller">func</a> (\*JSONAccessLog) [RequestFiller](https://github.com/cognusion/go-jar/tree/master/log.go?s=7756:7810#L240)
 ``` go
 func (a *JSONAccessLog) RequestFiller(r *http.Request)
 ```
@@ -2553,7 +2553,7 @@ RequestFiller adds request information to the AccessLog entry
 
 
 
-### <a name="JSONAccessLog.Reset">func</a> (\*JSONAccessLog) [Reset](https://github.com/cognusion/go-jar/tree/master/log.go?s=6891:6922#L212)
+### <a name="JSONAccessLog.Reset">func</a> (\*JSONAccessLog) [Reset](https://github.com/cognusion/go-jar/tree/master/log.go?s=6902:6933#L207)
 ``` go
 func (a *JSONAccessLog) Reset()
 ```
@@ -2562,7 +2562,7 @@ Reset will empty out the contents of the access log
 
 
 
-### <a name="JSONAccessLog.ResponseFiller">func</a> (\*JSONAccessLog) [ResponseFiller](https://github.com/cognusion/go-jar/tree/master/log.go?s=7303:7422#L234)
+### <a name="JSONAccessLog.ResponseFiller">func</a> (\*JSONAccessLog) [ResponseFiller](https://github.com/cognusion/go-jar/tree/master/log.go?s=7314:7433#L229)
 ``` go
 func (a *JSONAccessLog) ResponseFiller(endtime time.Time, duration time.Duration, responseCode int, responseLength int)
 ```
@@ -2571,7 +2571,7 @@ ResponseFiller adds response information to the AccessLog entry
 
 
 
-## <a name="Member">type</a> [Member](https://github.com/cognusion/go-jar/tree/master/pool.go?s=4868:4973#L133)
+## <a name="Member">type</a> [Member](https://github.com/cognusion/go-jar/tree/master/pool.go?s=4865:4970#L132)
 ``` go
 type Member struct {
     URL     *url.URL
@@ -2592,7 +2592,7 @@ Member is an attribute struct to describe a Pool Member
 
 
 
-### <a name="Member.String">func</a> (\*Member) [String](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=4098:4130#L136)
+### <a name="Member.String">func</a> (\*Member) [String](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go?s=4101:4133#L136)
 ``` go
 func (m *Member) String() string
 ```
@@ -2601,7 +2601,7 @@ String returns the Address of the Member
 
 
 
-## <a name="NoopResponseWriter">type</a> [NoopResponseWriter](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=5260:5326#L185)
+## <a name="NoopResponseWriter">type</a> [NoopResponseWriter](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=5338:5404#L187)
 ``` go
 type NoopResponseWriter struct {
     // contains filtered or unexported fields
@@ -2617,7 +2617,7 @@ but no body. This is almost never what you want. Really.
 
 
 
-### <a name="NewNoopResponseWriter">func</a> [NewNoopResponseWriter](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=5432:5479#L192)
+### <a name="NewNoopResponseWriter">func</a> [NewNoopResponseWriter](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=5510:5557#L194)
 ``` go
 func NewNoopResponseWriter() NoopResponseWriter
 ```
@@ -2628,7 +2628,7 @@ do not want to use.
 
 
 
-### <a name="NoopResponseWriter.Header">func</a> (\*NoopResponseWriter) [Header](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=5578:5627#L199)
+### <a name="NoopResponseWriter.Header">func</a> (\*NoopResponseWriter) [Header](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=5656:5705#L201)
 ``` go
 func (n *NoopResponseWriter) Header() http.Header
 ```
@@ -2637,7 +2637,7 @@ Header returns an http.Header
 
 
 
-### <a name="NoopResponseWriter.Write">func</a> (\*NoopResponseWriter) [Write](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=5784:5845#L205)
+### <a name="NoopResponseWriter.Write">func</a> (\*NoopResponseWriter) [Write](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=5862:5923#L207)
 ``` go
 func (n *NoopResponseWriter) Write(bytes []byte) (int, error)
 ```
@@ -2647,7 +2647,7 @@ returns the size of whatever you wrote to it, and never an error
 
 
 
-### <a name="NoopResponseWriter.WriteHeader">func</a> (\*NoopResponseWriter) [WriteHeader](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=5968:6024#L213)
+### <a name="NoopResponseWriter.WriteHeader">func</a> (\*NoopResponseWriter) [WriteHeader](https://github.com/cognusion/go-jar/tree/master/helpers.go?s=6046:6102#L215)
 ``` go
 func (n *NoopResponseWriter) WriteHeader(statusCode int)
 ```
@@ -2925,7 +2925,7 @@ Handler is a middleware that replaces the Request path
 
 
 
-## <a name="Pool">type</a> [Pool](https://github.com/cognusion/go-jar/tree/master/pool.go?s=5021:6011#L141)
+## <a name="Pool">type</a> [Pool](https://github.com/cognusion/go-jar/tree/master/pool.go?s=5018:6008#L140)
 ``` go
 type Pool struct {
     Config *PoolConfig
@@ -2957,7 +2957,7 @@ Pool is a list of like-minded destinations
 
 
 
-### <a name="Pool.GetMember">func</a> (\*Pool) [GetMember](https://github.com/cognusion/go-jar/tree/master/pool.go?s=6675:6719#L186)
+### <a name="Pool.GetMember">func</a> (\*Pool) [GetMember](https://github.com/cognusion/go-jar/tree/master/pool.go?s=6672:6716#L185)
 ``` go
 func (p *Pool) GetMember(u *url.URL) *Member
 ```
@@ -2966,7 +2966,7 @@ GetMember interacts with an internal cache, returning a Member from the cache or
 
 
 
-### <a name="Pool.GetPool">func</a> (\*Pool) [GetPool](https://github.com/cognusion/go-jar/tree/master/pool.go?s=6269:6315#L174)
+### <a name="Pool.GetPool">func</a> (\*Pool) [GetPool](https://github.com/cognusion/go-jar/tree/master/pool.go?s=6266:6312#L173)
 ``` go
 func (p *Pool) GetPool() (http.Handler, error)
 ```
@@ -2976,7 +2976,7 @@ materialized, it does that.
 
 
 
-### <a name="Pool.IsMaterialized">func</a> (\*Pool) [IsMaterialized](https://github.com/cognusion/go-jar/tree/master/pool.go?s=6095:6131#L168)
+### <a name="Pool.IsMaterialized">func</a> (\*Pool) [IsMaterialized](https://github.com/cognusion/go-jar/tree/master/pool.go?s=6092:6128#L167)
 ``` go
 func (p *Pool) IsMaterialized() bool
 ```
@@ -2985,7 +2985,7 @@ IsMaterialized return boolean on whether the pool has been materialized or not
 
 
 
-### <a name="Pool.Materialize">func</a> (\*Pool) [Materialize](https://github.com/cognusion/go-jar/tree/master/pool.go?s=9333:9383#L255)
+### <a name="Pool.Materialize">func</a> (\*Pool) [Materialize](https://github.com/cognusion/go-jar/tree/master/pool.go?s=9330:9380#L254)
 ``` go
 func (p *Pool) Materialize() (http.Handler, error)
 ```
@@ -2998,7 +2998,7 @@ Materialize it for you.
 
 
 
-## <a name="PoolConfig">type</a> [PoolConfig](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=219:2926#L14)
+## <a name="PoolConfig">type</a> [PoolConfig](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=222:2929#L14)
 ``` go
 type PoolConfig struct {
     // Name is what you'd like to call this Pool
@@ -3089,7 +3089,7 @@ Handler injects the Pool name into the Context
 
 
 
-## <a name="PoolManager">type</a> [PoolManager](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=4850:5146#L157)
+## <a name="PoolManager">type</a> [PoolManager](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=4853:5149#L157)
 ``` go
 type PoolManager interface {
     Servers() []*url.URL
@@ -3112,7 +3112,7 @@ PoolManager is an interface to encompass oxy/roundrobin and our chpool
 
 
 
-## <a name="PoolOptions">type</a> [PoolOptions](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=2981:3020#L65)
+## <a name="PoolOptions">type</a> [PoolOptions](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=2984:3023#L65)
 ``` go
 type PoolOptions map[string]interface{}
 ```
@@ -3127,7 +3127,7 @@ PoolOptions is an MSI with a case-agnostic getter
 
 
 
-### <a name="PoolOptions.Get">func</a> (\*PoolOptions) [Get](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=3084:3133#L68)
+### <a name="PoolOptions.Get">func</a> (\*PoolOptions) [Get](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=3087:3136#L68)
 ``` go
 func (p *PoolOptions) Get(key string) interface{}
 ```
@@ -3136,7 +3136,7 @@ Get returns an interface{} if *key* matches, otherwise nil
 
 
 
-### <a name="PoolOptions.GetBool">func</a> (\*PoolOptions) [GetBool](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=4207:4253#L127)
+### <a name="PoolOptions.GetBool">func</a> (\*PoolOptions) [GetBool](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=4210:4256#L127)
 ``` go
 func (p *PoolOptions) GetBool(key string) bool
 ```
@@ -3145,7 +3145,7 @@ GetBool returns a bool value if *key* matches, otherwise false
 
 
 
-### <a name="PoolOptions.GetFloat64">func</a> (\*PoolOptions) [GetFloat64](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=3916:3968#L112)
+### <a name="PoolOptions.GetFloat64">func</a> (\*PoolOptions) [GetFloat64](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=3919:3971#L112)
 ``` go
 func (p *PoolOptions) GetFloat64(key string) float64
 ```
@@ -3154,7 +3154,7 @@ GetFloat64 returns a float64 if *key* matches, otherwise -1
 
 
 
-### <a name="PoolOptions.GetInt">func</a> (\*PoolOptions) [GetInt](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=3640:3684#L97)
+### <a name="PoolOptions.GetInt">func</a> (\*PoolOptions) [GetInt](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=3643:3687#L97)
 ``` go
 func (p *PoolOptions) GetInt(key string) int
 ```
@@ -3163,7 +3163,7 @@ GetInt returns an int if *key* matches, otherwise -1
 
 
 
-### <a name="PoolOptions.GetString">func</a> (\*PoolOptions) [GetString](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=3362:3412#L82)
+### <a name="PoolOptions.GetString">func</a> (\*PoolOptions) [GetString](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=3365:3415#L82)
 ``` go
 func (p *PoolOptions) GetString(key string) string
 ```
@@ -3172,7 +3172,7 @@ GetString returns a string if *key* matches, otherwise empty string
 
 
 
-### <a name="PoolOptions.GetStringSlice">func</a> (\*PoolOptions) [GetStringSlice](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=4512:4569#L142)
+### <a name="PoolOptions.GetStringSlice">func</a> (\*PoolOptions) [GetStringSlice](https://github.com/cognusion/go-jar/tree/master/poolconfig.go?s=4515:4572#L142)
 ``` go
 func (p *PoolOptions) GetStringSlice(key string) []string
 ```
@@ -3711,4 +3711,4 @@ Work is called to do work
 
 
 - - -
-Generated by [godoc2md](http://godoc.org/github.com/cognusion/godoc2md)
+Generated by [godoc2md](http://github.com/cognusion/godoc2md)
