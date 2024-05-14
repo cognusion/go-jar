@@ -3,7 +3,6 @@ package jar
 import (
 	"github.com/cognusion/go-prw"
 	"github.com/rcrowley/go-metrics"
-	"github.com/sirupsen/logrus"
 	"gopkg.in/natefinch/lumberjack.v2"
 
 	"encoding/json"
@@ -41,6 +40,9 @@ var (
 
 	// LogPool is a Pool of AccessLogs
 	LogPool sync.Pool
+
+	// oxyLogger is an instantiation of our oxyLoggerHook bastardization.
+	oxyLogger = oxyLoggerHook{}
 )
 
 func init() {
@@ -123,28 +125,21 @@ func getLog(filename, prefix string, format, size, backups, age int, defaultWrit
 	return
 }
 
-// loggerHook is a logrus.Hook so we can intercept oxy logging
-type loggerHook struct {
-	Name   string
-	Log    *log.Logger
-	levels []logrus.Level
+// oxyLoggerHook is an oxy/utils/Logger so we can intercept oxy/v2 logging
+type oxyLoggerHook struct {
 }
 
-func (l *loggerHook) AddLevel(level logrus.Level) {
-	l.levels = append(l.levels, level)
+func (o *oxyLoggerHook) Debug(msg string, args ...any) {
+	DebugOut.Printf(msg, args...)
 }
-
-func (l *loggerHook) AddLevels(levels []logrus.Level) {
-	l.levels = append(l.levels, levels...)
+func (o *oxyLoggerHook) Info(msg string, args ...any) {
+	DebugOut.Printf(msg, args...)
 }
-
-func (l *loggerHook) Levels() []logrus.Level {
-	return l.levels
+func (o *oxyLoggerHook) Warn(msg string, args ...any) {
+	DebugOut.Printf(msg, args...)
 }
-
-func (l *loggerHook) Fire(entry *logrus.Entry) error {
-	l.Log.Printf("%s: %s\n", l.Name, entry.Message)
-	return nil
+func (o *oxyLoggerHook) Error(msg string, args ...any) {
+	ErrorOut.Printf(msg, args...)
 }
 
 // AccessLog is an interface providing base logging, but allowing addons to extent it easily

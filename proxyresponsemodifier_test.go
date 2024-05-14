@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	. "github.com/smartystreets/goconvey/convey"
-	"github.com/vulcand/oxy/forward"
+	"github.com/vulcand/oxy/v2/forward"
 
 	"io"
 	"net/http"
@@ -46,12 +46,14 @@ func TestProxyResponseModifier(t *testing.T) {
 			return &w, nil
 		}
 
-		fwd, err := forward.New(forward.Rewriter(&reqRewriter{}), forward.ResponseModifier(ourResponseModifier), forward.RoundTripper(&dt))
-		So(err, ShouldBeNil)
+		fwd := forward.New(false)
+		rw := reqRewriter{}
+		fwd.ModifyResponse = ourResponseModifier
+		fwd.Transport = &dt
 
 		rr := httptest.NewRecorder()
 
-		fwd.ServeHTTP(rr, req)
+		rw.Handler(fwd).ServeHTTP(rr, req)
 
 		So(rr.Code, ShouldEqual, http.StatusOK)
 		So(rr.Body.String(), ShouldNotBeEmpty)
@@ -108,12 +110,14 @@ func TestProxyResponseModifierChain(t *testing.T) {
 			return &w, nil
 		}
 
-		fwd, err := forward.New(forward.Rewriter(&reqRewriter{}), forward.ResponseModifier(ourResponseModifier), forward.RoundTripper(&dt))
-		So(err, ShouldBeNil)
+		fwd := forward.New(false)
+		rw := reqRewriter{}
+		fwd.ModifyResponse = ourResponseModifier
+		fwd.Transport = &dt
 
 		rr := httptest.NewRecorder()
 
-		fwd.ServeHTTP(rr, req)
+		rw.Handler(fwd).ServeHTTP(rr, req)
 
 		So(rr.Code, ShouldEqual, http.StatusOK)
 		So(rr.Body.String(), ShouldNotBeEmpty)
@@ -177,12 +181,14 @@ func TestProxyResponseModifierChainError(t *testing.T) {
 			return &w, nil
 		}
 
-		fwd, err := forward.New(forward.Rewriter(&reqRewriter{}), forward.ResponseModifier(ourResponseModifier), forward.RoundTripper(&dt))
-		So(err, ShouldBeNil)
+		fwd := forward.New(false)
+		rw := reqRewriter{}
+		fwd.ModifyResponse = ourResponseModifier
+		fwd.Transport = &dt
 
 		rr := httptest.NewRecorder()
 
-		fwd.ServeHTTP(rr, req)
+		rw.Handler(fwd).ServeHTTP(rr, req)
 
 		So(rr.Code, ShouldEqual, http.StatusInternalServerError)
 		So(rr.Header(), ShouldBeEmpty)

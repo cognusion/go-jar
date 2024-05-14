@@ -1,8 +1,8 @@
 package jar
 
 import (
-	"github.com/vulcand/oxy/roundrobin"
-	"github.com/vulcand/oxy/roundrobin/stickycookie"
+	"github.com/vulcand/oxy/v2/roundrobin"
+	"github.com/vulcand/oxy/v2/roundrobin/stickycookie"
 
 	"encoding/base64"
 	"fmt"

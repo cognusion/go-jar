@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/spf13/cast"
-	"github.com/vulcand/oxy/roundrobin"
+	"github.com/vulcand/oxy/v2/roundrobin"
 
 	"net/http"
 	"net/url"
