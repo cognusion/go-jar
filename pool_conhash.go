@@ -5,7 +5,7 @@ import (
 
 	"github.com/buraksezer/consistent"
 	"github.com/cespare/xxhash"
-	"github.com/vulcand/oxy/roundrobin"
+	"github.com/vulcand/oxy/v2/roundrobin"
 
 	"net/http"
 	"net/url"

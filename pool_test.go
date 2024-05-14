@@ -1,11 +1,10 @@
 package jar
 
 import (
-	"github.com/sirupsen/logrus"
 	. "github.com/smartystreets/goconvey/convey"
-	"github.com/vulcand/oxy/buffer"
-	"github.com/vulcand/oxy/forward"
-	"github.com/vulcand/oxy/roundrobin"
+	"github.com/vulcand/oxy/v2/buffer"
+	"github.com/vulcand/oxy/v2/forward"
+	"github.com/vulcand/oxy/v2/roundrobin"
 
 	"bytes"
 	"fmt"
@@ -44,12 +43,13 @@ func TestPoolStripPrefix(t *testing.T) {
 			return &w, nil
 		}
 
-		fwd, err := forward.New(forward.Rewriter(&reqRewriter{StripPrefix: "/garbage/plate"}), forward.RoundTripper(&dt))
-		So(err, ShouldBeNil)
+		fwd := forward.New(false)
+		rw := reqRewriter{StripPrefix: "/garbage/plate"}
+		fwd.Transport = &dt
 
 		rr := httptest.NewRecorder()
 
-		fwd.ServeHTTP(rr, req)
+		rw.Handler(fwd).ServeHTTP(rr, req)
 
 		So(rr.Code, ShouldEqual, http.StatusOK)
 		So(rr.Body.String(), ShouldNotBeEmpty)
@@ -81,12 +81,12 @@ func TestPoolForwardHostHeader(t *testing.T) {
 			return &w, nil
 		}
 
-		fwd, err := forward.New(forward.PassHostHeader(true), forward.Rewriter(&reqRewriter{}), forward.RoundTripper(&dt))
-		So(err, ShouldBeNil)
-
+		fwd := forward.New(true)
+		fwd.Transport = &dt
+		rw := reqRewriter{}
 		rr := httptest.NewRecorder()
 
-		fwd.ServeHTTP(rr, req)
+		rw.Handler(fwd).ServeHTTP(rr, req)
 
 		So(rr.Code, ShouldEqual, http.StatusOK)
 		So(rr.Body.String(), ShouldNotBeEmpty)
@@ -119,12 +119,13 @@ func TestPoolForwardHostHeaderNope(t *testing.T) {
 			return &w, nil
 		}
 
-		fwd, err := forward.New(forward.PassHostHeader(true), forward.Rewriter(&reqRewriter{Headers: []string{"Host"}}), forward.RoundTripper(&dt))
-		So(err, ShouldBeNil)
+		fwd := forward.New(true)
+		rw := reqRewriter{Headers: []string{"Host"}}
+		fwd.Transport = &dt
 
 		rr := httptest.NewRecorder()
 
-		fwd.ServeHTTP(rr, req)
+		rw.Handler(fwd).ServeHTTP(rr, req)
 
 		So(rr.Code, ShouldEqual, http.StatusOK)
 		So(rr.Body.String(), ShouldNotBeEmpty)
@@ -156,12 +157,13 @@ func TestPoolReplacePath(t *testing.T) {
 			return &w, nil
 		}
 
-		fwd, err := forward.New(forward.Rewriter(&reqRewriter{To: "/somewhereelse/"}), forward.RoundTripper(&dt))
-		So(err, ShouldBeNil)
+		fwd := forward.New(false)
+		rw := reqRewriter{To: "/somewhereelse/"}
+		fwd.Transport = &dt
 
 		rr := httptest.NewRecorder()
 
-		fwd.ServeHTTP(rr, req)
+		rw.Handler(fwd).ServeHTTP(rr, req)
 
 		So(rr.Code, ShouldEqual, http.StatusOK)
 		So(rr.Body.String(), ShouldNotBeEmpty)
@@ -193,14 +195,15 @@ func TestPoolReplacePathNope(t *testing.T) {
 			return &w, nil
 		}
 
-		fwd, err := forward.New(forward.Rewriter(&reqRewriter{}), forward.RoundTripper(&dt))
-		So(err, ShouldBeNil)
+		fwd := forward.New(false)
+		rw := reqRewriter{}
+		fwd.Transport = &dt
 
 		rr := httptest.NewRecorder()
 
 		So(req.URL.Path, ShouldEqual, "/")
 
-		fwd.ServeHTTP(rr, req)
+		rw.Handler(fwd).ServeHTTP(rr, req)
 
 		So(rr.Code, ShouldEqual, http.StatusOK)
 		So(rr.Body.String(), ShouldNotBeEmpty)
@@ -237,9 +240,7 @@ func TestPoolRoundRobinFair(t *testing.T) {
 		twoURL, err := url.Parse(twoServer.URL)
 		So(err, ShouldBeNil)
 
-		fwd, err := forward.New()
-		So(err, ShouldBeNil)
-
+		fwd := forward.New(false)
 		lb, err := roundrobin.New(fwd)
 		So(err, ShouldBeNil)
 
@@ -286,9 +287,7 @@ func TestPoolRoundRobinWeight(t *testing.T) {
 		twoURL, err := url.Parse(twoServer.URL)
 		So(err, ShouldBeNil)
 
-		fwd, err := forward.New()
-		So(err, ShouldBeNil)
-
+		fwd := forward.New(false)
 		lb, err := roundrobin.New(fwd)
 		So(err, ShouldBeNil)
 
@@ -335,9 +334,7 @@ func TestPoolRoundRobinWeightZero(t *testing.T) {
 		twoURL, err := url.Parse(twoServer.URL)
 		So(err, ShouldBeNil)
 
-		fwd, err := forward.New()
-		So(err, ShouldBeNil)
-
+		fwd := forward.New(false)
 		lb, err := roundrobin.New(fwd)
 		So(err, ShouldBeNil)
 
@@ -356,9 +353,6 @@ func TestPoolRoundRobinWeightZero(t *testing.T) {
 
 func TestPoolRoundRobinFailWell(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
-
-	logrusLogger := logrus.New()
-	logrusLogger.Out = io.Discard
 
 	Convey("When a two-member roundrobin is created with a buffer, and one \"crashes\", the failover is proper", t, func(c C) {
 
@@ -386,16 +380,14 @@ func TestPoolRoundRobinFailWell(t *testing.T) {
 		// explicit close now
 		twoServer.Close()
 
-		fwd, err := forward.New()
-		So(err, ShouldBeNil)
-
+		fwd := forward.New(false)
 		lb, err := roundrobin.New(fwd)
 		So(err, ShouldBeNil)
 
 		lb.UpsertServer(oneURL)
 		lb.UpsertServer(twoURL)
 
-		buff, err := buffer.New(lb, buffer.Retry(fmt.Sprintf("IsNetworkError() && Attempts() < %d", 2)), buffer.Logger(logrusLogger))
+		buff, err := buffer.New(lb, buffer.Retry(fmt.Sprintf("IsNetworkError() && Attempts() < %d", 2)), buffer.Logger(&oxyLogger))
 		So(err, ShouldBeNil)
 
 		for i := 0; i < 10; i++ {

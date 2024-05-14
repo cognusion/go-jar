@@ -24,12 +24,11 @@ require (
 	github.com/mcuadros/go-version v0.0.0-20190830083331-035f6764e8d2
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475
 	github.com/shirou/gopsutil v3.21.11+incompatible
-	github.com/sirupsen/logrus v1.9.3
+	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/smartystreets/goconvey v1.8.1
 	github.com/spf13/afero v1.9.5 // indirect
 	github.com/spf13/cast v1.5.1
 	github.com/spf13/viper v1.16.0
-	github.com/vulcand/oxy v1.4.2
 	github.com/xeipuuv/gojsonschema v1.2.0 // indirect
 	golang.org/x/crypto v0.23.0 // indirect
 	golang.org/x/net v0.25.0
@@ -56,6 +55,7 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/tus/tusd v1.11.0
 	github.com/viki-org/dnscache v0.0.0-20130720023526-c70c1f23c5d8
+	github.com/vulcand/oxy/v2 v2.0.0
 	go.uber.org/atomic v1.11.0
 )
 
@@ -66,7 +66,6 @@ require (
 	github.com/go-pkgz/expirable-cache v1.0.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/gopherjs/gopherjs v1.17.2 // indirect
-	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/gravitational/trace v1.2.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect

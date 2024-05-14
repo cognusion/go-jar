@@ -1,15 +1,13 @@
 package jar
 
 import (
-	"github.com/sirupsen/logrus"
 	. "github.com/smartystreets/goconvey/convey"
-	"github.com/vulcand/oxy/buffer"
-	"github.com/vulcand/oxy/forward"
-	"github.com/vulcand/oxy/roundrobin/stickycookie"
+	"github.com/vulcand/oxy/v2/buffer"
+	"github.com/vulcand/oxy/v2/forward"
+	"github.com/vulcand/oxy/v2/roundrobin/stickycookie"
 
 	"encoding/base64"
 	"fmt"
-	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -19,9 +17,6 @@ import (
 
 func TestPoolRoundRobinSticky(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
-
-	logrusLogger := logrus.New()
-	logrusLogger.Out = io.Discard
 
 	cookieName := "STICKYCOOKIE"
 
@@ -51,8 +46,7 @@ func TestPoolRoundRobinSticky(t *testing.T) {
 		// explicit close now
 		//twoServer.Close()
 
-		fwd, err := forward.New()
-		So(err, ShouldBeNil)
+		fwd := forward.New(false)
 
 		sc := http.Cookie{
 			Name:  cookieName,
@@ -65,7 +59,7 @@ func TestPoolRoundRobinSticky(t *testing.T) {
 		lb.UpsertServer(oneURL)
 		lb.UpsertServer(twoURL)
 
-		buff, err := buffer.New(lb, buffer.Retry(fmt.Sprintf("IsNetworkError() && Attempts() < %d", 2)), buffer.Logger(logrusLogger))
+		buff, err := buffer.New(lb, buffer.Retry(fmt.Sprintf("IsNetworkError() && Attempts() < %d", 2)), buffer.Logger(&oxyLogger))
 		So(err, ShouldBeNil)
 
 		for i := 0; i < 10; i++ {
@@ -80,9 +74,6 @@ func TestPoolRoundRobinSticky(t *testing.T) {
 
 func TestPoolRoundRobinStickyFailReissue(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
-
-	logrusLogger := logrus.New()
-	logrusLogger.Out = io.Discard
 
 	cookieName := "STICKYCOOKIE"
 
@@ -112,8 +103,7 @@ func TestPoolRoundRobinStickyFailReissue(t *testing.T) {
 		// explicit close now
 		twoServer.Close()
 
-		fwd, err := forward.New()
-		So(err, ShouldBeNil)
+		fwd := forward.New(false)
 
 		sc := http.Cookie{
 			Name:  cookieName,
@@ -126,7 +116,7 @@ func TestPoolRoundRobinStickyFailReissue(t *testing.T) {
 		lb.UpsertServer(oneURL)
 		//lb.UpsertServer(twoURL)
 
-		buff, err := buffer.New(lb, buffer.Retry(fmt.Sprintf("IsNetworkError() && Attempts() < %d", 2)), buffer.Logger(logrusLogger))
+		buff, err := buffer.New(lb, buffer.Retry(fmt.Sprintf("IsNetworkError() && Attempts() < %d", 2)), buffer.Logger(&oxyLogger))
 		So(err, ShouldBeNil)
 
 		for i := 0; i < 10; i++ {
@@ -145,9 +135,6 @@ func TestPoolRoundRobinStickyFailReissue(t *testing.T) {
 
 func TestPoolRoundRobinStickyCookie(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
-
-	logrusLogger := logrus.New()
-	logrusLogger.Out = io.Discard
 
 	cookieName := "STICKYCOOKIE"
 
@@ -177,8 +164,7 @@ func TestPoolRoundRobinStickyCookie(t *testing.T) {
 		// explicit close now
 		//twoServer.Close()
 
-		fwd, err := forward.New()
-		So(err, ShouldBeNil)
+		fwd := forward.New(false)
 
 		ao := stickycookie.HashValue{Salt: "3blah6blah9"}
 		So(err, ShouldBeNil)
@@ -199,7 +185,7 @@ func TestPoolRoundRobinStickyCookie(t *testing.T) {
 		lb.UpsertServer(oneURL)
 		lb.UpsertServer(twoURL)
 
-		buff, err := buffer.New(lb, buffer.Retry(fmt.Sprintf("IsNetworkError() && Attempts() < %d", 2)), buffer.Logger(logrusLogger))
+		buff, err := buffer.New(lb, buffer.Retry(fmt.Sprintf("IsNetworkError() && Attempts() < %d", 2)), buffer.Logger(&oxyLogger))
 		So(err, ShouldBeNil)
 
 		for i := 0; i < 10; i++ {
@@ -214,9 +200,6 @@ func TestPoolRoundRobinStickyCookie(t *testing.T) {
 
 func TestPoolRoundRobinStickyCookieOptions(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
-
-	logrusLogger := logrus.New()
-	logrusLogger.Out = io.Discard
 
 	cookieName := "STICKYCOOKIE"
 
@@ -246,8 +229,7 @@ func TestPoolRoundRobinStickyCookieOptions(t *testing.T) {
 		// explicit close now
 		//twoServer.Close()
 
-		fwd, err := forward.New()
-		So(err, ShouldBeNil)
+		fwd := forward.New(false)
 
 		Conf.Set(ConfigStickyCookieHTTPOnly, true)
 		Conf.Set(ConfigStickyCookieSecure, true)
@@ -258,7 +240,7 @@ func TestPoolRoundRobinStickyCookieOptions(t *testing.T) {
 		lb.UpsertServer(oneURL)
 		lb.UpsertServer(twoURL)
 
-		buff, err := buffer.New(lb, buffer.Retry(fmt.Sprintf("IsNetworkError() && Attempts() < %d", 2)), buffer.Logger(logrusLogger))
+		buff, err := buffer.New(lb, buffer.Retry(fmt.Sprintf("IsNetworkError() && Attempts() < %d", 2)), buffer.Logger(&oxyLogger))
 		So(err, ShouldBeNil)
 
 		var (
@@ -299,9 +281,6 @@ func TestPoolRoundRobinStickyCookieOptions(t *testing.T) {
 func TestPoolRoundRobinStickyCookieOptionsDefault(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 
-	logrusLogger := logrus.New()
-	logrusLogger.Out = io.Discard
-
 	cookieName := "STICKYCOOKIE"
 
 	Convey("When a two-member roundrobin is created with a buffer and using a sticky cookie and with HTTPOnly and Secure defaulting (false), requests pin to one instance, they stay that way, and the cookies are correct", t, func(c C) {
@@ -330,8 +309,7 @@ func TestPoolRoundRobinStickyCookieOptionsDefault(t *testing.T) {
 		// explicit close now
 		//twoServer.Close()
 
-		fwd, err := forward.New()
-		So(err, ShouldBeNil)
+		fwd := forward.New(false)
 
 		Conf.Set(ConfigStickyCookieHTTPOnly, false)
 		Conf.Set(ConfigStickyCookieSecure, false)
@@ -341,7 +319,7 @@ func TestPoolRoundRobinStickyCookieOptionsDefault(t *testing.T) {
 		lb.UpsertServer(oneURL)
 		lb.UpsertServer(twoURL)
 
-		buff, err := buffer.New(lb, buffer.Retry(fmt.Sprintf("IsNetworkError() && Attempts() < %d", 2)), buffer.Logger(logrusLogger))
+		buff, err := buffer.New(lb, buffer.Retry(fmt.Sprintf("IsNetworkError() && Attempts() < %d", 2)), buffer.Logger(&oxyLogger))
 		So(err, ShouldBeNil)
 
 		var (
@@ -382,9 +360,6 @@ func TestPoolRoundRobinStickyCookieOptionsDefault(t *testing.T) {
 func TestPoolRoundRobinStickyCookieFailReissue(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 
-	logrusLogger := logrus.New()
-	logrusLogger.Out = io.Discard
-
 	cookieName := "STICKYCOOKIE"
 
 	Convey("When a two-member roundrobin is created with a buffer and using an AES sticky cookie, and requests are pinned to one instance, but that instance fails, they get bounced over with a new cookie", t, func(c C) {
@@ -413,8 +388,7 @@ func TestPoolRoundRobinStickyCookieFailReissue(t *testing.T) {
 		// explicit close now
 		twoServer.Close()
 
-		fwd, err := forward.New()
-		So(err, ShouldBeNil)
+		fwd := forward.New(false)
 
 		ao, err := setupStickyCookie([]byte("1234567890abcdef"), 0)
 		So(err, ShouldBeNil)
@@ -435,7 +409,7 @@ func TestPoolRoundRobinStickyCookieFailReissue(t *testing.T) {
 		lb.UpsertServer(oneURL)
 		//lb.UpsertServer(twoURL)
 
-		buff, err := buffer.New(lb, buffer.Retry(fmt.Sprintf("IsNetworkError() && Attempts() < %d", 2)), buffer.Logger(logrusLogger))
+		buff, err := buffer.New(lb, buffer.Retry(fmt.Sprintf("IsNetworkError() && Attempts() < %d", 2)), buffer.Logger(&oxyLogger))
 		So(err, ShouldBeNil)
 
 		for i := 0; i < 10; i++ {
@@ -458,9 +432,6 @@ func TestPoolRoundRobinStickyCookieFailReissue(t *testing.T) {
 
 func TestPoolRoundRobinStickyCookieExpireReissue(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
-
-	logrusLogger := logrus.New()
-	logrusLogger.Out = io.Discard
 
 	cookieName := "STICKYCOOKIE"
 
@@ -488,8 +459,7 @@ func TestPoolRoundRobinStickyCookieExpireReissue(t *testing.T) {
 		twoURL, err := url.Parse(twoServer.URL)
 		So(err, ShouldBeNil)
 
-		fwd, err := forward.New()
-		So(err, ShouldBeNil)
+		fwd := forward.New(false)
 
 		// First ao has a 1ns expiration, so we know it will be expired
 		firstao, err := setupStickyCookie([]byte("1234567890abcdef"), 1*time.Nanosecond)
@@ -516,7 +486,7 @@ func TestPoolRoundRobinStickyCookieExpireReissue(t *testing.T) {
 		lb.UpsertServer(oneURL)
 		lb.UpsertServer(twoURL)
 
-		buff, err := buffer.New(lb, buffer.Retry(fmt.Sprintf("IsNetworkError() && Attempts() < %d", 2)), buffer.Logger(logrusLogger))
+		buff, err := buffer.New(lb, buffer.Retry(fmt.Sprintf("IsNetworkError() && Attempts() < %d", 2)), buffer.Logger(&oxyLogger))
 		So(err, ShouldBeNil)
 
 		buff.ServeHTTP(rr, req)

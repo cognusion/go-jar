@@ -2,7 +2,7 @@ package jar
 
 import (
 	"github.com/cognusion/go-timings"
-	"github.com/vulcand/oxy/forward"
+	"github.com/vulcand/oxy/v2/forward"
 
 	"crypto/rand"
 	"fmt"

@@ -1,15 +1,14 @@
 package jar
 
 import (
-	"github.com/sirupsen/logrus"
-	"github.com/vulcand/oxy/buffer"
-	"github.com/vulcand/oxy/forward"
-	"github.com/vulcand/oxy/roundrobin"
+	"github.com/vulcand/oxy/v2/buffer"
+	"github.com/vulcand/oxy/v2/forward"
+	"github.com/vulcand/oxy/v2/roundrobin"
 
 	"fmt"
-	"io"
 	"net"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 	"regexp"
 	"sync"
@@ -343,25 +342,10 @@ func (p *Pool) materializeS3() (http.Handler, error) {
 
 func (p *Pool) materializeHTTP() (http.Handler, error) {
 	var (
-		fwd  *forward.Forwarder
+		fwd  *httputil.ReverseProxy
 		err  error
 		pool http.Handler
 	)
-
-	logrusLogger := logrus.New()
-	logrusLogger.Out = io.Discard
-
-	if Conf.GetBool(ConfigDebug) {
-		hook := loggerHook{
-			Log:  DebugOut,
-			Name: p.Config.Name,
-		}
-		hook.AddLevels(logrus.AllLevels)
-		logrusLogger.AddHook(&hook)
-		logrusLogger.SetLevel(logrus.DebugLevel)
-		logrus.AddHook(&hook)
-		logrus.SetLevel(logrus.DebugLevel) // For things that don't use the provided logger :facepalm:
-	}
 
 	if p.Config.ReplacePath != "" {
 		DebugOut.Printf("\t\tReplacePath: %s\n", p.Config.ReplacePath)
@@ -392,12 +376,14 @@ func (p *Pool) materializeHTTP() (http.Handler, error) {
 		// Remove moar headers
 		pheaders = append(pheaders, p.Config.RemoveHeaders...)
 	}
-	fwd, err = forward.New(forward.Logger(logrusLogger), forward.PassHostHeader(true), forward.Rewriter(&reqRewriter{Headers: pheaders, To: p.Config.ReplacePath, StripPrefix: p.Config.StripPrefix}), forward.ResponseModifier(ResponseModiferChain.ToProxyResponseModifier()), forward.RoundTripper(DefaultTrip))
-	if err != nil {
-		return nil, err
-	}
+	rw := reqRewriter{Headers: pheaders, To: p.Config.ReplacePath, StripPrefix: p.Config.StripPrefix}
 
-	urlcapture := URLCaptureHandler(fwd)
+	fwd = forward.New(true)
+	fwd.ErrorLog = ErrorOut
+	fwd.ModifyResponse = ResponseModiferChain.ToProxyResponseModifier()
+	fwd.Transport = DefaultTrip
+
+	urlcapture := URLCaptureHandler(rw.Handler(fwd))
 
 	if p.Config.Sticky && p.Config.ConsistentHashing {
 		// Mutually exclusive
@@ -411,13 +397,13 @@ func (p *Pool) materializeHTTP() (http.Handler, error) {
 	)
 	if p.Config.Sticky {
 		// Pool is doing sticky load-balancing
-		pm, pmErr = p.materializeSticky(urlcapture, roundrobin.RoundRobinLogger(logrusLogger))
+		pm, pmErr = p.materializeSticky(urlcapture, roundrobin.Logger(&oxyLogger))
 	} else if p.Config.ConsistentHashing {
 		// Pool is using a consistent hash to direct traffics
 		pm, pmErr = p.materializeConsistent(urlcapture)
 	} else {
 		// Pool is not not sticky nor consistent, so standard rrlb
-		pm, pmErr = roundrobin.New(urlcapture, roundrobin.RoundRobinLogger(logrusLogger))
+		pm, pmErr = roundrobin.New(urlcapture, roundrobin.Logger(&oxyLogger))
 	}
 	if pmErr != nil {
 		return nil, pmErr
@@ -494,7 +480,7 @@ func (p *Pool) materializeHTTP() (http.Handler, error) {
 	// Buffer all the requests
 	if p.Config.Buffered {
 		DebugOut.Printf("\t\tBuffering with %d retries.\n", p.Config.BufferedFails)
-		buff, err := buffer.New(pm, buffer.Retry(fmt.Sprintf("IsNetworkError() && Attempts() < %d", p.Config.BufferedFails)), buffer.Logger(logrusLogger))
+		buff, err := buffer.New(pm, buffer.Retry(fmt.Sprintf("IsNetworkError() && Attempts() < %d", p.Config.BufferedFails)), buffer.Logger(&oxyLogger))
 		if err != nil {
 			return nil, err
 		}
@@ -544,4 +530,12 @@ func (h *reqRewriter) Rewrite(r *http.Request) {
 		ReplaceURI(r, h.To, h.To)
 	}
 
+}
+
+// Handler is an http.Handler to wrap the request rewriter.
+func (h *reqRewriter) Handler(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		h.Rewrite(r)
+		next.ServeHTTP(w, r)
+	})
 }

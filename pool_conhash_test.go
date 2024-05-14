@@ -2,7 +2,7 @@ package jar
 
 import (
 	. "github.com/smartystreets/goconvey/convey"
-	"github.com/vulcand/oxy/forward"
+	"github.com/vulcand/oxy/v2/forward"
 
 	"net/http"
 	"net/http/httptest"
@@ -65,9 +65,7 @@ func TestPoolConsistentHash(t *testing.T) {
 		threeURL, err := url.Parse(threeServer.URL)
 		So(err, ShouldBeNil)
 
-		fwd, err := forward.New()
-		So(err, ShouldBeNil)
-
+		fwd := forward.New(false)
 		lb, err := NewConsistentHashPool("request", "url", nil, fwd)
 		So(err, ShouldBeNil)
 
@@ -229,9 +227,7 @@ func TestPoolConsistentHashNoHash(t *testing.T) {
 		threeURL, err := url.Parse(threeServer.URL)
 		So(err, ShouldBeNil)
 
-		fwd, err := forward.New()
-		So(err, ShouldBeNil)
-
+		fwd := forward.New(false)
 		lb, err := NewConsistentHashPool("header", "url", nil, fwd)
 		So(err, ShouldBeNil)
 
