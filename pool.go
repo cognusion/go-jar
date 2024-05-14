@@ -72,9 +72,9 @@ var (
 	// LocalMemberWeight is the weight assigned to each member that is AZ-local
 	LocalMemberWeight int
 
-	// ResponseModiferChain is a ProxyResponseModifierChain to handle sequences of modifications
-	// use ``ResponseModiferChain.Add()`` to add your own
-	ResponseModiferChain ProxyResponseModifierChain
+	// ResponseModifierChain is a ProxyResponseModifierChain to handle sequences of modifications
+	// use ``ResponseModifierChain.Add()`` to add your own
+	ResponseModifierChain ProxyResponseModifierChain
 )
 
 func init() {
@@ -380,7 +380,7 @@ func (p *Pool) materializeHTTP() (http.Handler, error) {
 
 	fwd = forward.New(true)
 	fwd.ErrorLog = ErrorOut
-	fwd.ModifyResponse = ResponseModiferChain.ToProxyResponseModifier()
+	fwd.ModifyResponse = ResponseModifierChain.ToProxyResponseModifier()
 	fwd.Transport = DefaultTrip
 
 	urlcapture := URLCaptureHandler(rw.Handler(fwd))

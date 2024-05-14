@@ -59,7 +59,7 @@ func init() {
 				ErrorOut.Fatalln(err)
 			}
 			CorsHandler = c.Handler
-			ResponseModiferChain.Add(c.ResponseModifier) // wire in our ResponseModifier
+			ResponseModifierChain.Add(c.ResponseModifier) // wire in our ResponseModifier
 		}
 	})
 }
