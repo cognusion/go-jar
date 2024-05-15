@@ -1,0 +1,28 @@
+debug: true
+
+listen: :8081
+
+debugrequests: true
+debugresponses: true
+debugtimings: true
+
+maxconnections: 1
+
+paths:
+  -
+    Path: /
+    Name: catchall
+    Handlers:
+      - conftest
+    Finisher: Test
+
+plugins:
+  helloworld:
+    path: tests/plugins/testhandler.src
+    name: TestHandler
+  conftest:
+    path: tests/plugins/testhandlerconfig.src
+    name: TestHandler
+    config:
+      goodnight: moon
+      hello: world
