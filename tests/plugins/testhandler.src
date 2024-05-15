@@ -1,0 +1,9 @@
+import "net/http"
+func TestHandler(next http.Handler) http.Handler {
+	o := []byte("Hello World")
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		w.Write(o)
+		next.ServeHTTP(w, r)
+	}
+	return http.HandlerFunc(fn)
+}

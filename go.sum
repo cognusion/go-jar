@@ -1025,6 +1025,8 @@ github.com/tklauser/go-sysconf v0.3.11/go.mod h1:GqXfhXY3kiPa0nAXPDIQIWzJbMCB7Am
 github.com/tklauser/numcpus v0.6.0/go.mod h1:FEZLMke0lhOUG6w2JadTzp0a+Nl8PF/GFkQ5UVIcaL4=
 github.com/tklauser/numcpus v0.6.1 h1:ng9scYS7az0Bk4OZLvrNXNSAO2Pxr1XXRAPyjhIx+Fk=
 github.com/tklauser/numcpus v0.6.1/go.mod h1:1XfjsgE2zo8GVw7POkMbHENHzVg3GzmoZ9fESEdAacY=
+github.com/traefik/yaegi v0.16.1 h1:f1De3DVJqIDKmnasUF6MwmWv1dSEEat0wcpXhD2On3E=
+github.com/traefik/yaegi v0.16.1/go.mod h1:4eVhbPb3LnD2VigQjhYbEJ69vDRFdT2HQNrXx8eEwUY=
 github.com/tus/tusd v1.1.0/go.mod h1:3DWPOdeCnjBwKtv98y5dSws3itPqfce5TVa0s59LRiA=
 github.com/tus/tusd v1.11.0 h1:2ju32VcS5f72mX6u7TICfAHTMI+wO3SJ1aSARh+mGJY=
 github.com/tus/tusd v1.11.0/go.mod h1:HaDg0YNa7s5iOGjVN8VukOJ1sik8H3JV2b0Gf2IPpVw=

@@ -1,0 +1,16 @@
+import "net/http"
+import "fmt"
+var config = make(map[string]string)
+func SetConfig(c map[string]string) {
+	config = c
+}
+
+func TestHandler(next http.Handler) http.Handler {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		for k,v := range config {
+			w.Write([]byte(fmt.Sprintf("%s = %s\n",k,v)))
+		}
+		next.ServeHTTP(w, r)
+	}
+	return http.HandlerFunc(fn)
+}

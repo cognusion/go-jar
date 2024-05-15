@@ -128,9 +128,11 @@ If a pool has a member of ``ws://host:port/path`` then the Pool type is automati
 
 ## Q: What about dynamic plugins using Yaegi?
 
-[Yaegi](https://github.com/traefik/yaegi) is awesome for short-lived and carefully-tailored applications, but unfortunately doesn't participate in GC, is too slow for request/response actions, leaks heap, and has a bunch of interface-related gotchas that preclude its use. Below are the results from a trivial http.HandlerFunc that outputs a static `[]byte` implemented natively and `Eval`d by Yaegi:
+There is disabled-by-default support for dynamic handlers. [Yaegi](https://github.com/traefik/yaegi) is awesome for short-lived and carefully-tailored applications, but unfortunately doesn't participate in GC, is too slow for request/response actions, leaks heap, and has a bunch of interface-related gotchas that preclude its use. Below are the results from a trivial http.HandlerFunc that outputs a static `[]byte` implemented natively and `Eval`d by Yaegi:
 
 ```
-Benchmark_Native-8   	77224213	        15.55 ns/op	      27 B/op	       0 allocs/op
-Benchmark_Yaegi-8    	  565527	      1913 ns/op	     829 B/op	      20 allocs/op
+Benchmark_NativeHandler-12    	51765292	        23.83 ns/op	      41 B/op	       0 allocs/op
+Benchmark_YaegiHandler-12     	  630565	        1720 ns/op	     818 B/op	      20 allocs/op
 ```
+
+That said, all the kids are using it these days since *two magnitudes* of performance slide and a ~20% larger binary is ok. See the [Plugins docs](Plugins.md) for more information.

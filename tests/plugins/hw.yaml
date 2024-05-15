@@ -1,0 +1,10 @@
+plugins:
+  helloworld:
+    path: tests/plugins/testhandler.src
+    name: TestHandler
+  conftest:
+    path: tests/plugins/testhandlerconfig.src
+    name: TestHandler
+    config:
+      goodnight: moon
+      hello: world
