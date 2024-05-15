@@ -53,6 +53,7 @@ require (
 	github.com/mailgun/groupcache/v2 v2.5.0
 	github.com/pquerna/cachecontrol v0.2.0
 	github.com/spf13/pflag v1.0.5
+	github.com/traefik/yaegi v0.16.1
 	github.com/tus/tusd v1.11.0
 	github.com/viki-org/dnscache v0.0.0-20130720023526-c70c1f23c5d8
 	github.com/vulcand/oxy/v2 v2.0.0
@@ -86,7 +87,6 @@ require (
 	github.com/subosito/gotenv v1.4.2 // indirect
 	github.com/tklauser/go-sysconf v0.3.11 // indirect
 	github.com/tklauser/numcpus v0.6.1 // indirect
-	github.com/traefik/yaegi v0.16.1 // indirect
 	github.com/vulcand/predicate v1.2.0 // indirect
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
