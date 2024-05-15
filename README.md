@@ -19,5 +19,6 @@ Consumers will want to 'cd cmd/jard; go build; #enjoy'
   * [HMAC signature verification](docs/hmacsign.md)
   * [TUS-compatible Uploads](docs/tus.md)
   * [Distributed Content-caching](docs/cache.md)
+  * [Middleware plugins](docs/Plugins.md)
 * [GoDoc for embedding](docs/godoc.md)
 * [FAQ](docs/FAQ.md)
