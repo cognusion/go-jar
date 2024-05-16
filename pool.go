@@ -16,14 +16,6 @@ import (
 )
 
 const (
-	httpPool poolType = iota + 10
-	s3Pool
-	wsPool
-)
-
-type poolType int
-
-const (
 	// ErrPoolsConfigdefaultmembererrorstatusInvalid is returned when the pools.defaultmembererrorstatus is set improperly
 	ErrPoolsConfigdefaultmembererrorstatusInvalid = Error("pools.defaultmembererrorstatus is set to an invalid HealthCheckStatus")
 
@@ -141,7 +133,6 @@ type Pool struct {
 	Config *PoolConfig
 
 	members                sync.Map
-	poolTypeID             poolType
 	poolMaterializer       func() (http.Handler, error)
 	healthCheckErrorStatus HealthCheckStatus
 
@@ -271,13 +262,10 @@ func (p *Pool) Materialize() (http.Handler, error) {
 		case "http":
 			fallthrough
 		case "https":
-			p.poolTypeID = httpPool
 			p.poolMaterializer = p.materializeHTTP
 		case "s3":
-			p.poolTypeID = s3Pool
 			p.poolMaterializer = p.materializeS3
 		case "ws":
-			p.poolTypeID = wsPool
 			p.poolMaterializer = p.materializeHTTP
 		default:
 			// Um... no supported scheme?
