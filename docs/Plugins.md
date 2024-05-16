@@ -13,7 +13,19 @@ That said, all the kids are using it these days since *two magnitudes* of perfor
 
 ## Activation
 
-Renaming `plugins.goff` -> `plugins.go` and `plugins_test.goff` -> `plugins_test.go` and rebuilding will enable Yaegi-based dynamic plugin support.
+Building or testing with `--tags plugins` will activate the plugins system.
+
+```bash
+go-jar$ go test -run Plugin
+testing: warning: no tests to run
+PASS
+ok  	github.com/cognusion/go-jar	0.010s
+go-jar$ go test -run Plugin --tags plugins
+14 total assertions
+PASS
+ok  	github.com/cognusion/go-jar	0.025s
+
+```
 
 ## Rules & Configuration
 
