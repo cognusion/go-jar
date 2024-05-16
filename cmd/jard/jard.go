@@ -7,7 +7,10 @@ import (
 	"fmt"
 )
 
-var configVersion bool
+var (
+	configVersion bool
+	gopsAgent     bool
+)
 
 func init() {
 	var err error
@@ -17,6 +20,7 @@ func init() {
 	pflag.Bool(jar.ConfigCheckConfig, false, "Run through the config load and then exit")
 	pflag.Bool(jar.ConfigDumpConfig, false, "Load the config, dump it to stderr, and then exit")
 	pflag.BoolVar(&configVersion, "version", false, "Print the version and then exit")
+	pflag.BoolVar(&gopsAgent, "gopsagent", false, "Start the 'gops' agent")
 
 	config := pflag.String("config", "", "Config file to load")
 	pflag.Parse()
@@ -37,7 +41,6 @@ func init() {
 }
 
 func main() {
-
 	if configVersion {
 		fmt.Printf("JARD %s\nGo   %s\nCPUs %d\n",
 			jar.VERSION,
@@ -49,6 +52,12 @@ func main() {
 	if jar.Conf.GetBool(jar.ConfigDumpConfig) {
 		fmt.Println(jar.PrettyPrint(jar.Conf.AllSettings()))
 		return
+	}
+
+	if gopsAgent {
+		var psaChan = make(chan struct{})
+		defer close(psaChan)
+		startAgent(psaChan)
 	}
 
 	// Make. It. So.

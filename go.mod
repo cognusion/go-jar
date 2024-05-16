@@ -50,6 +50,7 @@ require (
 	github.com/didip/tollbooth/v7 v7.0.1
 	github.com/eventials/go-tus v0.0.0-20220610120217-05d0564bb571
 	github.com/fatih/color v1.13.0
+	github.com/google/gops v0.3.28
 	github.com/mailgun/groupcache/v2 v2.5.0
 	github.com/pquerna/cachecontrol v0.2.0
 	github.com/spf13/pflag v1.0.5
