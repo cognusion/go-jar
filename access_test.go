@@ -3,10 +3,8 @@ package jar
 import (
 	. "github.com/smartystreets/goconvey/convey"
 
-	//"log"
 	"net/http"
 	"net/http/httptest"
-	//"os"
 	"testing"
 )
 
@@ -258,8 +256,19 @@ func TestAccessHandlerAllow(t *testing.T) {
 		a = setupAccessMixed(a, t)
 		So(a, ShouldNotBeNil)
 
-		Convey("and a request is made from a known-ok IP address, it is allowed", func() {
+		Convey("and a request is made from a known-ok IPv4 address, it is allowed", func() {
 			req.RemoteAddr = "127.0.0.1"
+
+			rr := httptest.NewRecorder()
+			handler := a.AccessHandler(testHandler)
+
+			handler.ServeHTTP(rr, req)
+
+			So(rr.Code, ShouldEqual, http.StatusOK)
+		})
+
+		Convey("and a request is made from a known-ok IPv6 address, it is allowed", func() {
+			req.RemoteAddr = "[::1]"
 
 			rr := httptest.NewRecorder()
 			handler := a.AccessHandler(testHandler)
@@ -324,7 +333,7 @@ func setupAccessDeny(a *Access, t *testing.T) *Access {
 
 func setupAccessMixed(a *Access, t *testing.T) *Access {
 
-	for _, address := range []string{"192.168.0.1/24", "127.0.0.1", "137.143.110.101"} {
+	for _, address := range []string{"192.168.0.1/24", "127.0.0.1", "137.143.110.101", "::1"} {
 		err := a.AddAddress(address, true)
 		So(err, ShouldBeNil)
 	}
