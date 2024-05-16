@@ -21,7 +21,7 @@ func TestAccessAddIPs(t *testing.T) {
 		a, err := NewAccessFromStrings("", "")
 		So(err, ShouldBeNil)
 
-		a = setupAccessMixed(a, t)
+		a = setupAccessMixed(a)
 		So(a, ShouldNotBeNil)
 	})
 }
@@ -70,7 +70,7 @@ func TestAccessNoAddress(t *testing.T) {
 		a, err := NewAccessFromStrings("", "")
 		So(err, ShouldBeNil)
 
-		a = setupAccessMixed(a, t)
+		a = setupAccessMixed(a)
 		So(a, ShouldNotBeNil)
 
 		Convey("and when asked to validate an empty IP, it refuses", func() {
@@ -87,7 +87,7 @@ func TestAccessAllAll(t *testing.T) {
 		a, err := NewAccessFromStrings("all", "all")
 		So(err, ShouldBeNil)
 
-		a = setupAccessMixed(a, t)
+		a = setupAccessMixed(a)
 		So(a, ShouldNotBeNil)
 
 		Convey("and when asked to validate an IP address, it allows it (Allow: all trumps Deny: all)", func() {
@@ -103,7 +103,7 @@ func TestAccessNoneNone(t *testing.T) {
 		a, err := NewAccessFromStrings("none", "none")
 		So(err, ShouldBeNil)
 
-		a = setupAccessMixed(a, t)
+		a = setupAccessMixed(a)
 		So(a, ShouldNotBeNil)
 
 		Convey("and when asked to validate an IP address, it allows it (Deny: none trumps Allow: none)", func() {
@@ -120,7 +120,7 @@ func TestAccessDenyAll(t *testing.T) {
 		a, err := NewAccessFromStrings("", "all")
 		So(err, ShouldBeNil)
 
-		a = setupAccessMixed(a, t)
+		a = setupAccessMixed(a)
 		So(a, ShouldNotBeNil)
 
 		Convey("and when asked to validate an IP address, it is denied", func() {
@@ -136,7 +136,7 @@ func TestAccessAllowMixed(t *testing.T) {
 		a, err := NewAccessFromStrings("", "")
 		So(err, ShouldBeNil)
 
-		a = setupAccessMixed(a, t)
+		a = setupAccessMixed(a)
 		So(a, ShouldNotBeNil)
 
 		Convey("when asked to validate a list of known-approved IP addresses, they are approved", func() {
@@ -154,7 +154,7 @@ func TestAccessDenyMixed(t *testing.T) {
 		a, err := NewAccessFromStrings("", "")
 		So(err, ShouldBeNil)
 
-		a = setupAccessMixed(a, t)
+		a = setupAccessMixed(a)
 		So(a, ShouldNotBeNil)
 
 		Convey("when asked to validate a list of known-unapproved IP addresses, they are denied", func() {
@@ -172,7 +172,7 @@ func TestAccessAllowAllowOnly(t *testing.T) {
 		a, err := NewAccessFromStrings("", "")
 		So(err, ShouldBeNil)
 
-		a = setupAccessAllow(a, t)
+		a = setupAccessAllow(a)
 		So(a, ShouldNotBeNil)
 
 		Convey("when asked to validate a list of known-approved IP addresses, they are approved", func() {
@@ -190,7 +190,7 @@ func TestAccessDenyAllowOnly(t *testing.T) {
 		a, err := NewAccessFromStrings("", "")
 		So(err, ShouldBeNil)
 
-		a = setupAccessAllow(a, t)
+		a = setupAccessAllow(a)
 		So(a, ShouldNotBeNil)
 
 		Convey("when asked to validate a list of known-denied IP addresses, they are denied", func() {
@@ -209,7 +209,7 @@ func TestAccessAllowDenyOnly(t *testing.T) {
 		a, err := NewAccessFromStrings("", "")
 		So(err, ShouldBeNil)
 
-		a = setupAccessDeny(a, t)
+		a = setupAccessDeny(a)
 		So(a, ShouldNotBeNil)
 
 		Convey("when asked to validate a list of known-approved IP addresses, they are approved", func() {
@@ -227,7 +227,7 @@ func TestAccessDenyDenyOnly(t *testing.T) {
 		a, err := NewAccessFromStrings("", "")
 		So(err, ShouldBeNil)
 
-		a = setupAccessDeny(a, t)
+		a = setupAccessDeny(a)
 		So(a, ShouldNotBeNil)
 
 		Convey("when asked to validate a list of known-denied IP addresses, they are denied", func() {
@@ -253,7 +253,7 @@ func TestAccessHandlerAllow(t *testing.T) {
 		a, err := NewAccessFromStrings("", "")
 		So(err, ShouldBeNil)
 
-		a = setupAccessMixed(a, t)
+		a = setupAccessMixed(a)
 		So(a, ShouldNotBeNil)
 
 		Convey("and a request is made from a known-ok IPv4 address, it is allowed", func() {
@@ -295,7 +295,7 @@ func TestAccessHandlerDeny(t *testing.T) {
 		a, err := NewAccessFromStrings("", "")
 		So(err, ShouldBeNil)
 
-		a = setupAccessMixed(a, t)
+		a = setupAccessMixed(a)
 		So(a, ShouldNotBeNil)
 
 		Convey("and a request is made from a known-denied IP address, it is denied", func() {
@@ -311,7 +311,7 @@ func TestAccessHandlerDeny(t *testing.T) {
 	})
 }
 
-func setupAccessAllow(a *Access, t *testing.T) *Access {
+func setupAccessAllow(a *Access) *Access {
 
 	for _, address := range []string{"192.168.0.1/24", "127.0.0.1", "137.143.110.101"} {
 		err := a.AddAddress(address, true)
@@ -321,7 +321,7 @@ func setupAccessAllow(a *Access, t *testing.T) *Access {
 	return a
 }
 
-func setupAccessDeny(a *Access, t *testing.T) *Access {
+func setupAccessDeny(a *Access) *Access {
 
 	for _, address := range []string{"127.0.0.2", "137.143.0.0/16"} {
 		err := a.AddAddress(address, false)
@@ -331,7 +331,7 @@ func setupAccessDeny(a *Access, t *testing.T) *Access {
 	return a
 }
 
-func setupAccessMixed(a *Access, t *testing.T) *Access {
+func setupAccessMixed(a *Access) *Access {
 
 	for _, address := range []string{"192.168.0.1/24", "127.0.0.1", "137.143.110.101", "::1"} {
 		err := a.AddAddress(address, true)
