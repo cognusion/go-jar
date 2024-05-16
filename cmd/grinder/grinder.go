@@ -38,6 +38,7 @@ var (
 	debug         bool          // Enable debugging
 	ResponseDebug bool          // Enable full response output if debug
 	timeout       time.Duration // How long each GET request may take
+	COMPARE       bool          // Are we looking for X-Request-ID headers?
 
 	OutFormat = log.Ldate | log.Ltime | log.Lshortfile
 	DebugOut  = log.New(io.Discard, "[DEBUG] ", OutFormat)
@@ -67,6 +68,7 @@ func init() {
 	flag.BoolVar(&NoDNSCache, "nodnscache", false, "Disable DNS caching")
 	flag.BoolVar(&useBar, "bar", false, "Use progress bar instead of printing lines, can still use -stats")
 	flag.IntVar(&totalGuess, "guess", 0, "Rough guess of how many GETs will be coming for -bar to start at. It will adjust")
+	flag.BoolVar(&COMPARE, "checkvalid", true, "Checks to see if the response has an X-Request-ID header, else mismatch")
 
 	flag.Parse()
 
@@ -238,6 +240,9 @@ func scanStdIn(getChan chan string, abortChan chan bool, bar *pb.ProgressBar) {
 }
 
 func compare(resp *http.Response) bool {
+	if !COMPARE {
+		return true
+	}
 	reqid := resp.Header.Get("X-Request-ID")
 	reader := bufio.NewReader(resp.Body)
 	line, _ := reader.ReadString(' ')
