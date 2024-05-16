@@ -36,7 +36,7 @@ paths:
   -
     Path: /admin/healthcheck
     Absolute: true
-    Allow: 127.0.0.1
+    Allow: 127.0.0.1,::1
     Finisher: HealthCheck
     RateLimit: 1
   -

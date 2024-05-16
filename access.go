@@ -132,8 +132,22 @@ func (a *Access) Validate(address string) bool {
 	}
 
 	var addr string
-	aparts := strings.Split(address, ":")
-	addr = aparts[0]
+	if strings.Contains(address, ":") {
+		if strings.HasSuffix(address, "]") {
+			// IPv6 without port. Contrived :(
+			addr = strings.TrimPrefix(address, "[")
+			addr = strings.TrimSuffix(addr, "]")
+		} else {
+			var err error
+			addr, _, err = net.SplitHostPort(address)
+			if err != nil {
+				DebugOut.Printf("Error splitting host and port from '%s': %v\n", address, err)
+				return false
+			}
+		}
+	} else {
+		addr = address
+	}
 
 	ip := net.ParseIP(addr)
 	if ip == nil {
