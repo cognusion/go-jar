@@ -1,16 +1,21 @@
 package jar
 
 import (
+	"fmt"
+
 	"github.com/cognusion/go-jar/aws"
 
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/s3"
 
 	"net/http"
+	"net/url"
 	"strings"
 )
 
 func init() {
+	Materializers["s3"] = materializeS3
+
 	aws.TimingOut = TimingOut
 	aws.DebugOut = DebugOut
 }
@@ -75,4 +80,55 @@ func (s3p *S3Pool) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		ErrorOut.Printf("%s '%s' from bucket %s: %v", es, filepath, s3p.bucket, err)
 		http.Error(w, es, http.StatusInternalServerError)
 	}
+}
+
+func materializeS3(p *Pool) (http.Handler, error) {
+
+	// Define ListMembers
+	p.ListMembers = func() []*url.URL {
+		return nil
+	}
+
+	// Define AddMember
+	p.AddMember = func(member string) error {
+		return ErrPoolAddMemberNotSupported
+	}
+
+	// Define DeleteMember
+	p.DeleteMember = func(member string) error {
+		return ErrPoolDeleteMemberNotSupported
+	}
+
+	// Define RemoveMember
+	p.RemoveMember = func(member string) error {
+		return ErrPoolRemoveMemberNotSupported
+	}
+
+	// Add members
+	if len(p.Config.Members) < 1 {
+		return nil, fmt.Errorf("no Members configured for Pool")
+	}
+
+	// We only take the first.
+	member := p.Config.Members[0]
+
+	memberURL, err := url.Parse(member)
+	if err != nil {
+		return nil, err
+	}
+
+	DebugOut.Printf("\t\tAdding member '%s'\n", member)
+	p.GetMember(memberURL)
+
+	// Add it to
+	pool, err := NewS3Pool(member)
+	if err != nil {
+		return nil, err
+	}
+
+	// Write lock the pool briefly to set it
+	p.poollock.Lock()
+	p.pool = pool
+	p.poollock.Unlock()
+	return pool, nil
 }

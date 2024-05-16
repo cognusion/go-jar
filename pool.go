@@ -15,6 +15,9 @@ import (
 	"time"
 )
 
+// PoolMaterializer is a function responsible for materializing a Pool
+type PoolMaterializer func(*Pool) (http.Handler, error)
+
 const (
 	// ErrPoolsConfigdefaultmembererrorstatusInvalid is returned when the pools.defaultmembererrorstatus is set improperly
 	ErrPoolsConfigdefaultmembererrorstatusInvalid = Error("pools.defaultmembererrorstatus is set to an invalid HealthCheckStatus")
@@ -67,9 +70,16 @@ var (
 	// ResponseModifierChain is a ProxyResponseModifierChain to handle sequences of modifications
 	// use ``ResponseModifierChain.Add()`` to add your own
 	ResponseModifierChain ProxyResponseModifierChain
+
+	// Materializers is a map of available PoolMaterializers
+	Materializers = make(map[string]PoolMaterializer)
 )
 
 func init() {
+	// Set up the materializers
+	Materializers["http"] = materializeHTTP
+	Materializers["https"] = materializeHTTP
+	Materializers["ws"] = materializeHTTP
 
 	InitFuncs.Add(func() {
 		// Defaults for any subrequests
@@ -133,7 +143,7 @@ type Pool struct {
 	Config *PoolConfig
 
 	members                sync.Map
-	poolMaterializer       func() (http.Handler, error)
+	poolMaterializer       PoolMaterializer
 	healthCheckErrorStatus HealthCheckStatus
 
 	// AddMember adds a URI to the loadbalancer. An error is returned if the URI doesn't parse properly
@@ -258,77 +268,19 @@ func (p *Pool) Materialize() (http.Handler, error) {
 		}
 
 		// Grab the URL scheme, and switch on it
-		switch memberURL.Scheme {
-		case "http":
-			fallthrough
-		case "https":
-			p.poolMaterializer = p.materializeHTTP
-		case "s3":
-			p.poolMaterializer = p.materializeS3
-		case "ws":
-			p.poolMaterializer = p.materializeHTTP
-		default:
+		if v, ok := Materializers[memberURL.Scheme]; ok {
+			p.poolMaterializer = v
+		} else {
 			// Um... no supported scheme?
 			ErrorOut.Printf("FATAL: Materialization of Pool failed, Member scheme was %s", memberURL.Scheme)
 			panic(fmt.Errorf("materialization of Pool failed, Member scheme was %s", memberURL.Scheme))
 		}
 	}
 
-	return p.poolMaterializer()
+	return p.poolMaterializer(p)
 }
 
-func (p *Pool) materializeS3() (http.Handler, error) {
-
-	// Define ListMembers
-	p.ListMembers = func() []*url.URL {
-		return nil
-	}
-
-	// Define AddMember
-	p.AddMember = func(member string) error {
-		return ErrPoolAddMemberNotSupported
-	}
-
-	// Define DeleteMember
-	p.DeleteMember = func(member string) error {
-		return ErrPoolDeleteMemberNotSupported
-	}
-
-	// Define RemoveMember
-	p.RemoveMember = func(member string) error {
-		return ErrPoolRemoveMemberNotSupported
-	}
-
-	// Add members
-	if len(p.Config.Members) < 1 {
-		return nil, fmt.Errorf("no Members configured for Pool")
-	}
-
-	// We only take the first.
-	member := p.Config.Members[0]
-
-	memberURL, err := url.Parse(member)
-	if err != nil {
-		return nil, err
-	}
-
-	DebugOut.Printf("\t\tAdding member '%s'\n", member)
-	p.GetMember(memberURL)
-
-	// Add it to
-	pool, err := NewS3Pool(member)
-	if err != nil {
-		return nil, err
-	}
-
-	// Write lock the pool briefly to set it
-	p.poollock.Lock()
-	p.pool = pool
-	p.poollock.Unlock()
-	return pool, nil
-}
-
-func (p *Pool) materializeHTTP() (http.Handler, error) {
+func materializeHTTP(p *Pool) (http.Handler, error) {
 	var (
 		fwd  *httputil.ReverseProxy
 		err  error
