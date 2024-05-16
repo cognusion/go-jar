@@ -72,6 +72,7 @@ Consumers will want to 'cd cmd/jard; go build; #enjoy'
 * [func NewECBEncrypter(b cipher.Block) cipher.BlockMode](#NewECBEncrypter)
 * [func NewStickyPool(poolName, cookieName, cookieType string, next http.Handler, opts ...roundrobin.LBOption) (*roundrobin.RoundRobin, error)](#NewStickyPool)
 * [func OkFinisher(w http.ResponseWriter, r *http.Request)](#OkFinisher)
+* [func PluginHandler(name string, conf *viper.Viper) (func(http.Handler) http.Handler, error)](#PluginHandler)
 * [func PoolLister(w http.ResponseWriter, r *http.Request)](#PoolLister)
 * [func PoolMemberAdder(w http.ResponseWriter, r *http.Request)](#PoolMemberAdder)
 * [func PoolMemberLister(w http.ResponseWriter, r *http.Request)](#PoolMemberLister)
@@ -209,6 +210,9 @@ Consumers will want to 'cd cmd/jard; go build; #enjoy'
   * [func (p *PathReplacer) Handler(next http.Handler) http.Handler](#PathReplacer.Handler)
 * [type PathStripper](#PathStripper)
   * [func (p *PathStripper) Handler(next http.Handler) http.Handler](#PathStripper.Handler)
+* [type PluginConfig](#PluginConfig)
+  * [func NewPluginConfig(name string, conf *viper.Viper) (*PluginConfig, error)](#NewPluginConfig)
+  * [func (pc *PluginConfig) CreateHandler() (func(http.Handler) http.Handler, error)](#PluginConfig.CreateHandler)
 * [type Pool](#Pool)
   * [func (p *Pool) GetMember(u *url.URL) *Member](#Pool.GetMember)
   * [func (p *Pool) GetPool() (http.Handler, error)](#Pool.GetPool)
@@ -271,7 +275,7 @@ Consumers will want to 'cd cmd/jard; go build; #enjoy'
 
 
 #### <a name="pkg-files">Package files</a>
-[a_common.go](https://github.com/cognusion/go-jar/tree/master/a_common.go) [access.go](https://github.com/cognusion/go-jar/tree/master/access.go) [basicauth.go](https://github.com/cognusion/go-jar/tree/master/basicauth.go) [cache.go](https://github.com/cognusion/go-jar/tree/master/cache.go) [compression.go](https://github.com/cognusion/go-jar/tree/master/compression.go) [config.go](https://github.com/cognusion/go-jar/tree/master/config.go) [cors.go](https://github.com/cognusion/go-jar/tree/master/cors.go) [crypto.go](https://github.com/cognusion/go-jar/tree/master/crypto.go) [debug.go](https://github.com/cognusion/go-jar/tree/master/debug.go) [errors.go](https://github.com/cognusion/go-jar/tree/master/errors.go) [finishers.go](https://github.com/cognusion/go-jar/tree/master/finishers.go) [handlers.go](https://github.com/cognusion/go-jar/tree/master/handlers.go) [health.go](https://github.com/cognusion/go-jar/tree/master/health.go) [healthprocess.go](https://github.com/cognusion/go-jar/tree/master/healthprocess.go) [helpers.go](https://github.com/cognusion/go-jar/tree/master/helpers.go) [hmac.go](https://github.com/cognusion/go-jar/tree/master/hmac.go) [log.go](https://github.com/cognusion/go-jar/tree/master/log.go) [macros.go](https://github.com/cognusion/go-jar/tree/master/macros.go) [paths.go](https://github.com/cognusion/go-jar/tree/master/paths.go) [pool.go](https://github.com/cognusion/go-jar/tree/master/pool.go) [pool_conhash.go](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go) [pool_sticky.go](https://github.com/cognusion/go-jar/tree/master/pool_sticky.go) [poolconfig.go](https://github.com/cognusion/go-jar/tree/master/poolconfig.go) [pools.go](https://github.com/cognusion/go-jar/tree/master/pools.go) [proxyresponsemodifier.go](https://github.com/cognusion/go-jar/tree/master/proxyresponsemodifier.go) [s3pool.go](https://github.com/cognusion/go-jar/tree/master/s3pool.go) [s3proxy.go](https://github.com/cognusion/go-jar/tree/master/s3proxy.go) [taskscheduler.go](https://github.com/cognusion/go-jar/tree/master/taskscheduler.go) [tus.go](https://github.com/cognusion/go-jar/tree/master/tus.go) [update.go](https://github.com/cognusion/go-jar/tree/master/update.go) [urlswitch.go](https://github.com/cognusion/go-jar/tree/master/urlswitch.go) [version.go](https://github.com/cognusion/go-jar/tree/master/version.go) [worker-http.go](https://github.com/cognusion/go-jar/tree/master/worker-http.go) [worker-zulip.go](https://github.com/cognusion/go-jar/tree/master/worker-zulip.go) [workers.go](https://github.com/cognusion/go-jar/tree/master/workers.go) [z_zMustBeLast.go](https://github.com/cognusion/go-jar/tree/master/z_zMustBeLast.go)
+[a_common.go](https://github.com/cognusion/go-jar/tree/master/a_common.go) [access.go](https://github.com/cognusion/go-jar/tree/master/access.go) [basicauth.go](https://github.com/cognusion/go-jar/tree/master/basicauth.go) [cache.go](https://github.com/cognusion/go-jar/tree/master/cache.go) [compression.go](https://github.com/cognusion/go-jar/tree/master/compression.go) [config.go](https://github.com/cognusion/go-jar/tree/master/config.go) [cors.go](https://github.com/cognusion/go-jar/tree/master/cors.go) [crypto.go](https://github.com/cognusion/go-jar/tree/master/crypto.go) [debug.go](https://github.com/cognusion/go-jar/tree/master/debug.go) [errors.go](https://github.com/cognusion/go-jar/tree/master/errors.go) [finishers.go](https://github.com/cognusion/go-jar/tree/master/finishers.go) [handlers.go](https://github.com/cognusion/go-jar/tree/master/handlers.go) [health.go](https://github.com/cognusion/go-jar/tree/master/health.go) [healthprocess.go](https://github.com/cognusion/go-jar/tree/master/healthprocess.go) [helpers.go](https://github.com/cognusion/go-jar/tree/master/helpers.go) [hmac.go](https://github.com/cognusion/go-jar/tree/master/hmac.go) [log.go](https://github.com/cognusion/go-jar/tree/master/log.go) [macros.go](https://github.com/cognusion/go-jar/tree/master/macros.go) [paths.go](https://github.com/cognusion/go-jar/tree/master/paths.go) [plugins.go](https://github.com/cognusion/go-jar/tree/master/plugins.go) [pool.go](https://github.com/cognusion/go-jar/tree/master/pool.go) [pool_conhash.go](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go) [pool_sticky.go](https://github.com/cognusion/go-jar/tree/master/pool_sticky.go) [poolconfig.go](https://github.com/cognusion/go-jar/tree/master/poolconfig.go) [pools.go](https://github.com/cognusion/go-jar/tree/master/pools.go) [proxyresponsemodifier.go](https://github.com/cognusion/go-jar/tree/master/proxyresponsemodifier.go) [s3pool.go](https://github.com/cognusion/go-jar/tree/master/s3pool.go) [s3proxy.go](https://github.com/cognusion/go-jar/tree/master/s3proxy.go) [taskscheduler.go](https://github.com/cognusion/go-jar/tree/master/taskscheduler.go) [tus.go](https://github.com/cognusion/go-jar/tree/master/tus.go) [update.go](https://github.com/cognusion/go-jar/tree/master/update.go) [urlswitch.go](https://github.com/cognusion/go-jar/tree/master/urlswitch.go) [version.go](https://github.com/cognusion/go-jar/tree/master/version.go) [worker-http.go](https://github.com/cognusion/go-jar/tree/master/worker-http.go) [worker-zulip.go](https://github.com/cognusion/go-jar/tree/master/worker-zulip.go) [workers.go](https://github.com/cognusion/go-jar/tree/master/workers.go) [z_zMustBeLast.go](https://github.com/cognusion/go-jar/tree/master/z_zMustBeLast.go)
 
 
 ## <a name="pkg-constants">Constants</a>
@@ -1261,6 +1265,15 @@ NewStickyPool returns a primed RoundRobin that honors pinning based on a cookie 
 func OkFinisher(w http.ResponseWriter, r *http.Request)
 ```
 OkFinisher is a Finisher that simply returns "Ok", for throughput testing.
+
+
+
+## <a name="PluginHandler">func</a> [PluginHandler](https://github.com/cognusion/go-jar/tree/master/plugins.go?s=772:863#L33)
+``` go
+func PluginHandler(name string, conf *viper.Viper) (func(http.Handler) http.Handler, error)
+```
+PluginHandler is a glue function that takes a config key and returns either a
+handler function or an error, using the global Conf config.
 
 
 
@@ -2921,6 +2934,67 @@ PathStripper is a wrapping struct to remove the prefix from the Request path
 func (p *PathStripper) Handler(next http.Handler) http.Handler
 ```
 Handler is a middleware that replaces the Request path
+
+
+
+
+## <a name="PluginConfig">type</a> [PluginConfig](https://github.com/cognusion/go-jar/tree/master/plugins.go?s=1159:2007#L45)
+``` go
+type PluginConfig struct {
+    // Path is the full path to file to load
+    Path string
+
+    // Name is the function or package.function that is the handler
+    // we call.
+    Name string
+
+    // Config is any configuration information the handler itself needs.
+    // If used, ensure there is a `SetConfig(map[string]string)` function
+    // in the plugin so receive this properly. See tests for details.
+    Config map[string]string
+
+    // GoPath sets GOPATH for the interpreter.
+    GoPath string
+
+    // BuildTags sets build constraints for the interpreter.
+    BuildTags []string
+
+    // Args are the cmdline args fed to the interpreter, defaults to os.Args.
+    Args []string
+
+    // Env is the environment of interpreter. Entries are in the form "key=values".
+    Env []string
+
+    // Unrestricted allows to run non sandboxed stdlib symbols such as os/exec and environment
+    Unrestricted bool
+}
+
+```
+PluginConfig is a marshallable configuration structure with useful member functions.
+
+
+
+
+
+
+
+### <a name="NewPluginConfig">func</a> [NewPluginConfig](https://github.com/cognusion/go-jar/tree/master/plugins.go?s=2142:2217#L76)
+``` go
+func NewPluginConfig(name string, conf *viper.Viper) (*PluginConfig, error)
+```
+NewPluginConfig attempts to unmarshal a subconfiguration into a PluginConfig. Returning either
+a reference to it, or an error.
+
+
+
+
+
+### <a name="PluginConfig.CreateHandler">func</a> (\*PluginConfig) [CreateHandler](https://github.com/cognusion/go-jar/tree/master/plugins.go?s=2459:2539#L86)
+``` go
+func (pc *PluginConfig) CreateHandler() (func(http.Handler) http.Handler, error)
+```
+CreateHandler will attempt to create a HandlerPlugin from the parent config,
+returning either the handler or an error.
 
 
 
