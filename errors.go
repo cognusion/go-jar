@@ -27,9 +27,6 @@ const (
 	// ErrForbiddenError is used to communicate resource access denial
 	ErrForbiddenError = Error("you do not have access to this resource")
 
-	// ErrNoSession is called when an AWS feature is called, but there is no initialized AWS session
-	ErrNoSession = Error("there is no initialized AWS session")
-
 	// ErrUnknownError is returned when an error occurs for undefined-yet-anticipated reasons
 	ErrUnknownError = Error("unknown error")
 )

@@ -1,12 +1,16 @@
 package jar
 
 import (
+	"context"
+	"fmt"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
 	"github.com/shirou/gopsutil/process"
 	"go.uber.org/atomic"
-
-	"context"
-	"os"
-	"time"
 )
 
 // ProcessInfo is used to track information about ourselves.
@@ -18,6 +22,64 @@ type ProcessInfo struct {
 	interval time.Duration
 	pid      int32
 	proc     *process.Process
+}
+
+var (
+	// RestartSelf is a niladic that will trigger a graceful restart of this process
+	RestartSelf func()
+	// IntSelf is a niladic that will trigger an interrupt of this process
+	IntSelf func()
+	// KillSelf is a niladic that will trigger a graceful shutdown of this process
+	KillSelf func()
+)
+
+func init() {
+	Finishers["restart"] = Restart
+
+	// Ensure we only restart ourselves once
+	// why 10? small buffer so multiple requests close together hit the channel
+	// and don't block the caller
+	signalChan := make(chan os.Signal, 10)
+
+	// These functions are used by handlers to trigger signals to the running
+	// process.
+	RestartSelf = func() { signalChan <- syscall.SIGUSR2 }
+	IntSelf = func() { signalChan <- syscall.SIGINT }
+	KillSelf = func() { signalChan <- syscall.SIGKILL }
+
+	// We mirror the signal interception of grace, so we can properly clean up
+	ch := make(chan os.Signal, 10)
+	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM, syscall.SIGUSR2)
+
+	go func() {
+		for {
+			select {
+			case s := <-signalChan:
+				DebugOut.Printf("%s signaled.", s.String())
+				p, err := os.FindProcess(os.Getpid())
+				if err != nil {
+					ErrorOut.Printf("Error finding process '%d': %s\n", os.Getpid(), err)
+				}
+				p.Signal(s)
+			case s := <-ch:
+				switch s {
+				case syscall.SIGINT, syscall.SIGTERM:
+					StopFuncs.Call()
+					signal.Stop(ch)
+					return
+				case syscall.SIGUSR2:
+					StopFuncs.Call()
+				}
+			}
+		}
+	}()
+
+}
+
+// Restart signals the server to restart itself
+func Restart(w http.ResponseWriter, r *http.Request) {
+	RestartSelf()
+	fmt.Fprint(w, "Done\n")
 }
 
 // NewProcessInfo returns an intialized ProcessInfo that has an interval set to 1 minute.

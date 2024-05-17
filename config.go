@@ -20,16 +20,11 @@ const (
 	ConfigDebugResponses       = ConfigKey("debugresponses")
 	ConfigDebugTimings         = ConfigKey("debugtimings")
 	ConfigDumpConfig           = ConfigKey("dumpconfig")
-	ConfigEC2                  = ConfigKey("ec2")
 	ConfigErrorLog             = ConfigKey("errorlog")
 	ConfigHandlers             = ConfigKey("handlers")
 	ConfigHotConfig            = ConfigKey("hotconfig")
-	ConfigHotUpdate            = ConfigKey("hotupdate")
 	ConfigKeepaliveTimeout     = ConfigKey("keepalivetimeout")
 	ConfigKeys                 = ConfigKey("keys")
-	ConfigKeysAwsRegion        = ConfigKey("keys.aws.region")
-	ConfigKeysAwsAccessKey     = ConfigKey("keys.aws.access")
-	ConfigKeysAwsSecretKey     = ConfigKey("keys.aws.secret")
 	ConfigListen               = ConfigKey("listen")
 	ConfigLogAge               = ConfigKey("logage")
 	ConfigLogBackups           = ConfigKey("logbackups")
@@ -44,7 +39,6 @@ const (
 	ConfigTempFolder           = ConfigKey("tempfolder")
 	ConfigTimeout              = ConfigKey("timeout")
 	ConfigTrustRequestIDHeader = ConfigKey("trustrequestidheader")
-	ConfigUpdatePath           = ConfigKey("updatepath")
 	ConfigAuthoritativeDomains = ConfigKey("authoritativedomains")
 	ConfigVersionRequired      = ConfigKey("versionrequired")
 	ConfigLogFakeXFF           = ConfigKey("fakexfflog")
@@ -134,10 +128,8 @@ func loadDefaults(v *viper.Viper) error {
 	v.SetDefault(ConfigKeys, make(map[string]string))           // keys[keyname] = base64-encodedkey
 	v.SetDefault(ConfigAuthPool, make(map[string]interface{}))  // authpool[poolname] = map[opt]value
 	v.SetDefault(ConfigHandlers, make([]string, 0))             // handlers is a list of global handlers
-	v.SetDefault(ConfigHotUpdate, false)                        // hotupdate controls whether we allow JAR to replace itself
 	v.SetDefault(ConfigHotConfig, false)                        // hotconfig controls whether we watch for config changes, and reload on change, or not
 	v.SetDefault(ConfigTempFolder, "/tmp")                      // tempfolder is where temporary files go
-	v.SetDefault(ConfigUpdatePath, "")                          // update path is a full S3 URL to where an update file is
 	v.SetDefault(ConfigStripRequestHeaders, make([]string, 0))  // striprequestheaders lists request headers that should be removed
 	v.SetDefault(ConfigTimeout, 0)                              // Sets the total request/response timeout. Can be overridden per-path
 	v.SetDefault(ConfigKeepaliveTimeout, "5s")                  // Sets the amount of time keptalive sockets linger
@@ -145,7 +137,6 @@ func loadDefaults(v *viper.Viper) error {
 	v.SetDefault(ConfigRequestIDHeaderName, "X-Request-ID")     // Name of the header to use for adding the requestid
 	v.SetDefault(ConfigSlowRequestMax, "")                      // Sets the default slow request time for logging
 	v.SetDefault(ConfigTrustRequestIDHeader, false)             // Enable trusting of incoming ConfigRequestIDHeaderName to set the requestid
-	v.SetDefault(ConfigEC2, false)                              // Enable AWS EC2-specific features
 	v.SetDefault(ConfigAuthoritativeDomains, make([]string, 0)) // If set, restricts request handling to the domains listed, otherwise 400s
 	v.SetDefault(ConfigVersionRequired, "")                     // Sets the minimum ``go-jar`` VERSION that the config is valid for.
 

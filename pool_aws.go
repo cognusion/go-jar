@@ -1,9 +1,13 @@
 package jar
 
 import (
+	"net"
+	"regexp"
+
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/cognusion/go-jar/aws"
+	"github.com/vulcand/oxy/v2/roundrobin"
 
 	"net/http"
 	"net/url"
@@ -11,7 +15,13 @@ import (
 )
 
 func init() {
+	// Set up the Materializers
 	Materializers["s3"] = materializeS3
+
+	// Set up the MemberBuilders
+	MemberBuilders["http"] = append(MemberBuilders["http"], ec2HTTPMember)
+	MemberBuilders["https"] = append(MemberBuilders["https"], ec2HTTPMember)
+	MemberBuilders["ws"] = append(MemberBuilders["ws"], ec2HTTPMember)
 
 	aws.TimingOut = TimingOut
 	aws.DebugOut = DebugOut
@@ -77,6 +87,50 @@ func (s3p *S3Pool) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		ErrorOut.Printf("%s '%s' from bucket %s: %v", es, filepath, s3p.bucket, err)
 		http.Error(w, es, http.StatusInternalServerError)
 	}
+}
+
+func ec2HTTPMember(conf *PoolConfig, u *url.URL, m *Member) *Member {
+
+	if m == nil {
+		m = NewMember(u)
+	}
+
+	// If we're EC2-aware, and this Pool is using EC2Affinity, let's find out what the AZ is
+	if AWSSession != nil && Conf.GetBool(ConfigEC2) && conf.EC2Affinity {
+
+		if !conf.Prune {
+			// Not forcing this, but chances are you don't know what you're doing.
+			ErrorOut.Printf("WARNING!!! Pool %s is using EC2Affinity but not Prune. This may delay or prevent expected failover to non-local members in the event of a member failure.\n", conf.Name)
+			DebugOut.Printf("WARNING!!! Pool %s is using EC2Affinity but not Prune. This may delay or prevent expected failover to non-local members in the event of a member failure.\n", conf.Name)
+		}
+
+		// If the Hostname isn't just digits and dots, it's a name and not a number, make it a number
+		if ok, err := regexp.MatchString(`[^\d\.]`, u.Hostname()); err == nil && ok {
+			// hostname is probably not an address
+			addrs, err := net.LookupHost(u.Hostname())
+			if err != nil {
+				DebugOut.Printf("Error resolving hostname '%s': %s\n", u.Hostname(), err)
+			} else if len(addrs) > 0 {
+				// Take the first address
+				m.Address = addrs[0]
+			}
+		}
+
+		if az, azerr := AWSSession.GetInstanceAZByIP(m.Address); azerr != nil {
+			ErrorOut.Printf("Error adding EC2-aware pool-member '%s' to %s: %s\n", m.Address, conf.Name, azerr)
+		} else if az == "" {
+			DebugOut.Printf("\t\t\tPool %s has member %s that has no AZ\n", conf.Name, m.Address)
+		} else if az == AWSSession.Me.AvailabilityZone {
+			DebugOut.Printf("\t\t\tPool %s has member %s that is AZ-local!\n", conf.Name, m.Address)
+			m.Weight = roundrobin.Weight(LocalMemberWeight)
+			m.AZ = az
+		} else {
+			DebugOut.Printf("\t\t\tPool %s has member %s that is not AZ-local (%s)\n", conf.Name, m.Address, az)
+			m.AZ = az
+		}
+	}
+
+	return m
 }
 
 func materializeS3(p *Pool) (http.Handler, error) {

@@ -10,13 +10,15 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"regexp"
 	"sync"
 	"time"
 )
 
 // PoolMaterializer is a function responsible for materializing a Pool
 type PoolMaterializer func(*Pool) (http.Handler, error)
+
+// MemberBuilder is a function responsible for building a Pool member if *Member is nil, or modifying the existing one
+type MemberBuilder func(*PoolConfig, *url.URL, *Member) *Member
 
 const (
 	// ErrPoolsConfigdefaultmembererrorstatusInvalid is returned when the pools.defaultmembererrorstatus is set improperly
@@ -76,10 +78,13 @@ var (
 
 	// Materializers is a map of available PoolMaterializers
 	Materializers = make(map[string]PoolMaterializer)
+
+	// MemberBuilders is a map of available MemberBuilders (should be one per Materializer)
+	MemberBuilders = make(map[string][]MemberBuilder)
 )
 
 func init() {
-	// Set up the materializers
+	// Set up the Materializers
 	Materializers["http"] = materializeHTTP
 	Materializers["https"] = materializeHTTP
 	Materializers["ws"] = materializeHTTP
@@ -138,7 +143,16 @@ type Member struct {
 	URL     *url.URL
 	Address string
 	AZ      string
-	weight  roundrobin.ServerOption
+	Weight  roundrobin.ServerOption
+}
+
+// NewMember returns a default Member
+func NewMember(u *url.URL) *Member {
+	return &Member{
+		URL:     u,
+		Address: u.Hostname(),
+		Weight:  roundrobin.Weight(DefaultMemberWeight),
+	}
 }
 
 // Pool is a list of like-minded destinations
@@ -222,60 +236,16 @@ func (p *Pool) GetMember(u *url.URL) *Member {
 	}
 
 	// We need to craft a Member
-	m := p.buildMember(u)
+	m := NewMember(u)
+
+	if v, ok := MemberBuilders[u.Scheme]; ok {
+		for _, b := range v {
+			m = b(p.Config, u, m)
+		}
+	} // else we just use the default
+
 	p.members.Store(*u, m)
 	return m
-}
-
-// buildMember does the heavy-lifting of [re]building a Member from a URL. This should never be called directly, and GetMember should be called instead
-func (p *Pool) buildMember(u *url.URL) *Member {
-
-	m := Member{
-		URL:     u,
-		Address: u.Hostname(),
-		weight:  roundrobin.Weight(DefaultMemberWeight),
-	}
-
-	// If we're EC2-aware, and the member is for an S3 bucket
-	if AWSSession != nil && u.Scheme == "s3" {
-		return &m
-	}
-
-	// If we're EC2-aware, and this Pool is using EC2Affinity, let's find out what the AZ is
-	if AWSSession != nil && Conf.GetBool(ConfigEC2) && p.Config.EC2Affinity {
-
-		if !p.Config.Prune {
-			// Not forcing this, but chances are you don't know what you're doing.
-			ErrorOut.Printf("WARNING!!! Pool %s is using EC2Affinity but not Prune. This may delay or prevent expected failover to non-local members in the event of a member failure.\n", p.Config.Name)
-			DebugOut.Printf("WARNING!!! Pool %s is using EC2Affinity but not Prune. This may delay or prevent expected failover to non-local members in the event of a member failure.\n", p.Config.Name)
-		}
-
-		// If the Hostname isn't just digits and dots, it's a name and not a number, make it a number
-		if ok, err := regexp.MatchString(`[^\d\.]`, u.Hostname()); err == nil && ok {
-			// hostname is probably not an address
-			addrs, err := net.LookupHost(u.Hostname())
-			if err != nil {
-				DebugOut.Printf("Error resolving hostname '%s': %s\n", u.Hostname(), err)
-			} else if len(addrs) > 0 {
-				// Take the first address
-				m.Address = addrs[0]
-			}
-		}
-
-		if az, azerr := AWSSession.GetInstanceAZByIP(m.Address); azerr != nil {
-			ErrorOut.Printf("Error adding EC2-aware pool-member '%s' to %s: %s\n", m.Address, p.Config.Name, azerr)
-		} else if az == "" {
-			DebugOut.Printf("\t\t\tPool %s has member %s that has no AZ\n", p.Config.Name, m.Address)
-		} else if az == AWSSession.Me.AvailabilityZone {
-			DebugOut.Printf("\t\t\tPool %s has member %s that is AZ-local!\n", p.Config.Name, m.Address)
-			m.weight = roundrobin.Weight(LocalMemberWeight)
-			m.AZ = az
-		} else {
-			DebugOut.Printf("\t\t\tPool %s has member %s that is not AZ-local (%s)\n", p.Config.Name, m.Address, az)
-			m.AZ = az
-		}
-	}
-	return &m
 }
 
 // Materialize returns a Handler that can represent the Pool.
@@ -388,7 +358,7 @@ func materializeHTTP(p *Pool) (http.Handler, error) {
 		}
 
 		m := p.GetMember(u)
-		uerr = pm.UpsertServer(u, m.weight)
+		uerr = pm.UpsertServer(u, m.Weight)
 		if uerr != nil {
 			return uerr
 		}

@@ -29,11 +29,6 @@ paths:
     Allow: 127.0.0.1
     Finisher: Stack
   -
-    Path: /admin/update
-    Absolute: true
-    Allow: 127.0.0.1
-    Finisher: Update
-  -
     Path: /admin/healthcheck
     Absolute: true
     Allow: 127.0.0.1,::1

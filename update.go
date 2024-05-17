@@ -1,19 +1,22 @@
 package jar
 
 import (
-	"github.com/inconshreveable/go-update"
-
 	"github.com/cognusion/go-jar/aws"
+	"github.com/inconshreveable/go-update"
 
 	"archive/zip"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
-	"os/signal"
 	"path"
 	"path/filepath"
-	"syscall"
+)
+
+// Constants for configuration
+const (
+	ConfigHotUpdate  = ConfigKey("hotupdate")
+	ConfigUpdatePath = ConfigKey("updatepath")
 )
 
 const (
@@ -24,59 +27,11 @@ const (
 	ErrUpdateConfigEmptyURL = Error("update url is empty, not updating")
 )
 
-var (
-	// RestartSelf is a niladic that will trigger a graceful restart of this process
-	RestartSelf func()
-	// IntSelf is a niladic that will trigger an interrupt of this process
-	IntSelf func()
-	// KillSelf is a niladic that will trigger a graceful shutdown of this process
-	KillSelf func()
-)
-
 func init() {
 	// Link our Finishers
 	Finishers["update"] = Update
-	Finishers["restart"] = Restart
 
-	// Ensure we only restart ourselves once
-	// why 10? small buffer so multiple requests close together hit the channel
-	// and don't block the caller
-	signalChan := make(chan os.Signal, 10)
-
-	// These functions are used by handlers to trigger signals to the running
-	// process.
-	RestartSelf = func() { signalChan <- syscall.SIGUSR2 }
-	IntSelf = func() { signalChan <- syscall.SIGINT }
-	KillSelf = func() { signalChan <- syscall.SIGKILL }
-
-	// We mirror the signal interception of grace, so we can properly clean up
-	ch := make(chan os.Signal, 10)
-	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM, syscall.SIGUSR2)
-
-	go func() {
-		for {
-			select {
-			case s := <-signalChan:
-				DebugOut.Printf("%s signaled.", s.String())
-				p, err := os.FindProcess(os.Getpid())
-				if err != nil {
-					ErrorOut.Printf("Error finding process '%d': %s\n", os.Getpid(), err)
-				}
-				p.Signal(s)
-			case s := <-ch:
-				switch s {
-				case syscall.SIGINT, syscall.SIGTERM:
-					StopFuncs.Call()
-					signal.Stop(ch)
-					return
-				case syscall.SIGUSR2:
-					StopFuncs.Call()
-				}
-			}
-		}
-	}()
-
-	ConfigValidations["s3updatepath"] = func() error {
+	ConfigValidations[ConfigUpdatePath] = func() error {
 		if up := Conf.GetString(ConfigUpdatePath); up != "" && AWSSession == nil {
 			// Update requires AWS, for now
 			return ErrUpdateConfigS3NoAWS
@@ -94,12 +49,6 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	} else {
 		fmt.Fprint(w, "Done\n")
 	}
-}
-
-// Restart signals the server to restart itself
-func Restart(w http.ResponseWriter, r *http.Request) {
-	RestartSelf()
-	fmt.Fprint(w, "Done\n")
 }
 
 // handleUpdate grabs a zip from S3, downloads it, unzips it, updates the binary, and if restart, signals
