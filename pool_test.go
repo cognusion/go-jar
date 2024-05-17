@@ -16,6 +16,46 @@ import (
 	"testing"
 )
 
+func init() {
+	//DebugOut = log.New(os.Stderr, "[DEBUG] ", OutFormat)
+	//ErrorOut = log.New(os.Stderr, "[ERROR] ", OutFormat)
+}
+
+func TestPoolMaterializeHTTP(t *testing.T) {
+
+	req, err := http.NewRequest("GET", "http://somewhere.elsewhere.com/", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	Convey("When an HTTP Pool is materialized, and a request is made, the Host header is properly passed along", t, func() {
+		sfunc := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("OK"))
+		})
+
+		// Stage our very minimal Pool
+		pool := Pool{}
+		pool.Config = &PoolConfig{}
+
+		// Add a contrived server to the Pool
+		server := httptest.NewServer(sfunc)
+		pool.Config.Members = []string{server.URL}
+
+		// Materialize the Pool
+		h, err := pool.GetPool()
+		So(err, ShouldBeNil)
+
+		// Serve a request
+		rr := httptest.NewRecorder()
+		h.ServeHTTP(rr, req)
+
+		// Look good?
+		So(rr.Code, ShouldEqual, http.StatusOK)
+		So(rr.Body.String(), ShouldEqual, "OK")
+	})
+}
+
 func TestPoolStripPrefix(t *testing.T) {
 
 	req, err := http.NewRequest("GET", "/garbage/plate/food", nil)
