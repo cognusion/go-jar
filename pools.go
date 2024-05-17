@@ -301,7 +301,7 @@ func (p *Pools) tickFunc(rChan chan interface{}) {
 func poolConfigMapToPoolMap(poolConfigs map[string]*PoolConfig) map[string]*Pool {
 	p := make(map[string]*Pool)
 	for name, config := range poolConfigs {
-		p[name] = &Pool{Config: config}
+		p[name] = NewPool(config)
 	}
 	return p
 }

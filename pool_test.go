@@ -35,8 +35,7 @@ func TestPoolMaterializeHTTP(t *testing.T) {
 		})
 
 		// Stage our very minimal Pool
-		pool := Pool{}
-		pool.Config = &PoolConfig{}
+		pool := NewPool(&PoolConfig{})
 
 		// Add a contrived server to the Pool
 		server := httptest.NewServer(sfunc)
@@ -53,6 +52,12 @@ func TestPoolMaterializeHTTP(t *testing.T) {
 		// Look good?
 		So(rr.Code, ShouldEqual, http.StatusOK)
 		So(rr.Body.String(), ShouldEqual, "OK")
+
+		// Get the pool again
+		// Materialize the Pool
+		h2, err2 := pool.GetPool()
+		So(err2, ShouldBeNil)
+		So(h2, ShouldEqual, h)
 	})
 }
 

@@ -1,12 +1,9 @@
 package jar
 
 import (
-	"fmt"
-
-	"github.com/cognusion/go-jar/aws"
-
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/cognusion/go-jar/aws"
 
 	"net/http"
 	"net/url"
@@ -106,7 +103,7 @@ func materializeS3(p *Pool) (http.Handler, error) {
 
 	// Add members
 	if len(p.Config.Members) < 1 {
-		return nil, fmt.Errorf("no Members configured for Pool")
+		return nil, ErrPoolNoMembersConfigured
 	}
 
 	// We only take the first.
@@ -126,9 +123,5 @@ func materializeS3(p *Pool) (http.Handler, error) {
 		return nil, err
 	}
 
-	// Write lock the pool briefly to set it
-	p.poollock.Lock()
-	p.pool = pool
-	p.poollock.Unlock()
 	return pool, nil
 }

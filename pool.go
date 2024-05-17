@@ -42,6 +42,9 @@ const (
 
 	// ErrPoolConfigConsistentAndSticky is returned when a Pool has both Sticky and ConsistentHashing set
 	ErrPoolConfigConsistentAndSticky = Error("a Pool cannot have Sticky and ConsistentHashing set")
+
+	// ErrPoolConfigMissing is returned when an operation on a Pool is requested, but no config is set
+	ErrPoolConfigMissing = Error("no Config present for Pool")
 )
 
 // Constants for configuration key strings
@@ -164,6 +167,34 @@ type Pool struct {
 	pool     http.Handler
 }
 
+// NewPool returns a new, minimal, unmaterialized pool with the attached config
+func NewPool(conf *PoolConfig) *Pool {
+	p := Pool{
+		Config: conf,
+	}
+
+	// Sets p.healthCheckErrorStatus to a valid HealthCheckStatus.
+	// ConfigPoolsDefaultMemberErrorStatus can be assumed validated at this point
+	if !p.Config.HealthCheckDisabled && p.Config.HealthCheckErrorStatus != "" {
+		DebugOut.Printf("\t\tHealthCheckErrorStatus: %s\n", p.Config.HealthCheckErrorStatus)
+		if hcs, serr := StringToHealthCheckStatus(p.Config.HealthCheckErrorStatus); serr != nil {
+			ErrorOut.Printf("Non-fatal error materializing %s.HealthCheckErrorStatus of '%s', setting to default (%s)\n", p.Config.Name, p.Config.HealthCheckErrorStatus, Conf.GetString(ConfigPoolsDefaultMemberErrorStatus))
+
+			// Default
+			hcs, _ = StringToHealthCheckStatus(Conf.GetString(ConfigPoolsDefaultMemberErrorStatus))
+			p.healthCheckErrorStatus = hcs
+		} else {
+			p.healthCheckErrorStatus = hcs
+		}
+	} else if !p.Config.HealthCheckDisabled {
+		// Default
+		hcs, _ := StringToHealthCheckStatus(Conf.GetString(ConfigPoolsDefaultMemberErrorStatus))
+		p.healthCheckErrorStatus = hcs
+	}
+
+	return &p
+}
+
 // IsMaterialized return boolean on whether the pool has been materialized or not
 func (p *Pool) IsMaterialized() bool {
 	return p.pool != nil
@@ -255,8 +286,13 @@ func (p *Pool) buildMember(u *url.URL) *Member {
 func (p *Pool) Materialize() (http.Handler, error) {
 	if p.poolMaterializer == nil {
 		// No poolMaterializer was set, detect and set poolTypeID and poolMaterializer
+
+		if p.Config == nil {
+			return nil, fmt.Errorf("no Config present for Pool. Cannot materialize")
+		}
+
 		if len(p.Config.Members) < 1 {
-			return nil, fmt.Errorf("no Members configured for Pool")
+			return nil, ErrPoolNoMembersConfigured
 		}
 
 		// We only take the first.
@@ -277,7 +313,16 @@ func (p *Pool) Materialize() (http.Handler, error) {
 		}
 	}
 
-	return p.poolMaterializer(p)
+	h, err := p.poolMaterializer(p)
+	if err != nil {
+		return nil, err
+	}
+
+	// Write lock the pool briefly to set it
+	p.poollock.Lock()
+	p.pool = h
+	p.poollock.Unlock()
+	return h, nil
 }
 
 func materializeHTTP(p *Pool) (http.Handler, error) {
@@ -289,25 +334,6 @@ func materializeHTTP(p *Pool) (http.Handler, error) {
 
 	if p.Config.ReplacePath != "" {
 		DebugOut.Printf("\t\tReplacePath: %s\n", p.Config.ReplacePath)
-	}
-
-	// Sets p.healthCheckErrorStatus to a valid HealthCheckStatus.
-	// ConfigPoolsDefaultMemberErrorStatus can be assumed validated at this point
-	if !p.Config.HealthCheckDisabled && p.Config.HealthCheckErrorStatus != "" {
-		DebugOut.Printf("\t\tHealthCheckErrorStatus: %s\n", p.Config.HealthCheckErrorStatus)
-		if hcs, serr := StringToHealthCheckStatus(p.Config.HealthCheckErrorStatus); serr != nil {
-			ErrorOut.Printf("Non-fatal error materializing %s.HealthCheckErrorStatus of '%s', setting to default (%s)\n", p.Config.Name, p.Config.HealthCheckErrorStatus, Conf.GetString(ConfigPoolsDefaultMemberErrorStatus))
-
-			// Default
-			hcs, _ = StringToHealthCheckStatus(Conf.GetString(ConfigPoolsDefaultMemberErrorStatus))
-			p.healthCheckErrorStatus = hcs
-		} else {
-			p.healthCheckErrorStatus = hcs
-		}
-	} else if !p.Config.HealthCheckDisabled {
-		// Default
-		hcs, _ := StringToHealthCheckStatus(Conf.GetString(ConfigPoolsDefaultMemberErrorStatus))
-		p.healthCheckErrorStatus = hcs
 	}
 
 	// Make a copy of the global request headers to strip
@@ -429,10 +455,6 @@ func materializeHTTP(p *Pool) (http.Handler, error) {
 		pool = pm
 	}
 
-	// Write lock the pool briefly to set it
-	p.poollock.Lock()
-	p.pool = pool
-	p.poollock.Unlock()
 	return pool, nil
 }
 
