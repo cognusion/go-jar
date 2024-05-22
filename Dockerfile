@@ -9,3 +9,4 @@ COPY . .
 RUN go build -C cmd/jard/ -v -o /app/jard
 
 CMD ["jard"]
+
