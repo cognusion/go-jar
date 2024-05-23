@@ -100,9 +100,8 @@ func (p *Pools) healthTicker() {
 		return
 	}
 
-	// TODO: Size this appropriately
 	var (
-		rChan    = make(chan interface{}, 100)
+		rChan    = make(chan interface{})
 		hcErrors = make(map[string]*HealthCheckError)
 	)
 
