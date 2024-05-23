@@ -11,8 +11,6 @@ import (
 var (
 	configVersion bool
 	gopsAgent     bool
-
-	tags string
 )
 
 func init() {
@@ -45,22 +43,17 @@ func init() {
 
 func main() {
 	if configVersion {
-		// Pull the tags, if any, from the build
-		bi, _ := debug.ReadBuildInfo()
-		for _, v := range bi.Settings {
-			if v.Key == "-tags" {
-				tags = v.Value
-				break
-			}
-		}
-
 		fmt.Printf("JARD %s\nGo   %s\nCPUs %d\n",
 			jar.VERSION,
 			jar.GOVERSION,
 			jar.NUMCPU)
-		if tags != "" {
-			// There are tags
-			fmt.Printf("Tags %s\n", tags)
+
+		// Pull the tags, if any, from the build
+		bi, _ := debug.ReadBuildInfo()
+		for _, v := range bi.Settings {
+			if v.Key == "-tags" {
+				fmt.Printf("Tags %s\n", v.Value)
+			}
 		}
 		return
 	}
