@@ -64,6 +64,22 @@ func TestWorkerDo(t *testing.T) {
 	})
 }
 
+func TestWorkerDoOnce(t *testing.T) {
+	rChan := make(chan interface{}, 1)
+
+	Convey("When a Worker is told to do some work once", t, func() {
+		r := Worker{}
+		r.DoOnce(&DemoWork{rChan})
+
+		Convey("we should get the expected response, on the return channel", func() {
+			resp := <-rChan
+			So(resp, ShouldHaveSameTypeAs, "Hello World")
+			So(resp, ShouldEqual, "Worrrrrrrrk")
+		})
+
+	})
+}
+
 func TestWorkerQuit(t *testing.T) {
 	workChan := make(chan Work)
 	quitChan := make(chan bool)

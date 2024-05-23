@@ -19,6 +19,11 @@ type Worker struct {
 	self atomic.Value
 }
 
+// DoOnce asks the Worker to do one unit of Work and then end
+func (w *Worker) DoOnce(work Work) {
+	w.workIt(work)
+}
+
 // Do forks off a Workerloop that listens for Work, quits, or kills
 func (w *Worker) Do() {
 	w.self.Store(true)

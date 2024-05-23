@@ -17,7 +17,9 @@
   * [func (w *WorkError) Error() string](#WorkError.Error)
 * [type Worker](#Worker)
   * [func (w *Worker) Do()](#Worker.Do)
+  * [func (w *Worker) DoOnce(work Work)](#Worker.DoOnce)
 * [type WorkerPool](#WorkerPool)
+  * [func NewSimpleWorkerPool(WorkChan chan Work) *WorkerPool](#NewSimpleWorkerPool)
   * [func NewWorkerPool(WorkChan chan Work, initialSize int, autoAdjustInterval time.Duration) *WorkerPool](#NewWorkerPool)
   * [func (p *WorkerPool) AddWorkers(number int64)](#WorkerPool.AddWorkers)
   * [func (p *WorkerPool) CheckAndAdjust()](#WorkerPool.CheckAndAdjust)
@@ -115,7 +117,7 @@ Might see a closed KillChan if it's time to leave expeditiously
 
 
 
-### <a name="Worker.Do">func</a> (\*Worker) [Do](https://github.com/cognusion/go-jar/tree/master/workers/worker.go?s=615:636#L23)
+### <a name="Worker.Do">func</a> (\*Worker) [Do](https://github.com/cognusion/go-jar/tree/master/workers/worker.go?s=733:754#L28)
 ``` go
 func (w *Worker) Do()
 ```
@@ -124,7 +126,16 @@ Do forks off a Workerloop that listens for Work, quits, or kills
 
 
 
-## <a name="WorkerPool">type</a> [WorkerPool](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=725:1399#L24)
+### <a name="Worker.DoOnce">func</a> (\*Worker) [DoOnce](https://github.com/cognusion/go-jar/tree/master/workers/worker.go?s=609:643#L23)
+``` go
+func (w *Worker) DoOnce(work Work)
+```
+DoOnce asks the Worker to do one unit of Work and then end
+
+
+
+
+## <a name="WorkerPool">type</a> [WorkerPool](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=1056:1751#L28)
 ``` go
 type WorkerPool struct {
     // WorkChan is where the work goes
@@ -138,6 +149,10 @@ type WorkerPool struct {
 }
 
 ```
+WorkerPool was an overly-complicated mechanation to allow arbitrary work to be accomplished by an arbitrary worker.
+If you obtain your WorkerPool using NewSimpleWorkerPool, most of the over-complicated mechanation is ignored.
+If you obtain your WorkerPool using NewWorkerPool, the following is deprecated, and applies:
+
 WorkerPool is an overly-complicated mechanation to allow arbitrary work to be accomplished by an arbitrary worker,
 which will then return arbitrary results onto an arbitrary channel, while allowing for the evidence-driven growing or
 shrinking of the pool of available workers based on the fillyness of the WorkChan, which should be buffered and of
@@ -149,7 +164,15 @@ an appropriate size. If that hasn't turned you off yet, carry on.
 
 
 
-### <a name="NewWorkerPool">func</a> [NewWorkerPool](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=1875:1976#L52)
+### <a name="NewSimpleWorkerPool">func</a> [NewSimpleWorkerPool](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=1967:2023#L55)
+``` go
+func NewSimpleWorkerPool(WorkChan chan Work) *WorkerPool
+```
+NewSimpleWorkerPool returns a functioning WorkerPool bound to WorkChan, that does not try keep Workers running. It is strongly recommended that
+WorkChan be unbounded unless you demonstrably need to bound it.
+
+
+### <a name="NewWorkerPool">func</a> [NewWorkerPool](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=2911:3012#L80)
 ``` go
 func NewWorkerPool(WorkChan chan Work, initialSize int, autoAdjustInterval time.Duration) *WorkerPool
 ```
@@ -158,66 +181,80 @@ it will run the CheckAndAdjust() every that often.
 NOTE: If your WorkChan is unbuffered (no size during make(), autoAdjust will not run, nor will calling CheckAndAdjust() result in changes. The channel capacity
 and usage is key to this. It is recommended that the buffer size be around anticipated burst size for work
 
+Deprecated: NewWorkerPool has been replaced by NewSimpleWorkerPool. In v2 this version will be removed completely in lieu of the "simple" variety.
 
 
 
 
-### <a name="WorkerPool.AddWorkers">func</a> (\*WorkerPool) [AddWorkers](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=6111:6156#L219)
+
+### <a name="WorkerPool.AddWorkers">func</a> (\*WorkerPool) [AddWorkers](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=7327:7372#L260)
 ``` go
 func (p *WorkerPool) AddWorkers(number int64)
 ```
 AddWorkers adds the specified number of workers
 
+Deprecated: AddWorkers will be removed in v2
 
 
 
-### <a name="WorkerPool.CheckAndAdjust">func</a> (\*WorkerPool) [CheckAndAdjust](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=3638:3675#L131)
+
+### <a name="WorkerPool.CheckAndAdjust">func</a> (\*WorkerPool) [CheckAndAdjust](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=4871:4908#L171)
 ``` go
 func (p *WorkerPool) CheckAndAdjust()
 ```
 CheckAndAdjust asynchronously triggers the process to possibly resize the pool.
 While a resize process is running, subsequent processors will silently exit
 
+Deprecated: CheckAndAdjust will be removed in v2
 
 
 
-### <a name="WorkerPool.Max">func</a> (\*WorkerPool) [Max](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=3394:3427#L125)
+
+### <a name="WorkerPool.Max">func</a> (\*WorkerPool) [Max](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=4545:4578#L160)
 ``` go
 func (p *WorkerPool) Max(max int)
 ```
 Max sets the maximum number of workers
 
+Deprecated: Max will be removed in v2
 
 
 
-### <a name="WorkerPool.Min">func</a> (\*WorkerPool) [Min](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=3270:3303#L120)
+
+### <a name="WorkerPool.Min">func</a> (\*WorkerPool) [Min](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=4350:4383#L150)
 ``` go
 func (p *WorkerPool) Min(min int)
 ```
 Min sets the minimum number of workers
 
+Deprecated: Min will be removed in v2
 
 
 
-### <a name="WorkerPool.RemoveWorkers">func</a> (\*WorkerPool) [RemoveWorkers](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=6471:6519#L233)
+
+### <a name="WorkerPool.RemoveWorkers">func</a> (\*WorkerPool) [RemoveWorkers](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=7768:7816#L280)
 ``` go
 func (p *WorkerPool) RemoveWorkers(number int64)
 ```
-RemoveWorkers removes the specified number of workers, or the number running.
+RemoveWorkers removes the specified number of workers, or the number running
+
+Deprecated: RemoveWorkers will be removed in v2
 
 
 
 
-### <a name="WorkerPool.Size">func</a> (\*WorkerPool) [Size](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=6918:6951#L249)
+### <a name="WorkerPool.Size">func</a> (\*WorkerPool) [Size](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=8317:8350#L302)
 ``` go
 func (p *WorkerPool) Size() int64
 ```
-Size returns the eventually-consistent number of workers in the pool
+Size returns the eventually-consistent number of workers in the pool. Returns -1 for simple pools
+
+Deprecated: Size will be removed in v2
 
 
 
 
-### <a name="WorkerPool.Work">func</a> (\*WorkerPool) [Work](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=3167:3198#L115)
+### <a name="WorkerPool.Work">func</a> (\*WorkerPool) [Work](https://github.com/cognusion/go-jar/tree/master/workers/workerpool.go?s=4203:4234#L143)
 ``` go
 func (p *WorkerPool) Work() int
 ```
@@ -231,4 +268,4 @@ Work returns the quantity of Work in the work channel
 
 
 - - -
-Generated by [godoc2md](http://godoc.org/github.com/cognusion/godoc2md)
+Generated by [godoc2md](http://github.com/cognusion/godoc2md)

@@ -13,6 +13,28 @@ func init() {
 	//DebugOut = log.New(os.Stderr, "[DEBUG] ", log.Ldate|log.Ltime|log.Lshortfile)
 }
 
+func TestSimpleWorkerpool(t *testing.T) {
+	workChan := make(chan Work)
+	rChan := make(chan interface{}, 1)
+
+	Convey("When a simple Workerpool intializes, and when we give it work", t, func() {
+		p := NewSimpleWorkerPool(workChan)
+		defer p.Stop()
+
+		So(p.Size(), ShouldEqual, -1) // stupid if{} for simple pools
+
+		p.Metrics.Mark(1)
+		workChan <- &DemoWork{rChan}
+
+		Convey("we should get the expected response, on the return channel", func() {
+			resp := <-rChan
+			So(resp, ShouldHaveSameTypeAs, "Hello World")
+			So(resp, ShouldEqual, "Worrrrrrrrk")
+		})
+
+	})
+}
+
 func TestWorkerpoolDo(t *testing.T) {
 	workChan := make(chan Work)
 	rChan := make(chan interface{}, 1)
