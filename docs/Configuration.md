@@ -1,6 +1,6 @@
 # Configuration
 
-JAR configuration can occur via file or ENV. I recommend files, and this documentation assumes that (*YAML* specifically). JAR can read configuration in JSON, TOML, YAML, HCL, or Java properties -formats. The config variable *names* are case insensitive, but be careful with the *values* as most are strict.
+JAR configuration can occur via file or ENV. This documentation assumes *YAML* specifically. JAR can read configuration in JSON, TOML, YAML, HCL, or Java properties -formats. The config variable *names* are case insensitive, but be careful with the *values* as most are strict.
 
 This documentation reflects configuration possibilities as of the associated commit. Please extend this documentation, or ask questions, as they come up.
 
@@ -9,16 +9,16 @@ Usage of ./jar:
       --checkconfig     Run through the config load and then exit
       --config string   Config file to load
       --debug           Enable vociferous output
-      --docs            Run through the config, build runtime docs, and then exit
       --dumpconfig      Load the config, dump it to stderr, and then exit
-      --version         Print the version (3.24.4), and then exit
+      --gopsagent       Start the 'gops' agent
+      --version         Print the version and then exit
 ```
 
 ## General
 
 ### authoritativedomains: [list]
 
-A list of domains or hostname suffixes this instance will handle. Anything not matching will return 400. This also impact **tls.httpredirects**.
+A list of domains or hostname suffixes this instance will handle. Anything not matching will return 400. This also impacts **tls.httpredirects**.
 
 ```yaml
 authoritativedomains:

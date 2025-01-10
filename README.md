@@ -13,6 +13,7 @@ across heterogeneous application stacks.
 
 Consumers will want to 'cd cmd/jard; go build; #enjoy'
 
+* [Roadmap](docs/Roadmap.md)
 * [Configuration Docs](docs/Configuration.md)
 * [Features](docs/Features.md)
   * [Consistent-Hashing Pools](docs/consistenthashing.md)
