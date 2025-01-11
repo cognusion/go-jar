@@ -443,7 +443,7 @@ type reqRewriter struct {
 // Rewrite remove headers from a request
 func (h *reqRewriter) Rewrite(r *http.Request) {
 
-	DebugOut.Printf(ErrRequestError{r, fmt.Sprintf("reqRewriter firing! %+v\n", h)}.String())
+	DebugOut.Print(ErrRequestError{r, fmt.Sprintf("reqRewriter firing! %+v\n", h)}.String())
 	hr := forward.HeaderRewriter{TrustForwardHeader: true, Hostname: Hostname}
 	hr.Rewrite(r)
 

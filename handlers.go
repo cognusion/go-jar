@@ -545,7 +545,7 @@ func (b *BodyByteLimit) Handler(next http.Handler) http.Handler {
 			if err := buff.ResetFromLimitedReader(r.Body, b.byteLimit); err != nil {
 				r.Body.Close()
 				buff.Close()
-				DebugOut.Printf(ErrRequestError{r, "Request body too large"}.Error())
+				DebugOut.Print(ErrRequestError{r, "Request body too large"}.Error())
 				http.Error(w, ErrRequestError{r, http.StatusText(http.StatusRequestEntityTooLarge)}.Error(), http.StatusRequestEntityTooLarge) // Machine-readable
 				return
 			}

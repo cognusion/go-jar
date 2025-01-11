@@ -96,7 +96,7 @@ func (h *HMAC) Handler(next http.Handler) http.Handler {
 		t.Start()
 
 		if parts = strings.Split(r.URL.Path, "/"); len(parts) < 2 {
-			DebugOut.Printf(ErrRequestError{r, "Request path doesn't have at least 2 /-delimited parts. Unsigned or malformed"}.Error())
+			DebugOut.Print(ErrRequestError{r, "Request path doesn't have at least 2 /-delimited parts. Unsigned or malformed"}.Error())
 			http.Error(w, ErrRequestError{r, http.StatusText(http.StatusForbidden)}.Error(), http.StatusForbidden) // Machine-readable
 			return
 		}
@@ -105,14 +105,14 @@ func (h *HMAC) Handler(next http.Handler) http.Handler {
 		r.URL.Path = strings.Join(parts[:len(parts)-1], "/")
 		realURI = craftURI(r.URL.Path, r.URL.Query()) // set URI without the hmac
 
-		DebugOut.Printf(ErrRequestError{r, fmt.Sprintf("Verifying '%s' against %s", realURI, hashPart)}.Error())
+		DebugOut.Print(ErrRequestError{r, fmt.Sprintf("Verifying '%s' against %s", realURI, hashPart)}.Error())
 		ok, err := verifyHMAC([]byte(realURI), h.key, h.salt, hashPart)
 		if err != nil {
-			DebugOut.Printf(ErrRequestError{r, fmt.Sprintf("Error while verifying HMAC: %s", err.Error())}.Error())
+			DebugOut.Print(ErrRequestError{r, fmt.Sprintf("Error while verifying HMAC: %s", err.Error())}.Error())
 			http.Error(w, ErrRequestError{r, http.StatusText(http.StatusForbidden)}.Error(), http.StatusForbidden) // Machine-readable
 			return
 		} else if !ok {
-			DebugOut.Printf(ErrRequestError{r, "HMAC verification failed"}.Error())
+			DebugOut.Print(ErrRequestError{r, "HMAC verification failed"}.Error())
 			http.Error(w, ErrRequestError{r, http.StatusText(http.StatusForbidden)}.Error(), http.StatusForbidden) // Machine-readable
 			return
 		}
@@ -126,14 +126,14 @@ func (h *HMAC) Handler(next http.Handler) http.Handler {
 			expStr := r.URL.Query().Get(expirationField)
 			exp, perr := strconv.ParseInt(expStr, 10, 0)
 			if perr != nil {
-				DebugOut.Printf(ErrRequestError{r, fmt.Sprintf("Error while converting expiration number to int: %s", perr.Error())}.Error())
+				DebugOut.Print(ErrRequestError{r, fmt.Sprintf("Error while converting expiration number to int: %s", perr.Error())}.Error())
 				http.Error(w, ErrRequestError{r, http.StatusText(http.StatusForbidden)}.Error(), http.StatusForbidden) // Machine-readable
 				return
 			}
 
 			expTime := time.UnixMilli(exp)
 			if !time.Now().Before(expTime) {
-				DebugOut.Printf(ErrRequestError{r, "HMAC expired"}.Error())
+				DebugOut.Print(ErrRequestError{r, "HMAC expired"}.Error())
 				http.Error(w, ErrRequestError{r, http.StatusText(http.StatusForbidden)}.Error(), http.StatusForbidden) // Machine-readable
 				return
 			}
