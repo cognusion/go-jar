@@ -362,6 +362,14 @@ func bootstrap() (done bool, servers []*http.Server) {
 			tlscfg.NextProtos = append(tlscfg.NextProtos, "h2")
 		}
 
+		/*
+			// HTTP/3 - Should this be before or after 2? :thinking:
+			if Conf.GetBool(ConfigTLSHTTP3) {
+				DebugOut.Println("HTTP3: true")
+				tlscfg.NextProtos = append(tlscfg.NextProtos, "h3")
+			}
+		*/
+
 		// Get the certs in there unless ACME is doing it for us
 		if !Conf.GetBool(ConfigACMEEnabled) {
 			lc := Conf.GetStringMap(ConfigTLSCerts)

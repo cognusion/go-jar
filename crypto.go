@@ -40,6 +40,7 @@ const (
 	ConfigTLSMaxVersion        = ConfigKey("tls.maxversion")
 	ConfigTLSMinVersion        = ConfigKey("tls.minversion")
 	ConfigTLSHTTP2             = ConfigKey("tls.http2")
+	//ConfigTLSHTTP3             = ConfigKey("tls.http3")
 )
 
 var (
