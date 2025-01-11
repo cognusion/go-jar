@@ -344,10 +344,17 @@ func bootstrap() (done bool, servers []*http.Server) {
 			DebugOut.Printf("\t%s\n", c)
 		}
 
-		tlscfg = &tls.Config{
-			PreferServerCipherSuites: true,
-			CipherSuites:             cl,
+		if Conf.GetBool(ConfigACMEEnabled) {
+			// we are using ACME
+			acmeManager = boostrapAcme()
+			tlscfg = acmeManager.TLSConfig()
+		} else {
+			// we are not using ACME
+			tlscfg = &tls.Config{}
 		}
+
+		// We care about the ciphersuites used.
+		tlscfg.CipherSuites = cl
 
 		// HTTP/2
 		if Conf.GetBool(ConfigTLSHTTP2) {
@@ -355,28 +362,30 @@ func bootstrap() (done bool, servers []*http.Server) {
 			tlscfg.NextProtos = append(tlscfg.NextProtos, "h2")
 		}
 
-		// Get the certs in there
-		lc := Conf.GetStringMap(ConfigTLSCerts)
-		certs := make([]Cert, len(lc))
-		i := 0
-		for k, c := range lc {
-			cm := cast.ToStringMapString(c)
-			certs[i] = Cert{
-				Domain:   k,
-				Keyfile:  cm["keyfile"],
-				Certfile: cm["certfile"],
+		// Get the certs in there unless ACME is doing it for us
+		if !Conf.GetBool(ConfigACMEEnabled) {
+			lc := Conf.GetStringMap(ConfigTLSCerts)
+			certs := make([]Cert, len(lc))
+			i := 0
+			for k, c := range lc {
+				cm := cast.ToStringMapString(c)
+				certs[i] = Cert{
+					Domain:   k,
+					Keyfile:  cm["keyfile"],
+					Certfile: cm["certfile"],
+				}
+				i++
 			}
-			i++
-		}
 
-		// Load all the cert pairs
-		DebugOut.Printf("Certs: %+v\n", certs)
-		for _, c := range certs {
-			cer, err := tls.LoadX509KeyPair(c.Certfile, c.Keyfile)
-			if err != nil {
-				panic(fmt.Errorf("error loading certpair %s %s: %w", c.Certfile, c.Keyfile, err))
+			// Load all the cert pairs
+			DebugOut.Printf("Certs: %+v\n", certs)
+			for _, c := range certs {
+				cer, err := tls.LoadX509KeyPair(c.Certfile, c.Keyfile)
+				if err != nil {
+					panic(fmt.Errorf("error loading certpair %s %s: %w", c.Certfile, c.Keyfile, err))
+				}
+				tlscfg.Certificates = append(tlscfg.Certificates, cer)
 			}
-			tlscfg.Certificates = append(tlscfg.Certificates, cer)
 		}
 
 		var (
