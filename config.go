@@ -146,6 +146,10 @@ func loadDefaults(v *viper.Viper) error {
 	v.SetDefault(ConfigURLRouteNameHeaderName, "X-URLROUTENAME")     // Name of the header to use for route name
 	v.SetDefault(ConfigPoolHeaderName, "X-URLPOOL")                  // Name of the header to use when capturing the servicing pool
 	v.SetDefault(ConfigPoolMemberHeaderName, "X-URLPOOLMEMBER")      // Name of the header to use when capturing the servicing request pool member
+
+	//v.SetDefault(ConfigTLSHTTP2, true) // If using TLS, support h2
+	//v.SetDefault(ConfigTLSHTTP3, true) // If using TLS, support h3
+
 	ConfigAdditions.Set(v)
 
 	return nil
