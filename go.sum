@@ -854,8 +854,8 @@ github.com/cognusion/go-timings v1.0.0 h1:BIJH9nj46an/bp3L6FCXeeRwTDeKNxu7uSE8xd
 github.com/cognusion/go-timings v1.0.0/go.mod h1:M2IjK6Sr6/YTlm3Jws1wL7NUdn+28XVEkTac529GlbY=
 github.com/cognusion/go-zulipsend v1.0.1 h1:dLLoWAuRR/Rd6iBe4KRprNYKzQXWMeU4wOcj62Mbs0k=
 github.com/cognusion/go-zulipsend v1.0.1/go.mod h1:QaQwnmbLN7Ol1IrVXv2mEgH57SNsdQJHUzKFAskoNII=
-github.com/cognusion/grace v0.1.0 h1:2db0SpB/Akjcu5u9HY9njPuhNGXlPm4jracKNDiIAoo=
-github.com/cognusion/grace v0.1.0/go.mod h1:mktX+D04vk7vswmFiQJqQ0oIgXk7f3UAISusVR5bSa0=
+github.com/cognusion/grace v0.1.1 h1:HGeqQeYCIxFfsoeNy03OjlPtzr7+njzvXnC0WZLbh4E=
+github.com/cognusion/grace v0.1.1/go.mod h1:Mqyl47+rY2GWxnyCAsw5yXK8EvDH6P6AVeTBBLOB82Y=
 github.com/cognusion/srvdisco v1.0.0 h1:c/c92qcYGrvTf7Z65WDfFJ/UlM+ovwOH9E/3ro3uXtU=
 github.com/cognusion/srvdisco v1.0.0/go.mod h1:Z/gC6PbS5K5GjJLSZpCAtVQixpOR3ZqC3eTZV/BY+BI=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=

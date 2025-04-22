@@ -11,7 +11,7 @@ require (
 	github.com/cognusion/go-cronzilla v1.0.0
 	github.com/cognusion/go-nagios-checks v1.0.0 // indirect
 	github.com/cognusion/go-timings v1.0.0
-	github.com/cognusion/grace v0.1.0
+	github.com/cognusion/grace v0.1.1
 	github.com/davecgh/go-spew v1.1.1
 	github.com/eapache/go-resiliency v1.7.0
 	github.com/facebookgo/clock v0.0.0-20150410010913-600d898af40a // indirect
