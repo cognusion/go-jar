@@ -72,19 +72,17 @@ func init() {
 					var (
 						cpu  float64
 						mem  float64
-						size int64
 						rate float64
 					)
 
 					if Workers != nil {
-						size = Workers.Size()
 						rate = Workers.Metrics.Rate1()
 					}
 					if ThisProcess != nil {
 						cpu = ThisProcess.CPU()
 						mem = ThisProcess.Memory()
 					}
-					DebugOut.Printf("Rate: %.4f/second Goros: %d Workers: %d Worker Rate: %.2f Connections: %d Requests: %d CPU: %.2f%% RAM: %.2f%%\n", rc.Rate1(), runtime.NumGoroutine(), size, rate, ConnectionCounterGet(), rc.Count(), cpu, mem)
+					DebugOut.Printf("Rate: %.4f/second Goros: %d Worker Rate: %.2f Connections: %d Requests: %d CPU: %.2f%% RAM: %.2f%%\n", rc.Rate1(), runtime.NumGoroutine(), rate, ConnectionCounterGet(), rc.Count(), cpu, mem)
 				}
 				return nil
 			}, 10*time.Second)
