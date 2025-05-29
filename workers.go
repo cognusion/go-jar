@@ -22,11 +22,7 @@ func init() {
 			workChan := make(chan workers.Work)
 
 			Workers = workers.NewSimpleWorkerPool(workChan)
-
-			AddWork = func(work workers.Work) {
-				Workers.Metrics.Mark(1)
-				workChan <- work
-			}
+			AddWork = Workers.AddWork
 		}
 	})
 }
