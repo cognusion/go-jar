@@ -307,14 +307,14 @@ func (p *WorkerPool) Size() int64 {
 	return atomic.LoadInt64(&p.size)
 }
 
+// simplePool listens for work, and doles it out to a new Worker.
 func (p *WorkerPool) simplePool() {
 	for {
 		select {
 		case work := <-p.WorkChan:
 			DebugOut.Printf("Work: %T %+v \n", work, work)
 
-			w := &Worker{}
-			go w.DoOnce(work)
+			go workIt(work)
 
 		case <-p.killChan:
 			return

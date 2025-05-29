@@ -68,8 +68,7 @@ func TestWorkerDoOnce(t *testing.T) {
 	rChan := make(chan interface{}, 1)
 
 	Convey("When a Worker is told to do some work once", t, func() {
-		r := Worker{}
-		r.DoOnce(&DemoWork{rChan})
+		workIt(&DemoWork{rChan})
 
 		Convey("we should get the expected response, on the return channel", func() {
 			resp := <-rChan

@@ -1,7 +1,6 @@
 package workers
 
 import (
-	"fmt"
 	"sync/atomic"
 )
 
@@ -21,7 +20,7 @@ type Worker struct {
 
 // DoOnce asks the Worker to do one unit of Work and then end
 func (w *Worker) DoOnce(work Work) {
-	w.workIt(work)
+	workIt(work)
 }
 
 // Do forks off a Workerloop that listens for Work, quits, or kills
@@ -36,7 +35,7 @@ func (w *Worker) Do() {
 			select {
 			case work := <-w.WorkChan:
 				DebugOut.Printf("Work: %T %+v \n", work, work)
-				w.workIt(work)
+				workIt(work)
 			case b := <-w.QuitChan:
 				if b {
 					return
@@ -46,21 +45,4 @@ func (w *Worker) Do() {
 			}
 		}
 	}()
-}
-
-func (w *Worker) workIt(work Work) {
-	defer w.recovery(work)
-	work.Return(work.Work())
-}
-
-// recovery is used internally to recover from panic's caused by shoddy Work
-func (w *Worker) recovery(panicwork Work) {
-	if r := recover(); r != nil {
-		DebugOut.Printf("Worker panic'd: %s\n", r)
-		ErrorOut.Printf("Worker panic'd: %s\n", r)
-
-		if panicwork != nil {
-			panicwork.Return(WorkError{fmt.Sprintf("Work generated panic: %s", r)})
-		}
-	}
 }
