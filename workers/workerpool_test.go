@@ -3,8 +3,6 @@ package workers
 import (
 	. "github.com/smartystreets/goconvey/convey"
 
-	//"log"
-	//"os"
 	"testing"
 	"time"
 )
@@ -30,6 +28,7 @@ func TestSimpleWorkerpool(t *testing.T) {
 			resp := <-rChan
 			So(resp, ShouldHaveSameTypeAs, "Hello World")
 			So(resp, ShouldEqual, "Worrrrrrrrk")
+			So(p.Metrics.Count(), ShouldEqual, 1)
 		})
 
 	})
@@ -342,4 +341,41 @@ func TestWorkerpoolCheckGrowAutomatic(t *testing.T) {
 		})
 
 	})
+}
+
+func addWork(pool *WorkerPool, work Work) {
+	//pool.Metrics.Mark(1)
+	pool.WorkChan <- work
+}
+
+func Benchmark_OldWorkerPool(b *testing.B) {
+	workChan := make(chan Work)
+	rChan := make(chan interface{})
+
+	p := NewWorkerPool(workChan, 100, 0)
+	defer p.Stop()
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		// Yes, this is super naive and doesn't test the overall async performance.
+		// I'm benching for allocs more than time.
+		addWork(p, &DemoWork{rChan})
+		<-rChan
+	}
+}
+
+func Benchmark_SimpleWorkerPool(b *testing.B) {
+	workChan := make(chan Work)
+	rChan := make(chan interface{})
+
+	p := NewSimpleWorkerPool(workChan)
+	defer p.Stop()
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		// Yes, this is super naive and doesn't test the overall async performance.
+		// I'm benching for allocs more than time.
+		addWork(p, &DemoWork{rChan})
+		<-rChan
+	}
 }

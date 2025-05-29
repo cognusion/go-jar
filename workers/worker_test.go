@@ -97,7 +97,7 @@ func TestWorkerQuit(t *testing.T) {
 		So(r.self.Load(), ShouldBeTrue)
 
 		quitChan <- true
-
+		time.Sleep(1 * time.Millisecond)
 		Convey("it's gone", func() {
 			So(r.self.Load(), ShouldBeFalse)
 		})
