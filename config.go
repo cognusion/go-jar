@@ -1,11 +1,12 @@
 package jar
 
 import (
-	"github.com/spf13/viper"
-
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
+
+	"github.com/spf13/viper"
 )
 
 // Constants for configuration key strings
@@ -96,7 +97,7 @@ func LoadConfig(configFilename string, v *viper.Viper) error {
 			return fmt.Errorf("unable to locate config file '%s': %w", configFilenames[0], err)
 		}
 		for _, configFile := range configFilenames[1:] {
-			file, err := os.Open(configFile) // For read access.
+			file, err := os.Open(filepath.Clean(configFile)) // For read access.
 			if err != nil {
 				return fmt.Errorf("unable to open config file '%s': %w", configFile, err)
 			}

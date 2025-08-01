@@ -1,6 +1,8 @@
 package jar
 
 import (
+	"path/filepath"
+
 	"github.com/cognusion/go-timings"
 	"github.com/fsnotify/fsnotify"
 
@@ -203,7 +205,7 @@ func (b *BasicAuth) handler(next http.Handler) http.Handler {
 func (b *BasicAuth) Load() error {
 	file := strings.TrimPrefix(b.source, "file://")
 
-	f, err := os.Open(file)
+	f, err := os.Open(filepath.Clean(file))
 	if err != nil {
 		ErrorOut.Printf("Error opening '%s': %s\n", file, err)
 		return err
