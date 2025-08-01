@@ -3,6 +3,7 @@ package mapmap
 import (
 	"bufio"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -94,7 +95,7 @@ func (o *MapMap) Size() int {
 func (o *MapMap) Load(name, filename string) error {
 	m := make(map[string]string)
 
-	file, err := os.Open(filename)
+	file, err := os.Open(filepath.Clean(filename))
 	if err != nil {
 		return err
 	}
