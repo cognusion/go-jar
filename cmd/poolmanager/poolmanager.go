@@ -1,29 +1,29 @@
 package main
 
 import (
-	"io"
-
-	"github.com/cognusion/srvdisco"
-	"github.com/spf13/pflag"
-
 	"crypto/tls"
 	"encoding/base64"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"strings"
+
+	"github.com/cognusion/srvdisco"
+	"github.com/spf13/pflag"
 )
 
 var (
-	debug     bool
-	useSRV    bool
-	suffixSRV string
-	domainSRV string
-	scheme    string
-	targets   string
-	baseURI   string
-	command   string
-	pool      string
+	debug      bool
+	useSRV     bool
+	skipVerify bool
+	suffixSRV  string
+	domainSRV  string
+	scheme     string
+	targets    string
+	baseURI    string
+	command    string
+	pool       string
 
 	commands = []string{"add", "lose", "list"}
 )
@@ -37,6 +37,7 @@ func init() {
 	// Set up the CLI
 	pflag.BoolVar(&debug, "debug", false, "Enable vociferous output")
 	pflag.BoolVar(&useSRV, "srv", true, "Use DNS SRV to look up targets")
+	pflag.BoolVar(&skipVerify, "skipverify", true, "Skip certificate verification")
 	pflag.StringVar(&suffixSRV, "srvsuffix", "", "Suffix of DNS SRV to use (e.g. dev, prod, useast1c, etc.)")
 	pflag.StringVar(&domainSRV, "srvdomain", "", "Domain of DNS SRV to use")
 	pflag.StringVar(&scheme, "scheme", "https", "Protocol scheme to prefix")
@@ -46,8 +47,11 @@ func init() {
 	pflag.StringVar(&command, "command", "", fmt.Sprintf("Command to issue, one of: %v", commands))
 	pflag.Parse()
 
-	// DGAF about cert issues. Make It So.
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	if skipVerify {
+		// DGAF about cert issues. Make It So.
+		//#nosec G402 -- Tool explicit skipverify.
+		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	}
 }
 
 func get(url string) error {
