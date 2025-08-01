@@ -314,6 +314,7 @@ func addPKCS5(plaintext []byte, blocksize int) []byte {
 
 // compareShaHashAndPassword compares a SHA-hashed password and a clear password and returns errMismatchedHashAndPassword if they do not match
 func compareShaHashAndPassword(hashedPassword, password []byte) error {
+	//#nosec G401 -- Only used if explicitly requested.
 	d := sha1.New()
 	d.Write(password)
 	if subtle.ConstantTimeCompare(hashedPassword[5:], []byte(base64.StdEncoding.EncodeToString(d.Sum(nil)))) != 1 {
