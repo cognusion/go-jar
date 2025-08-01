@@ -474,11 +474,12 @@ func bootstrap() (done bool, servers []*http.Server) {
 
 	// Default listener
 	s := &http.Server{
-		Addr:        listen,
-		Handler:     r,
-		ErrorLog:    ErrorOut,
-		TLSConfig:   tlscfg, // might be nil, might be live.
-		IdleTimeout: Conf.GetDuration(ConfigKeepaliveTimeout),
+		Addr:              listen,
+		Handler:           r,
+		ErrorLog:          ErrorOut,
+		TLSConfig:         tlscfg, // might be nil, might be live.
+		IdleTimeout:       Conf.GetDuration(ConfigKeepaliveTimeout),
+		ReadHeaderTimeout: Conf.GetDuration(ConfigTimeout),
 		//ReadTimeout:  Conf.GetDuration(ConfigTimeout),
 		//WriteTimeout: Conf.GetDuration(ConfigTimeout),
 	}
