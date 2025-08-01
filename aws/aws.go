@@ -2,6 +2,12 @@ package aws
 
 import (
 	"context"
+	"fmt"
+	"io"
+	"log"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -11,13 +17,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/cognusion/go-timings"
-
-	"fmt"
-	"io"
-	"log"
-	"os"
-	"path/filepath"
-	"strings"
 )
 
 var (
@@ -118,7 +117,7 @@ func (s *Session) BucketToFile(bucket, bucketPath, filename string) (size int64,
 	defer TimingOut.Printf("BucketToFile took %s for %s %s %s\n", t.Since().String(), bucket, bucketPath, filename)
 
 	// Open the file
-	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
+	file, err := os.OpenFile(filepath.Clean(filename), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
 		return
 	}
