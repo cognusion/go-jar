@@ -9,13 +9,15 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/ec2metadata"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/ec2"
-	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/aws/credentials"
+	"github.com/aws/aws-sdk-go-v2/aws/ec2metadata"
+	"github.com/aws/aws-sdk-go-v2/aws/session"
+	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
+	ec2types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	s3types "github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/cognusion/go-timings"
 )
 
@@ -25,13 +27,13 @@ var (
 	// TimingOut is a log.Logger for timing-related debug messages. DEPRECATED
 	TimingOut = log.New(io.Discard, "[TIMING] ", 0)
 
-	bofcACL = "bucket-owner-full-control"
+	bofcACL = s3types.ObjectCannedACLBucketOwnerFullControl
 )
 
 // Session is a container around an AWS Session, to make AWS operations easier
 type Session struct {
 	// AWS is the raw, hopefully initialized AWS Session
-	AWS *session.Session
+	AWS *aws.Config
 	Me  *ec2metadata.EC2InstanceIdentityDocument
 }
 
@@ -71,17 +73,17 @@ func InitAWS(awsRegion, awsAccessKey, awsSecretKey string) (*session.Session, er
 	// Region
 	if awsRegion != "" {
 		// CLI trumps
-		config.Region = aws.String(awsRegion)
+		config.Region = awsRegion
 	} else if os.Getenv("AWS_DEFAULT_REGION") != "" {
 		// Env is good, too
-		config.Region = aws.String(os.Getenv("AWS_DEFAULT_REGION"))
+		config.Region = os.Getenv("AWS_DEFAULT_REGION")
 	} else {
 		// Grab it from this EC2 instance, maybe
 		region, err := GetAwsRegionE()
 		if err != nil {
 			return nil, fmt.Errorf("cannot set AWS region: '%w'", err)
 		}
-		config.Region = aws.String(region)
+		config.Region = region
 	}
 
 	// Creds
@@ -105,7 +107,7 @@ func InitAWS(awsRegion, awsAccessKey, awsSecretKey string) (*session.Session, er
 }
 
 // S3Client returns a raw S3 client from the current session
-func (s *Session) S3Client() *s3.S3 {
+func (s *Session) S3Client() *s3.Client {
 	return s3.New(s.AWS)
 }
 
@@ -123,8 +125,8 @@ func (s *Session) BucketToFile(bucket, bucketPath, filename string) (size int64,
 	}
 	defer file.Close()
 
-	downloader := s3manager.NewDownloader(s.AWS)
-	size, err = downloader.Download(file,
+	downloader := manager.NewDownloader(s.AWS)
+	size, err = downloader.Download(context.Background(), file,
 		&s3.GetObjectInput{
 			Bucket: aws.String(bucket),
 			Key:    aws.String(bucketPath),
@@ -145,10 +147,10 @@ func (s *Session) BucketToWriterWithContext(ctx context.Context, bucket, bucketP
 	t.Start()
 	defer TimingOut.Printf("BucketToWriterWithContext took %s for %s %s\n", t.Since().String(), bucket, bucketPath)
 
-	downloader := s3manager.NewDownloader(s.AWS)
+	downloader := manager.NewDownloader(s.AWS)
 	downloader.Concurrency = 1 // Mandatory to wrap the Writer
 
-	size, err = downloader.DownloadWithContext(ctx, writerAtWrapper{out},
+	size, err = downloader.Download(ctx, writerAtWrapper{out},
 		&s3.GetObjectInput{
 			Bucket: aws.String(bucket),
 			Key:    aws.String(bucketPath),
@@ -165,17 +167,17 @@ func (s *Session) BucketUpload(bucket, bucketPath string, file io.Reader) error 
 // BucketUploadWithContext uploads the file to the bucket/bucketPath, with the specified context
 func (s *Session) BucketUploadWithContext(ctx context.Context, bucket, bucketPath string, file io.Reader) error {
 
-	uploader := s3manager.NewUploader(s.AWS)
+	uploader := manager.NewUploader(s.AWS)
 
-	upParams := &s3manager.UploadInput{
-		ACL:    &bofcACL,
+	upParams := &s3.PutObjectInput{
+		ACL:    bofcACL,
 		Bucket: &bucket,
 		Key:    &bucketPath,
 		Body:   file,
 	}
 
 	// Perform upload with options different than the those in the Uploader.
-	_, err := uploader.UploadWithContext(ctx, upParams)
+	_, err := uploader.Upload(ctx, upParams)
 	return err
 }
 
@@ -196,12 +198,12 @@ func (s *Session) GetInstanceAZByIP(ip string) (string, error) {
 	t.Start()
 	defer TimingOut.Printf("GetInstanceAZByIP took %s\n", t.Since().String())
 
-	F := ec2.Filter{
+	F := ec2types.Filter{
 		Name:   aws.String("private-ip-address"),
-		Values: []*string{&ip},
+		Values: []string{ip},
 	}
 	DII := ec2.DescribeInstancesInput{
-		Filters: []*ec2.Filter{&F},
+		Filters: []ec2types.Filter{F},
 	}
 
 	svc := ec2.New(s.AWS)
@@ -211,7 +213,7 @@ func (s *Session) GetInstanceAZByIP(ip string) (string, error) {
 		err    error
 	)
 
-	result, err = svc.DescribeInstances(&DII)
+	result, err = svc.DescribeInstances(context.Background(), &DII)
 	if err != nil {
 		return "", err
 	}
@@ -225,19 +227,19 @@ func (s *Session) GetInstanceAZByIP(ip string) (string, error) {
 }
 
 // GetInstancesAZByIP returns a map of IPs to Availability Zones or an error
-func (s *Session) GetInstancesAZByIP(ips []*string) (*map[string]string, error) {
+func (s *Session) GetInstancesAZByIP(ips []string) (*map[string]string, error) {
 
 	var (
 		mss   = make(map[string]string)
 		token *string
 	)
 
-	F := ec2.Filter{
+	F := ec2types.Filter{
 		Name:   aws.String("private-ip-address"),
 		Values: ips,
 	}
 	DII := ec2.DescribeInstancesInput{
-		Filters: []*ec2.Filter{&F},
+		Filters: []ec2types.Filter{F},
 	}
 
 	svc := ec2.New(s.AWS)
@@ -251,13 +253,13 @@ func (s *Session) GetInstancesAZByIP(ips []*string) (*map[string]string, error) 
 
 		if *token == "nil" {
 			// First run
-			result, err = svc.DescribeInstances(&DII)
+			result, err = svc.DescribeInstances(context.Background(), &DII)
 		} else {
 			// Pages
 			DIIP := ec2.DescribeInstancesInput{
 				NextToken: token,
 			}
-			result, err = svc.DescribeInstances(&DIIP)
+			result, err = svc.DescribeInstances(context.Background(), &DIIP)
 		}
 		if err != nil {
 			return nil, err

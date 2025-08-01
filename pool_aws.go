@@ -4,8 +4,8 @@ import (
 	"net"
 	"regexp"
 
-	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/cognusion/go-jar/aws"
 	"github.com/vulcand/oxy/v2/roundrobin"
 
