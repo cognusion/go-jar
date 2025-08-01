@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/shirou/gopsutil/process"
+	"github.com/shirou/gopsutil/v4/process"
 	"go.uber.org/atomic"
 )
 
