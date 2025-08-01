@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/shirou/gopsutil/v4/process"
+	"github.com/spf13/cast"
 	"go.uber.org/atomic"
 )
 
@@ -86,7 +87,7 @@ func Restart(w http.ResponseWriter, r *http.Request) {
 // Supply 0 as the pid to autodetect the running process' pid
 func NewProcessInfo(pid int32) *ProcessInfo {
 	if pid == 0 {
-		pid = int32(os.Getpid())
+		pid = cast.ToInt32(os.Getpid())
 	}
 	p, err := process.NewProcess(pid)
 	if err != nil {
