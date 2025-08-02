@@ -10,9 +10,9 @@ import (
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/aws/credentials"
-	"github.com/aws/aws-sdk-go-v2/aws/ec2metadata"
-	"github.com/aws/aws-sdk-go-v2/aws/session"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/feature/ec2/imds"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	ec2types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
@@ -33,8 +33,8 @@ var (
 // Session is a container around an AWS Session, to make AWS operations easier
 type Session struct {
 	// AWS is the raw, hopefully initialized AWS Session
-	AWS *aws.Config
-	Me  *ec2metadata.EC2InstanceIdentityDocument
+	AWS aws.Config
+	Me  *imds.GetInstanceIdentityDocumentOutput
 }
 
 // NewSession returns a Session or an error. If `ec2` is false, `Session.Me` will be false.
@@ -47,7 +47,7 @@ func NewSession(awsRegion, awsAccessKey, awsSecretKey string, ec2 bool) (*Sessio
 		// Error initing session
 		return nil, err
 	}
-	s.AWS = awsSession
+	s.AWS = *awsSession
 
 	if ec2 {
 		idd, err := s.getMe()
@@ -55,7 +55,7 @@ func NewSession(awsRegion, awsAccessKey, awsSecretKey string, ec2 bool) (*Sessio
 			// Error getting ec2metadata
 			return nil, err
 		}
-		s.Me = &idd
+		s.Me = idd
 		DebugOut.Printf("EC2 Me: %+v\n", idd)
 	}
 	return &s, nil
@@ -66,7 +66,7 @@ func NewSession(awsRegion, awsAccessKey, awsSecretKey string, ec2 bool) (*Sessio
 // provided, the well-known environment variables (WKE) are
 // consulted. If they're not available, and running in an EC2
 // instance, then it will use the local IAM role
-func InitAWS(awsRegion, awsAccessKey, awsSecretKey string) (*session.Session, error) {
+func InitAWS(awsRegion, awsAccessKey, awsSecretKey string) (*aws.Config, error) {
 
 	config := aws.NewConfig()
 
@@ -89,26 +89,26 @@ func InitAWS(awsRegion, awsAccessKey, awsSecretKey string) (*session.Session, er
 	// Creds
 	if awsAccessKey != "" && awsSecretKey != "" {
 		// CLI trumps
-		creds := credentials.NewStaticCredentials(
+		creds := credentials.NewStaticCredentialsProvider(
 			awsAccessKey,
 			awsSecretKey,
 			"")
 		config.Credentials = creds
 	} else if os.Getenv("AWS_ACCESS_KEY_ID") != "" {
 		// Env is good, too
-		creds := credentials.NewStaticCredentials(
+		creds := credentials.NewStaticCredentialsProvider(
 			os.Getenv("AWS_ACCESS_KEY_ID"),
 			os.Getenv("AWS_SECRET_ACCESS_KEY"),
 			"")
 		config.Credentials = creds
 	}
 
-	return session.NewSession(config)
+	return config, nil
 }
 
 // S3Client returns a raw S3 client from the current session
 func (s *Session) S3Client() *s3.Client {
-	return s3.New(s.AWS)
+	return s3.NewFromConfig(s.AWS)
 }
 
 // BucketToFile copies a file from an S3 bucket to a local file
@@ -125,7 +125,7 @@ func (s *Session) BucketToFile(bucket, bucketPath, filename string) (size int64,
 	}
 	defer file.Close()
 
-	downloader := manager.NewDownloader(s.AWS)
+	downloader := manager.NewDownloader(s3.NewFromConfig(s.AWS))
 	size, err = downloader.Download(context.Background(), file,
 		&s3.GetObjectInput{
 			Bucket: aws.String(bucket),
@@ -147,7 +147,7 @@ func (s *Session) BucketToWriterWithContext(ctx context.Context, bucket, bucketP
 	t.Start()
 	defer TimingOut.Printf("BucketToWriterWithContext took %s for %s %s\n", t.Since().String(), bucket, bucketPath)
 
-	downloader := manager.NewDownloader(s.AWS)
+	downloader := manager.NewDownloader(s3.NewFromConfig(s.AWS))
 	downloader.Concurrency = 1 // Mandatory to wrap the Writer
 
 	size, err = downloader.Download(ctx, writerAtWrapper{out},
@@ -167,7 +167,7 @@ func (s *Session) BucketUpload(bucket, bucketPath string, file io.Reader) error 
 // BucketUploadWithContext uploads the file to the bucket/bucketPath, with the specified context
 func (s *Session) BucketUploadWithContext(ctx context.Context, bucket, bucketPath string, file io.Reader) error {
 
-	uploader := manager.NewUploader(s.AWS)
+	uploader := manager.NewUploader(s3.NewFromConfig(s.AWS))
 
 	upParams := &s3.PutObjectInput{
 		ACL:    bofcACL,
@@ -182,12 +182,12 @@ func (s *Session) BucketUploadWithContext(ctx context.Context, bucket, bucketPat
 }
 
 // getMe grabs the InstanceIdentityDocument for the running instance
-func (s *Session) getMe() (ec2metadata.EC2InstanceIdentityDocument, error) {
+func (s *Session) getMe() (*imds.GetInstanceIdentityDocumentOutput, error) {
 	// {DevpayProductCodes:[] AvailabilityZone:us-east-1d PrivateIP:10.2.21.50 Version:2017-09-30
 	//  Region:us-east-1 InstanceID:i-032681bb83e1de5cf BillingProducts:[] InstanceType:t2.medium
 	//  AccountID:929091317894 PendingTime:2018-06-27 18:06:50 +0000 UTC ImageID:ami-55ef662f KernelID:
 	//  RamdiskID: Architecture:x86_64}
-	return ec2metadata.New(s.AWS).GetInstanceIdentityDocument()
+	return imds.NewFromConfig(s.AWS).GetInstanceIdentityDocument(context.TODO(), nil)
 }
 
 // GetInstanceAZByIP returns an Availability Zone or an error
@@ -206,7 +206,7 @@ func (s *Session) GetInstanceAZByIP(ip string) (string, error) {
 		Filters: []ec2types.Filter{F},
 	}
 
-	svc := ec2.New(s.AWS)
+	svc := ec2.NewFromConfig(s.AWS)
 
 	var (
 		result *ec2.DescribeInstancesOutput
@@ -242,7 +242,7 @@ func (s *Session) GetInstancesAZByIP(ips []string) (*map[string]string, error) {
 		Filters: []ec2types.Filter{F},
 	}
 
-	svc := ec2.New(s.AWS)
+	svc := ec2.NewFromConfig(s.AWS)
 
 	token = aws.String("nil") // just because
 	for token != nil {
@@ -287,19 +287,24 @@ func GetAwsRegion() (region string) {
 // GetAwsRegionE returns the region as a string and and error,
 // first consulting the well-known environment variables,
 // then falling back EC2 metadata calls
-func GetAwsRegionE() (region string, err error) {
+func GetAwsRegionE() (string, error) {
 
 	if os.Getenv("AWS_DEFAULT_REGION") != "" {
-		region = os.Getenv("AWS_DEFAULT_REGION")
-	} else {
-		// Grab it from this EC2 instace
-		var s *session.Session
-		if s, err = session.NewSession(); err != nil {
-			return
-		}
-		region, err = ec2metadata.New(s).Region()
+		return os.Getenv("AWS_DEFAULT_REGION"), nil
 	}
-	return
+
+	// Grab it from this EC2 instace
+	cfg, err := config.LoadDefaultConfig(context.TODO())
+	if err != nil {
+		return "", err
+	}
+
+	client := imds.NewFromConfig(cfg)
+	region, err := client.GetRegion(context.TODO(), nil)
+	if err != nil {
+		return "", err
+	}
+	return region.Region, nil
 }
 
 // S3urlToParts explodes an s3://bucket/path/file url into its parts
