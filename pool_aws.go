@@ -1,17 +1,16 @@
 package jar
 
 import (
+	"errors"
 	"net"
-	"regexp"
-
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/cognusion/go-jar/aws"
-	"github.com/vulcand/oxy/v2/roundrobin"
-
 	"net/http"
 	"net/url"
+	"regexp"
 	"strings"
+
+	s3types "github.com/aws/aws-sdk-go-v2/service/s3/types"
+	"github.com/cognusion/go-jar/aws"
+	"github.com/vulcand/oxy/v2/roundrobin"
 )
 
 func init() {
@@ -72,16 +71,11 @@ func (s3p *S3Pool) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	_, err := s3p.session.BucketToWriter(s3p.bucket, filepath, w)
 	if err != nil {
-		if aerr, ok := err.(awserr.Error); ok {
-			switch aerr.Code() {
-			case s3.ErrCodeNoSuchBucket:
-				fallthrough
-			case s3.ErrCodeNoSuchKey:
-				http.Error(w, ErrRequestError{r, "Not found"}.Error(), http.StatusNotFound)
-				return
-			}
-			// Anything else, we treat as a generic error
+		if errors.Is(err, &s3types.NoSuchBucket{}) || errors.Is(err, &s3types.NoSuchKey{}) {
+			http.Error(w, ErrRequestError{r, "Not found"}.Error(), http.StatusNotFound)
+			return
 		}
+		// Anything else, we treat as a generic error
 
 		es := ErrRequestError{r, "Error during download"}.Error()
 		ErrorOut.Printf("%s '%s' from bucket %s: %v", es, filepath, s3p.bucket, err)
