@@ -1,15 +1,18 @@
 package jar
 
 import (
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	"github.com/cognusion/go-timings"
-
+	"context"
 	"fmt"
 	"io"
 	"net/http"
 	"path/filepath"
 	"strings"
+
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	s3types "github.com/aws/aws-sdk-go-v2/service/s3/types"
+	"github.com/cognusion/go-timings"
 )
 
 // Constants for configuration key strings
@@ -34,7 +37,7 @@ const (
 )
 
 var (
-	bofcACL = "bucket-owner-full-control"
+	bofcACL = s3types.ObjectCannedACLBucketOwnerFullControl
 	charMap map[string]string
 )
 
@@ -111,7 +114,7 @@ func S3StreamProxyFinisher(w http.ResponseWriter, r *http.Request) {
 		basefn string
 	)
 
-	svc := s3manager.NewUploader(AWSSession.AWS)
+	svc := manager.NewUploader(s3.NewFromConfig(AWSSession.AWS))
 
 	if pathOptions.GetString(ConfigS3StreamProxyZulipStream) != "" && ZulipClient != nil {
 		DebugOut.Print(ErrRequestError{r, fmt.Sprintf("S3StreamProxy using Zulip %s %s\n", pathOptions.GetString(ConfigS3StreamProxyZulipStream), pathOptions.GetString(ConfigS3StreamProxyZulipTopic))}.String())
@@ -168,8 +171,8 @@ func S3StreamProxyFinisher(w http.ResponseWriter, r *http.Request) {
 			DebugOut.Println(ErrRequestError{r, fmt.Sprintf("S3StreamProxy: Upload '%s' to Bucket '%s' Key '%s'", fn, bucket, basefn)})
 
 			// Upload the file to S3.
-			_, err := svc.Upload(&s3manager.UploadInput{
-				ACL:    &bofcACL,
+			_, err := svc.Upload(context.Background(), &s3.PutObjectInput{
+				ACL:    bofcACL,
 				Bucket: aws.String(bucket),
 				Key:    aws.String(basefn),
 				Body:   p,
