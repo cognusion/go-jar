@@ -42,8 +42,10 @@ type GroupCache struct {
 // more caches use the .Add() function. fillfunc may be nil if caches will be added later
 // using .Add().
 func NewGroupCache(config Config, fillfunc BackFillFunc) (*GroupCache, error) {
-
-	srv := http.Server{}
+	srv := http.Server{
+		ReadHeaderTimeout: config.ListenReadTimeOut,
+		ReadTimeout:       config.ListenReadTimeOut,
+	}
 	mux := http.NewServeMux()
 
 	pool := groupcache.NewHTTPPoolOpts(config.PeerList[0], nil)
