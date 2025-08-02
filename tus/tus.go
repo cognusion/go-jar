@@ -2,24 +2,21 @@ package tus
 
 import (
 	"context"
-
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
-	s3types "github.com/aws/aws-sdk-go-v2/service/s3/types"
-
-	"github.com/tus/tusd/v2/pkg/filestore"
-	tusd "github.com/tus/tusd/v2/pkg/handler"
-	"github.com/tus/tusd/v2/pkg/memorylocker"
-	"github.com/tus/tusd/v2/pkg/s3store"
-
-	"golang.org/x/exp/slog"
-
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"strings"
+
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	s3types "github.com/aws/aws-sdk-go-v2/service/s3/types"
+	"github.com/tus/tusd/v2/pkg/filestore"
+	tusd "github.com/tus/tusd/v2/pkg/handler"
+	"github.com/tus/tusd/v2/pkg/memorylocker"
+	"github.com/tus/tusd/v2/pkg/s3store"
+	"golang.org/x/exp/slog"
 )
 
 const (
@@ -80,7 +77,7 @@ func New(basePath string, config Config) (*TUS, error) {
 	tConfig := tusd.Config{
 		BasePath:           basePath,
 		StoreComposer:      composer,
-		Logger:             slog.Default().With("[DE", "BUG]"),
+		Logger:             slog.New(slog.NewTextHandler(DebugOut.Writer(), nil)),
 		DisableDownload:    true, // TODO
 		DisableTermination: true, // TODO
 	}
