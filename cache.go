@@ -17,8 +17,10 @@ import (
 const (
 	// ConfigGroupCachePeers is a config for a list of peers, ala ``http://127.0.0.1:8080,http://127.0.0.1:8081,http://127.0.0.1:8082``
 	ConfigGroupCachePeers = ConfigKey("groupcache.peerlist")
-	// ConfigGroupCacheAddr is a config key for my listening address, ala ``:8080``
+	// ConfigGroupCacheAddr is a config key for the listening address, ala ``:8080``
 	ConfigGroupCacheAddr = ConfigKey("groupcache.listenaddress")
+	// ConfigGroupCacheReadTimeout is a config key for the listener read timeout.
+	ConfigGroupCacheReadTimeout = ConfigKey("groupcache.listenreadtimeout")
 
 	// ConfigCacheSizeMB is the size- in megabytes- the cache should be. Defaults to 16.
 	ConfigCacheSizeMB = ConfigKey("cache.sizemb")
@@ -44,11 +46,12 @@ type CacheCluster struct {
 }
 
 // NewCacheCluster should be called at most once, and returns an initialized CacheCluster
-func NewCacheCluster(address string, peers []string) *CacheCluster {
+func NewCacheCluster(address string, readTimeout time.Duration, peers []string) *CacheCluster {
 	DebugOut.Printf("Adding cache cluster. Listening on %s with peers: %+v\n", address, peers)
 	conf := cache.Config{
-		ListenAddress: address,
-		PeerList:      peers,
+		ListenAddress:     address,
+		ListenReadTimeOut: readTimeout,
+		PeerList:          peers,
 	}
 	c, _ := cache.NewGroupCache(conf, nil) // No error possible if fillfunc is nil
 	return &CacheCluster{

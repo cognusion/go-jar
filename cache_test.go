@@ -1,12 +1,13 @@
 package jar
 
 import (
-	. "github.com/smartystreets/goconvey/convey"
-
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"testing"
+	"time"
+
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 var cc *CacheCluster
@@ -16,7 +17,7 @@ func cacheTestSetup() {
 	//DebugOut = log.New(os.Stdout, "[DEBUG] ", log.Lshortfile)
 	//ErrorOut = log.New(os.Stdout, "[ERROR] ", log.Lshortfile)
 	if cc == nil {
-		cc = NewCacheCluster(":8086", []string{"http://127.0.0.1:8086"})
+		cc = NewCacheCluster(":8086", 10*time.Second, []string{"http://127.0.0.1:8086"})
 	}
 }
 

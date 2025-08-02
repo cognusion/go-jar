@@ -293,7 +293,7 @@ func bootstrap() (done bool, servers []*http.Server) {
 
 	// GroupCache?
 	if Conf.GetString(ConfigGroupCachePeers) != "" {
-		Caches = NewCacheCluster(Conf.GetString(ConfigGroupCacheAddr), StringToCleanList(Conf.GetString(ConfigGroupCachePeers), ","))
+		Caches = NewCacheCluster(Conf.GetString(ConfigGroupCacheAddr), Conf.GetDuration(ConfigGroupCacheReadTimeout), StringToCleanList(Conf.GetString(ConfigGroupCachePeers), ","))
 		Caches.SetDebugOut(DebugOut)
 	}
 
