@@ -1,6 +1,8 @@
 package tus
 
 import (
+	"log"
+
 	tusc "github.com/eventials/go-tus"
 	. "github.com/smartystreets/goconvey/convey"
 
@@ -17,8 +19,8 @@ import (
 
 func TestTUS(t *testing.T) {
 
-	//DebugOut = log.New(os.Stderr, "[DEBUG] ", 0)
-	//ErrorOut = log.New(os.Stderr, "[ERROR] ", 0)
+	DebugOut = log.New(os.Stderr, "[DEBUG] ", 0)
+	ErrorOut = log.New(os.Stderr, "[ERROR] ", 0)
 
 	Convey("When a TUS is created with an unsupported target prefix, the appropriate error is returned", t, func() {
 
@@ -49,7 +51,7 @@ func TestTUS(t *testing.T) {
 		tConfig.HttpClient = srv.Client()
 		client, err := tusc.NewClient(srv.URL+"/tus/", tConfig)
 		So(err, ShouldBeNil)
-		client.Header.Add("X-Request-ID", "U"+randString(7))
+		client.Header.Set("X-Request-ID", "U"+randString(7))
 
 		DebugOut.Printf("Client: %+v\n", client)
 		// create an upload from the buffer.
@@ -86,9 +88,9 @@ func TestTUS(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			req.Header.Add("X-Request-ID", "H"+randString(7))
+			req.Header.Set("X-Request-ID", "H"+randString(7))
 
-			resp, rErr := srv.Client().Do(req)
+			resp, rErr := client.Do(req)
 			So(rErr, ShouldBeNil)
 			defer resp.Body.Close()
 
@@ -101,9 +103,9 @@ func TestTUS(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			req.Header.Add("X-Request-ID", "G"+randString(7))
+			req.Header.Set("X-Request-ID", "G"+randString(7))
 
-			resp, rErr := srv.Client().Do(req)
+			resp, rErr := client.Do(req)
 			So(rErr, ShouldBeNil)
 			defer resp.Body.Close()
 
@@ -115,9 +117,9 @@ func TestTUS(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			req.Header.Add("X-Request-ID", "D"+randString(7))
+			req.Header.Set("X-Request-ID", "D"+randString(7))
 
-			resp, rErr := srv.Client().Do(req)
+			resp, rErr := client.Do(req)
 			So(rErr, ShouldBeNil)
 			defer resp.Body.Close()
 
@@ -129,7 +131,7 @@ func TestTUS(t *testing.T) {
 func randString(length int) string {
 	charSet := "abcdedfghijklmnopqrstABCDEFGHIJKLMNOP"
 	outString := make([]byte, length)
-	for i := 0; i < length; i++ {
+	for i := range length {
 		random := rand.Intn(len(charSet))
 		randomChar := charSet[random]
 		outString[i] = randomChar

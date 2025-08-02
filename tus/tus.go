@@ -1,13 +1,18 @@
 package tus
 
 import (
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/s3"
+	"context"
 
-	"github.com/tus/tusd/pkg/filestore"
-	tusd "github.com/tus/tusd/pkg/handler"
-	"github.com/tus/tusd/pkg/memorylocker"
-	"github.com/tus/tusd/pkg/s3store"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	s3types "github.com/aws/aws-sdk-go-v2/service/s3/types"
+
+	"github.com/tus/tusd/v2/pkg/filestore"
+	tusd "github.com/tus/tusd/v2/pkg/handler"
+	"github.com/tus/tusd/v2/pkg/memorylocker"
+	"github.com/tus/tusd/v2/pkg/s3store"
+
+	"golang.org/x/exp/slog"
 
 	"fmt"
 	"io"
@@ -28,7 +33,7 @@ var (
 	// ErrorOut is a log.Logger for error messages
 	ErrorOut = log.New(io.Discard, "[ERROR] ", 0)
 
-	bofcACL = "bucket-owner-full-control"
+	bofcACL = s3types.ObjectCannedACLBucketOwnerFullControl
 )
 
 // Error is an error type
@@ -43,7 +48,7 @@ func (e Error) Error() string {
 type TUS struct {
 	handler *tusd.Handler
 	config  *tusd.Config
-	s3      *s3.S3
+	s3      *s3.Client
 }
 
 // New returns an initialized TUS. **WARNING:** Do not set `Config.S3Client`
@@ -75,7 +80,7 @@ func New(basePath string, config Config) (*TUS, error) {
 	tConfig := tusd.Config{
 		BasePath:           basePath,
 		StoreComposer:      composer,
-		Logger:             DebugOut,
+		Logger:             slog.Default().With("[DE", "BUG]"),
 		DisableDownload:    true, // TODO
 		DisableTermination: true, // TODO
 	}
@@ -157,14 +162,14 @@ func (t *TUS) rename(bucket, old, new string) error {
 	if t.s3 != nil {
 		// S3
 		cpCfg := s3.CopyObjectInput{
-			ACL:        aws.String(bofcACL),
+			ACL:        bofcACL,
 			Bucket:     aws.String(bucket),
 			CopySource: aws.String(fmt.Sprintf("%s/%s", bucket, old)),
 			Key:        aws.String(new),
 		}
 
 		cpCfgInfo := s3.CopyObjectInput{
-			ACL:        aws.String(bofcACL),
+			ACL:        bofcACL,
 			Bucket:     aws.String(bucket),
 			CopySource: aws.String(fmt.Sprintf("%s/%s%s", bucket, old, ".info")),
 			Key:        aws.String(fmt.Sprintf("%s%s", new, ".info")),
@@ -181,9 +186,9 @@ func (t *TUS) rename(bucket, old, new string) error {
 		}
 
 		for i, c := range []s3.CopyObjectInput{cpCfg, cpCfgInfo} {
-			if _, err := t.s3.CopyObject(&c); err != nil {
+			if _, err := t.s3.CopyObject(context.Background(), &c); err != nil {
 				return err
-			} else if _, err = t.s3.DeleteObject(&[]s3.DeleteObjectInput{delCfg, delCfgInfo}[i]); err != nil {
+			} else if _, err = t.s3.DeleteObject(context.Background(), &[]s3.DeleteObjectInput{delCfg, delCfgInfo}[i]); err != nil {
 				return err
 			}
 		}
