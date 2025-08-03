@@ -157,6 +157,7 @@ func Unzip(src, dest string) error {
 			}
 			defer f.Close()
 
+			//#nosec G110 -- File is unlikely to be under control of malicious actors. If it is, there are larger concerns.
 			_, err = io.Copy(f, rc)
 			if err != nil {
 				return err

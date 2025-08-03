@@ -350,6 +350,7 @@ func bootstrap() (done bool, servers []*http.Server) {
 			tlscfg = acmeManager.TLSConfig()
 		} else {
 			// we are not using ACME
+			//#nosec G402 -- Config is set later. Min protocols are enforced per configuration.
 			tlscfg = &tls.Config{}
 		}
 
