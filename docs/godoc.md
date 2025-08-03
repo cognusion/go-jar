@@ -124,7 +124,7 @@ Consumers will want to 'cd cmd/jard; go build; #enjoy'
   * [func (c *CORS) ResponseModifier(resp *http.Response) error](#CORS.ResponseModifier)
   * [func (c *CORS) String() string](#CORS.String)
 * [type CacheCluster](#CacheCluster)
-  * [func NewCacheCluster(address string, peers []string) *CacheCluster](#NewCacheCluster)
+  * [func NewCacheCluster(address string, readTimeout time.Duration, peers []string) *CacheCluster](#NewCacheCluster)
   * [func (cc *CacheCluster) NewPageCache(name string, cacheSize, maxItemSize int64, itemExpiration time.Duration, cacheControlHeader string) (*PageCache, error)](#CacheCluster.NewPageCache)
 * [type Cert](#Cert)
 * [type Compression](#Compression)
@@ -275,7 +275,7 @@ Consumers will want to 'cd cmd/jard; go build; #enjoy'
 
 
 #### <a name="pkg-files">Package files</a>
-[a_common.go](https://github.com/cognusion/go-jar/tree/master/a_common.go) [access.go](https://github.com/cognusion/go-jar/tree/master/access.go) [aws.go](https://github.com/cognusion/go-jar/tree/master/aws.go) [basicauth.go](https://github.com/cognusion/go-jar/tree/master/basicauth.go) [cache.go](https://github.com/cognusion/go-jar/tree/master/cache.go) [compression.go](https://github.com/cognusion/go-jar/tree/master/compression.go) [config.go](https://github.com/cognusion/go-jar/tree/master/config.go) [cors.go](https://github.com/cognusion/go-jar/tree/master/cors.go) [crypto.go](https://github.com/cognusion/go-jar/tree/master/crypto.go) [debug.go](https://github.com/cognusion/go-jar/tree/master/debug.go) [errors.go](https://github.com/cognusion/go-jar/tree/master/errors.go) [finishers.go](https://github.com/cognusion/go-jar/tree/master/finishers.go) [handlers.go](https://github.com/cognusion/go-jar/tree/master/handlers.go) [health.go](https://github.com/cognusion/go-jar/tree/master/health.go) [healthprocess.go](https://github.com/cognusion/go-jar/tree/master/healthprocess.go) [helpers.go](https://github.com/cognusion/go-jar/tree/master/helpers.go) [hmac.go](https://github.com/cognusion/go-jar/tree/master/hmac.go) [log.go](https://github.com/cognusion/go-jar/tree/master/log.go) [macros.go](https://github.com/cognusion/go-jar/tree/master/macros.go) [paths.go](https://github.com/cognusion/go-jar/tree/master/paths.go) [pool.go](https://github.com/cognusion/go-jar/tree/master/pool.go) [pool_aws.go](https://github.com/cognusion/go-jar/tree/master/pool_aws.go) [pool_conhash.go](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go) [pool_sticky.go](https://github.com/cognusion/go-jar/tree/master/pool_sticky.go) [poolconfig.go](https://github.com/cognusion/go-jar/tree/master/poolconfig.go) [pools.go](https://github.com/cognusion/go-jar/tree/master/pools.go) [proxyresponsemodifier.go](https://github.com/cognusion/go-jar/tree/master/proxyresponsemodifier.go) [s3proxy.go](https://github.com/cognusion/go-jar/tree/master/s3proxy.go) [taskscheduler.go](https://github.com/cognusion/go-jar/tree/master/taskscheduler.go) [tus.go](https://github.com/cognusion/go-jar/tree/master/tus.go) [update.go](https://github.com/cognusion/go-jar/tree/master/update.go) [urlswitch.go](https://github.com/cognusion/go-jar/tree/master/urlswitch.go) [version.go](https://github.com/cognusion/go-jar/tree/master/version.go) [worker-http.go](https://github.com/cognusion/go-jar/tree/master/worker-http.go) [worker-zulip.go](https://github.com/cognusion/go-jar/tree/master/worker-zulip.go) [workers.go](https://github.com/cognusion/go-jar/tree/master/workers.go) [z_zMustBeLast.go](https://github.com/cognusion/go-jar/tree/master/z_zMustBeLast.go)
+[a_common.go](https://github.com/cognusion/go-jar/tree/master/a_common.go) [access.go](https://github.com/cognusion/go-jar/tree/master/access.go) [aws.go](https://github.com/cognusion/go-jar/tree/master/aws.go) [basicauth.go](https://github.com/cognusion/go-jar/tree/master/basicauth.go) [cache.go](https://github.com/cognusion/go-jar/tree/master/cache.go) [compression.go](https://github.com/cognusion/go-jar/tree/master/compression.go) [config.go](https://github.com/cognusion/go-jar/tree/master/config.go) [cors.go](https://github.com/cognusion/go-jar/tree/master/cors.go) [crypto.go](https://github.com/cognusion/go-jar/tree/master/crypto.go) [crypto_acme.go](https://github.com/cognusion/go-jar/tree/master/crypto_acme.go) [debug.go](https://github.com/cognusion/go-jar/tree/master/debug.go) [errors.go](https://github.com/cognusion/go-jar/tree/master/errors.go) [finishers.go](https://github.com/cognusion/go-jar/tree/master/finishers.go) [handlers.go](https://github.com/cognusion/go-jar/tree/master/handlers.go) [health.go](https://github.com/cognusion/go-jar/tree/master/health.go) [healthprocess.go](https://github.com/cognusion/go-jar/tree/master/healthprocess.go) [helpers.go](https://github.com/cognusion/go-jar/tree/master/helpers.go) [hmac.go](https://github.com/cognusion/go-jar/tree/master/hmac.go) [log.go](https://github.com/cognusion/go-jar/tree/master/log.go) [macros.go](https://github.com/cognusion/go-jar/tree/master/macros.go) [paths.go](https://github.com/cognusion/go-jar/tree/master/paths.go) [pool.go](https://github.com/cognusion/go-jar/tree/master/pool.go) [pool_aws.go](https://github.com/cognusion/go-jar/tree/master/pool_aws.go) [pool_conhash.go](https://github.com/cognusion/go-jar/tree/master/pool_conhash.go) [pool_sticky.go](https://github.com/cognusion/go-jar/tree/master/pool_sticky.go) [poolconfig.go](https://github.com/cognusion/go-jar/tree/master/poolconfig.go) [pools.go](https://github.com/cognusion/go-jar/tree/master/pools.go) [proxyresponsemodifier.go](https://github.com/cognusion/go-jar/tree/master/proxyresponsemodifier.go) [s3proxy.go](https://github.com/cognusion/go-jar/tree/master/s3proxy.go) [taskscheduler.go](https://github.com/cognusion/go-jar/tree/master/taskscheduler.go) [tus.go](https://github.com/cognusion/go-jar/tree/master/tus.go) [update.go](https://github.com/cognusion/go-jar/tree/master/update.go) [urlswitch.go](https://github.com/cognusion/go-jar/tree/master/urlswitch.go) [version.go](https://github.com/cognusion/go-jar/tree/master/version.go) [worker-http.go](https://github.com/cognusion/go-jar/tree/master/worker-http.go) [worker-zulip.go](https://github.com/cognusion/go-jar/tree/master/worker-zulip.go) [workers.go](https://github.com/cognusion/go-jar/tree/master/workers.go) [z_zMustBeLast.go](https://github.com/cognusion/go-jar/tree/master/z_zMustBeLast.go)
 
 
 ## <a name="pkg-constants">Constants</a>
@@ -320,8 +320,10 @@ const (
 const (
     // ConfigGroupCachePeers is a config for a list of peers, ala ``http://127.0.0.1:8080,http://127.0.0.1:8081,http://127.0.0.1:8082``
     ConfigGroupCachePeers = ConfigKey("groupcache.peerlist")
-    // ConfigGroupCacheAddr is a config key for my listening address, ala ``:8080``
+    // ConfigGroupCacheAddr is a config key for the listening address, ala ``:8080``
     ConfigGroupCacheAddr = ConfigKey("groupcache.listenaddress")
+    // ConfigGroupCacheReadTimeout is a config key for the listener read timeout.
+    ConfigGroupCacheReadTimeout = ConfigKey("groupcache.listenreadtimeout")
 
     // ConfigCacheSizeMB is the size- in megabytes- the cache should be. Defaults to 16.
     ConfigCacheSizeMB = ConfigKey("cache.sizemb")
@@ -423,6 +425,18 @@ const (
     ConfigTLSMaxVersion        = ConfigKey("tls.maxversion")
     ConfigTLSMinVersion        = ConfigKey("tls.minversion")
     ConfigTLSHTTP2             = ConfigKey("tls.http2")
+    ConfigTLSHTTP3             = ConfigKey("tls.http3")
+)
+```
+Constants for configuration key strings
+
+``` go
+const (
+    ConfigACMEEnabled        = ConfigKey("acme.enabled")
+    ConfigACMEEmailAddress   = ConfigKey("acme.email")
+    ConfigACMEHostWhiteList  = ConfigKey("acme.hosts")
+    ConfigACMECacheDirectory = ConfigKey("acme.cachedir")
+    ConfigACMERenewBefore    = ConfigKey("acme.renewbefore")
 )
 ```
 Constants for configuration key strings
@@ -646,17 +660,6 @@ const (
     ConfigZulipToken         = ConfigKey("zulip.token")
     ConfigZulipRetryCount    = ConfigKey("zulip.retrycount")
     ConfigZulipRetryInterval = ConfigKey("zulip.retryinterval")
-)
-```
-Constants for configuration key strings
-
-``` go
-const (
-    ConfigWorkersInitialPoolSize = ConfigKey("workers.initialpoolsize")
-    ConfigWorkersMaxPoolSize     = ConfigKey("workers.maxpoolsize")
-    ConfigWorkersMinPoolSize     = ConfigKey("workers.minpoolsize")
-    ConfigWorkersQueueSize       = ConfigKey("workers.queuesize")
-    ConfigWorkersResizeInterval  = ConfigKey("workers.resizeinterval")
 )
 ```
 Constants for configuration key strings
@@ -910,7 +913,7 @@ var (
 ``` go
 var (
     // VERSION is the internal code revision number
-    VERSION string = "1.1.0+git"
+    VERSION string = "1.8.0+git"
 )
 ```
 ``` go
@@ -928,7 +931,7 @@ AccessLogHandler is a middleware that times how long requests takes, assembled a
 
 
 
-## <a name="AddMetrics">func</a> [AddMetrics](https://github.com/cognusion/go-jar/tree/master/health.go?s=8124:8208#L320)
+## <a name="AddMetrics">func</a> [AddMetrics](https://github.com/cognusion/go-jar/tree/master/health.go?s=8061:8145#L318)
 ``` go
 func AddMetrics(m map[string]map[string]interface{}, hc *health.Check) *health.Check
 ```
@@ -936,7 +939,7 @@ AddMetrics ranges over the supplied map, adding each as a Metric to the supplied
 
 
 
-## <a name="AddStatuses">func</a> [AddStatuses](https://github.com/cognusion/go-jar/tree/master/health.go?s=7833:7907#L309)
+## <a name="AddStatuses">func</a> [AddStatuses](https://github.com/cognusion/go-jar/tree/master/health.go?s=7770:7844#L307)
 ``` go
 func AddStatuses(s *health.StatusRegistry, hc *health.Check) *health.Check
 ```
@@ -1003,7 +1006,7 @@ proper error, as it is returned if Bootstrap is complete (e.g. checkconfig or do
 
 
 
-## <a name="ConnectionCounterAdd">func</a> [ConnectionCounterAdd](https://github.com/cognusion/go-jar/tree/master/health.go?s=5382:5409#L206)
+## <a name="ConnectionCounterAdd">func</a> [ConnectionCounterAdd](https://github.com/cognusion/go-jar/tree/master/health.go?s=5319:5346#L204)
 ``` go
 func ConnectionCounterAdd()
 ```
@@ -1011,7 +1014,7 @@ ConnectionCounterAdd atomically adds 1 to the ConnectionCounter
 
 
 
-## <a name="ConnectionCounterGet">func</a> [ConnectionCounterGet](https://github.com/cognusion/go-jar/tree/master/health.go?s=5689:5722#L216)
+## <a name="ConnectionCounterGet">func</a> [ConnectionCounterGet](https://github.com/cognusion/go-jar/tree/master/health.go?s=5626:5659#L214)
 ``` go
 func ConnectionCounterGet() int64
 ```
@@ -1019,7 +1022,7 @@ ConnectionCounterGet atomically returns the current value of the ConnectionCount
 
 
 
-## <a name="ConnectionCounterRemove">func</a> [ConnectionCounterRemove](https://github.com/cognusion/go-jar/tree/master/health.go?s=5526:5556#L211)
+## <a name="ConnectionCounterRemove">func</a> [ConnectionCounterRemove](https://github.com/cognusion/go-jar/tree/master/health.go?s=5463:5493#L209)
 ``` go
 func ConnectionCounterRemove()
 ```
@@ -1076,7 +1079,7 @@ DumpHandler is a special handler that ships a ton of request output to DebugLog
 
 
 
-## <a name="ECBDecrypt">func</a> [ECBDecrypt](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=5963:6046#L188)
+## <a name="ECBDecrypt">func</a> [ECBDecrypt](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=6016:6099#L189)
 ``` go
 func ECBDecrypt(b64key string, eb64ciphertext string) (plaintext []byte, err error)
 ```
@@ -1085,7 +1088,7 @@ PKCS5 padding is trimmed as needed
 
 
 
-## <a name="ECBEncrypt">func</a> [ECBEncrypt](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=6733:6815#L218)
+## <a name="ECBEncrypt">func</a> [ECBEncrypt](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=6786:6868#L219)
 ``` go
 func ECBEncrypt(b64key string, plaintext []byte) (b64ciphertext string, err error)
 ```
@@ -1228,7 +1231,7 @@ using a template
 
 
 
-## <a name="InitConfig">func</a> [InitConfig](https://github.com/cognusion/go-jar/tree/master/config.go?s=2791:2821#L65)
+## <a name="InitConfig">func</a> [InitConfig](https://github.com/cognusion/go-jar/tree/master/config.go?s=2808:2838#L66)
 ``` go
 func InitConfig() *viper.Viper
 ```
@@ -1236,7 +1239,7 @@ InitConfig creates an config, initialized with defaults and environment-set valu
 
 
 
-## <a name="LoadConfig">func</a> [LoadConfig](https://github.com/cognusion/go-jar/tree/master/config.go?s=3147:3207#L85)
+## <a name="LoadConfig">func</a> [LoadConfig](https://github.com/cognusion/go-jar/tree/master/config.go?s=3164:3224#L86)
 ``` go
 func LoadConfig(configFilename string, v *viper.Viper) error
 ```
@@ -1268,7 +1271,7 @@ MinuteStreamer is a special finisher that writes the next number, once a secondi
 
 
 
-## <a name="NewECBDecrypter">func</a> [NewECBDecrypter](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=8104:8157#L277)
+## <a name="NewECBDecrypter">func</a> [NewECBDecrypter](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=8157:8210#L278)
 ``` go
 func NewECBDecrypter(b cipher.Block) cipher.BlockMode
 ```
@@ -1276,7 +1279,7 @@ NewECBDecrypter should never be used unless you know what you're doing
 
 
 
-## <a name="NewECBEncrypter">func</a> [NewECBEncrypter](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=7388:7441#L250)
+## <a name="NewECBEncrypter">func</a> [NewECBEncrypter](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=7441:7494#L251)
 ``` go
 func NewECBEncrypter(b cipher.Block) cipher.BlockMode
 ```
@@ -1404,7 +1407,7 @@ ResponseHeaders is a simple piece of middleware that sets configured headers
 
 
 
-## <a name="Restart">func</a> [Restart](https://github.com/cognusion/go-jar/tree/master/healthprocess.go?s=1921:1973#L80)
+## <a name="Restart">func</a> [Restart](https://github.com/cognusion/go-jar/tree/master/healthprocess.go?s=1949:2001#L81)
 ``` go
 func Restart(w http.ResponseWriter, r *http.Request)
 ```
@@ -1420,7 +1423,7 @@ RouteIDInspectionHandler checks the Query params for a ROUTEID and shoves it int
 
 
 
-## <a name="S3StreamProxyFinisher">func</a> [S3StreamProxyFinisher](https://github.com/cognusion/go-jar/tree/master/s3proxy.go?s=2008:2074#L81)
+## <a name="S3StreamProxyFinisher">func</a> [S3StreamProxyFinisher](https://github.com/cognusion/go-jar/tree/master/s3proxy.go?s=2141:2207#L84)
 ``` go
 func S3StreamProxyFinisher(w http.ResponseWriter, r *http.Request)
 ```
@@ -1436,7 +1439,7 @@ SetupHandler adds the RequestID and various other informatives to a request cont
 
 
 
-## <a name="Stack">func</a> [Stack](https://github.com/cognusion/go-jar/tree/master/health.go?s=5188:5238#L196)
+## <a name="Stack">func</a> [Stack](https://github.com/cognusion/go-jar/tree/master/health.go?s=5125:5175#L194)
 ``` go
 func Stack(w http.ResponseWriter, r *http.Request)
 ```
@@ -1512,7 +1515,7 @@ Update signals the updater to update itself
 
 
 
-## <a name="ValidateExtras">func</a> [ValidateExtras](https://github.com/cognusion/go-jar/tree/master/config.go?s=8176:8205#L156)
+## <a name="ValidateExtras">func</a> [ValidateExtras](https://github.com/cognusion/go-jar/tree/master/config.go?s=8343:8372#L161)
 ``` go
 func ValidateExtras() []error
 ```
@@ -1521,7 +1524,7 @@ All functions will be run, so an array of errors may be returned
 
 
 
-## <a name="WithRqID">func</a> [WithRqID](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=16936:17004#L563)
+## <a name="WithRqID">func</a> [WithRqID](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=16935:17003#L563)
 ``` go
 func WithRqID(ctx context.Context, requestID string) context.Context
 ```
@@ -1529,7 +1532,7 @@ WithRqID returns a context which knows its request ID
 
 
 
-## <a name="WithSessionID">func</a> [WithSessionID](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=17128:17201#L568)
+## <a name="WithSessionID">func</a> [WithSessionID](https://github.com/cognusion/go-jar/tree/master/handlers.go?s=17127:17200#L568)
 ``` go
 func WithSessionID(ctx context.Context, sessionID string) context.Context
 ```
@@ -1621,7 +1624,7 @@ AccessLog is an interface providing base logging, but allowing addons to extent 
 
 
 
-## <a name="BasicAuth">type</a> [BasicAuth](https://github.com/cognusion/go-jar/tree/master/basicauth.go?s=1063:1208#L40)
+## <a name="BasicAuth">type</a> [BasicAuth](https://github.com/cognusion/go-jar/tree/master/basicauth.go?s=1081:1226#L42)
 ``` go
 type BasicAuth struct {
     // List of allowed users
@@ -1638,14 +1641,14 @@ BasicAuth wraps a handler requiring HTTP basic auth
 
 
 
-### <a name="NewBasicAuth">func</a> [NewBasicAuth](https://github.com/cognusion/go-jar/tree/master/basicauth.go?s=1304:1370#L50)
+### <a name="NewBasicAuth">func</a> [NewBasicAuth](https://github.com/cognusion/go-jar/tree/master/basicauth.go?s=1322:1388#L52)
 ``` go
 func NewBasicAuth(source, realm string, users []string) *BasicAuth
 ```
 NewBasicAuth takes a source, realm, and list of users, returning an initialized *BasicAuth
 
 
-### <a name="NewVerifiedBasicAuth">func</a> [NewVerifiedBasicAuth](https://github.com/cognusion/go-jar/tree/master/basicauth.go?s=1807:1890#L71)
+### <a name="NewVerifiedBasicAuth">func</a> [NewVerifiedBasicAuth](https://github.com/cognusion/go-jar/tree/master/basicauth.go?s=1825:1908#L73)
 ``` go
 func NewVerifiedBasicAuth(source, realm string, users []string) (*BasicAuth, error)
 ```
@@ -1655,7 +1658,7 @@ NewVerifiedBasicAuth takes a source, realm, and list of users, verifies the auth
 
 
 
-### <a name="BasicAuth.Authenticate">func</a> (\*BasicAuth) [Authenticate](https://github.com/cognusion/go-jar/tree/master/basicauth.go?s=2815:2886#L113)
+### <a name="BasicAuth.Authenticate">func</a> (\*BasicAuth) [Authenticate](https://github.com/cognusion/go-jar/tree/master/basicauth.go?s=2833:2904#L115)
 ``` go
 func (b *BasicAuth) Authenticate(username, password, realm string) bool
 ```
@@ -1664,7 +1667,7 @@ Authenticate takes a username, password, realm, and return bool if the authentic
 
 
 
-### <a name="BasicAuth.Load">func</a> (\*BasicAuth) [Load](https://github.com/cognusion/go-jar/tree/master/basicauth.go?s=5710:5742#L203)
+### <a name="BasicAuth.Load">func</a> (\*BasicAuth) [Load](https://github.com/cognusion/go-jar/tree/master/basicauth.go?s=5728:5760#L205)
 ``` go
 func (b *BasicAuth) Load() error
 ```
@@ -1673,7 +1676,7 @@ Load prepares any pre-auth dancing, caching, etc. necessary
 
 
 
-### <a name="BasicAuth.VerifySource">func</a> (\*BasicAuth) [VerifySource](https://github.com/cognusion/go-jar/tree/master/basicauth.go?s=2413:2453#L98)
+### <a name="BasicAuth.VerifySource">func</a> (\*BasicAuth) [VerifySource](https://github.com/cognusion/go-jar/tree/master/basicauth.go?s=2431:2471#L100)
 ``` go
 func (b *BasicAuth) VerifySource() error
 ```
@@ -1790,7 +1793,7 @@ func (c *CORS) String() string
 
 
 
-## <a name="CacheCluster">type</a> [CacheCluster](https://github.com/cognusion/go-jar/tree/master/cache.go?s=1691:1781#L39)
+## <a name="CacheCluster">type</a> [CacheCluster](https://github.com/cognusion/go-jar/tree/master/cache.go?s=1844:1934#L41)
 ``` go
 type CacheCluster struct {
     *cache.GroupCache
@@ -1806,9 +1809,9 @@ CacheCluster is our internal representation of GroupCache
 
 
 
-### <a name="NewCacheCluster">func</a> [NewCacheCluster](https://github.com/cognusion/go-jar/tree/master/cache.go?s=1873:1939#L47)
+### <a name="NewCacheCluster">func</a> [NewCacheCluster](https://github.com/cognusion/go-jar/tree/master/cache.go?s=2026:2119#L49)
 ``` go
-func NewCacheCluster(address string, peers []string) *CacheCluster
+func NewCacheCluster(address string, readTimeout time.Duration, peers []string) *CacheCluster
 ```
 NewCacheCluster should be called at most once, and returns an initialized CacheCluster
 
@@ -1816,7 +1819,7 @@ NewCacheCluster should be called at most once, and returns an initialized CacheC
 
 
 
-### <a name="CacheCluster.NewPageCache">func</a> (\*CacheCluster) [NewPageCache](https://github.com/cognusion/go-jar/tree/master/cache.go?s=2724:2880#L72)
+### <a name="CacheCluster.NewPageCache">func</a> (\*CacheCluster) [NewPageCache](https://github.com/cognusion/go-jar/tree/master/cache.go?s=2946:3102#L75)
 ``` go
 func (cc *CacheCluster) NewPageCache(name string, cacheSize, maxItemSize int64, itemExpiration time.Duration, cacheControlHeader string) (*PageCache, error)
 ```
@@ -1825,7 +1828,7 @@ NewPageCache should be called at most once per unique "name", and returns an ini
 
 
 
-## <a name="Cert">type</a> [Cert](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=3990:4061#L117)
+## <a name="Cert">type</a> [Cert](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=4043:4114#L118)
 ``` go
 type Cert struct {
     Domain   string
@@ -1879,7 +1882,7 @@ Handler is a middleware to potentially GZIP-compress outgoing response bodies
 
 
 
-## <a name="ConfigKey">type</a> [ConfigKey](https://github.com/cognusion/go-jar/tree/master/config.go?s=2664:2687#L62)
+## <a name="ConfigKey">type</a> [ConfigKey](https://github.com/cognusion/go-jar/tree/master/config.go?s=2681:2704#L63)
 ``` go
 type ConfigKey = string
 ```
@@ -2395,7 +2398,7 @@ List returns the names of all of the Handlers
 
 
 
-## <a name="HealthCheckError">type</a> [HealthCheckError](https://github.com/cognusion/go-jar/tree/master/pools.go?s=9505:9708#L330)
+## <a name="HealthCheckError">type</a> [HealthCheckError](https://github.com/cognusion/go-jar/tree/master/pools.go?s=9466:9669#L329)
 ``` go
 type HealthCheckError struct {
     PoolName    string
@@ -2420,7 +2423,7 @@ HealthCheckError is an error returned through the HealthCheck system
 
 
 
-### <a name="HealthCheckError.Error">func</a> (\*HealthCheckError) [Error](https://github.com/cognusion/go-jar/tree/master/pools.go?s=9764:9805#L342)
+### <a name="HealthCheckError.Error">func</a> (\*HealthCheckError) [Error](https://github.com/cognusion/go-jar/tree/master/pools.go?s=9725:9766#L341)
 ``` go
 func (h *HealthCheckError) Error() string
 ```
@@ -2429,7 +2432,7 @@ Error returns the stringified version of the error
 
 
 
-## <a name="HealthCheckResult">type</a> [HealthCheckResult](https://github.com/cognusion/go-jar/tree/master/pools.go?s=9952:10100#L347)
+## <a name="HealthCheckResult">type</a> [HealthCheckResult](https://github.com/cognusion/go-jar/tree/master/pools.go?s=9913:10061#L346)
 ``` go
 type HealthCheckResult struct {
     PoolName   string
@@ -2452,7 +2455,7 @@ HealthCheckResult is a non-error returned through the HealthCheck system
 
 
 
-## <a name="HealthCheckStatus">type</a> [HealthCheckStatus](https://github.com/cognusion/go-jar/tree/master/health.go?s=3286:3312#L117)
+## <a name="HealthCheckStatus">type</a> [HealthCheckStatus](https://github.com/cognusion/go-jar/tree/master/health.go?s=3223:3249#L115)
 ``` go
 type HealthCheckStatus int
 ```
@@ -2475,7 +2478,7 @@ Constants for HealthCheckStatuses
 
 
 
-### <a name="StringToHealthCheckStatus">func</a> [StringToHealthCheckStatus](https://github.com/cognusion/go-jar/tree/master/health.go?s=3844:3912#L142)
+### <a name="StringToHealthCheckStatus">func</a> [StringToHealthCheckStatus](https://github.com/cognusion/go-jar/tree/master/health.go?s=3781:3849#L140)
 ``` go
 func StringToHealthCheckStatus(hc string) (HealthCheckStatus, error)
 ```
@@ -2485,14 +2488,14 @@ StringToHealthCheckStatus takes a string HealthCheckStatus and returns the Healt
 
 
 
-### <a name="HealthCheckStatus.String">func</a> (HealthCheckStatus) [String](https://github.com/cognusion/go-jar/tree/master/health.go?s=3314:3356#L119)
+### <a name="HealthCheckStatus.String">func</a> (HealthCheckStatus) [String](https://github.com/cognusion/go-jar/tree/master/health.go?s=3251:3293#L117)
 ``` go
 func (i HealthCheckStatus) String() string
 ```
 
 
 
-## <a name="HealthCheckWork">type</a> [HealthCheckWork](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10150:10411#L357)
+## <a name="HealthCheckWork">type</a> [HealthCheckWork](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10111:10372#L356)
 ``` go
 type HealthCheckWork struct {
     PoolName    string
@@ -2518,7 +2521,7 @@ HealthCheckWork is Work to run a HealthCheck
 
 
 
-### <a name="HealthCheckWork.Return">func</a> (\*HealthCheckWork) [Return](https://github.com/cognusion/go-jar/tree/master/pools.go?s=11735:11787#L425)
+### <a name="HealthCheckWork.Return">func</a> (\*HealthCheckWork) [Return](https://github.com/cognusion/go-jar/tree/master/pools.go?s=11696:11748#L424)
 ``` go
 func (h *HealthCheckWork) Return(rthing interface{})
 ```
@@ -2527,7 +2530,7 @@ Return consumes a Work result and slides it downthe return channel
 
 
 
-### <a name="HealthCheckWork.Work">func</a> (\*HealthCheckWork) [Work](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10496:10540#L370)
+### <a name="HealthCheckWork.Work">func</a> (\*HealthCheckWork) [Work](https://github.com/cognusion/go-jar/tree/master/pools.go?s=10457:10501#L369)
 ``` go
 func (h *HealthCheckWork) Work() interface{}
 ```
@@ -2714,7 +2717,7 @@ WriteHeader changes the response code
 
 
 
-## <a name="PageCache">type</a> [PageCache](https://github.com/cognusion/go-jar/tree/master/cache.go?s=2318:2620#L61)
+## <a name="PageCache">type</a> [PageCache](https://github.com/cognusion/go-jar/tree/master/cache.go?s=2540:2842#L64)
 ``` go
 type PageCache struct {
     Name           string
@@ -2736,7 +2739,7 @@ PageCache is a cache that is specific to caching responses
 
 
 
-### <a name="PageCache.Handler">func</a> (\*PageCache) [Handler](https://github.com/cognusion/go-jar/tree/master/cache.go?s=3679:3738#L105)
+### <a name="PageCache.Handler">func</a> (\*PageCache) [Handler](https://github.com/cognusion/go-jar/tree/master/cache.go?s=3901:3960#L108)
 ``` go
 func (c *PageCache) Handler(next http.Handler) http.Handler
 ```
@@ -3281,7 +3284,7 @@ healthcheck pool members, managing them accordingly.
 
 
 
-### <a name="BuildPools">func</a> [BuildPools](https://github.com/cognusion/go-jar/tree/master/pools.go?s=8960:8993#L312)
+### <a name="BuildPools">func</a> [BuildPools](https://github.com/cognusion/go-jar/tree/master/pools.go?s=8921:8954#L311)
 ``` go
 func BuildPools() (*Pools, error)
 ```
@@ -3301,7 +3304,7 @@ Set the interval to 0 to disable healthchecks
 
 
 
-### <a name="Pools.Exists">func</a> (\*Pools) [Exists](https://github.com/cognusion/go-jar/tree/master/pools.go?s=5002:5042#L170)
+### <a name="Pools.Exists">func</a> (\*Pools) [Exists](https://github.com/cognusion/go-jar/tree/master/pools.go?s=4963:5003#L169)
 ``` go
 func (p *Pools) Exists(name string) bool
 ```
@@ -3310,7 +3313,7 @@ Exists returns bool if the named Pool exists
 
 
 
-### <a name="Pools.Get">func</a> (\*Pools) [Get](https://github.com/cognusion/go-jar/tree/master/pools.go?s=5171:5217#L179)
+### <a name="Pools.Get">func</a> (\*Pools) [Get](https://github.com/cognusion/go-jar/tree/master/pools.go?s=5132:5178#L178)
 ``` go
 func (p *Pools) Get(name string) (*Pool, bool)
 ```
@@ -3319,7 +3322,7 @@ Get returns a Pool and a bool, given a name, from the Pools
 
 
 
-### <a name="Pools.List">func</a> (\*Pools) [List](https://github.com/cognusion/go-jar/tree/master/pools.go?s=4778:4809#L156)
+### <a name="Pools.List">func</a> (\*Pools) [List](https://github.com/cognusion/go-jar/tree/master/pools.go?s=4739:4770#L155)
 ``` go
 func (p *Pools) List() []string
 ```
@@ -3328,7 +3331,7 @@ List returns list of Pool names
 
 
 
-### <a name="Pools.Merge">func</a> (\*Pools) [Merge](https://github.com/cognusion/go-jar/tree/master/pools.go?s=5518:5563#L198)
+### <a name="Pools.Merge">func</a> (\*Pools) [Merge](https://github.com/cognusion/go-jar/tree/master/pools.go?s=5479:5524#L197)
 ``` go
 func (p *Pools) Merge(pools map[string]*Pool)
 ```
@@ -3337,7 +3340,7 @@ Merge adds-or-replaces the specified pools
 
 
 
-### <a name="Pools.Replace">func</a> (\*Pools) [Replace](https://github.com/cognusion/go-jar/tree/master/pools.go?s=5712:5759#L208)
+### <a name="Pools.Replace">func</a> (\*Pools) [Replace](https://github.com/cognusion/go-jar/tree/master/pools.go?s=5673:5720#L207)
 ``` go
 func (p *Pools) Replace(pools map[string]*Pool)
 ```
@@ -3346,7 +3349,7 @@ Replace does exactly that on the entire map of Pool
 
 
 
-### <a name="Pools.Set">func</a> (\*Pools) [Set](https://github.com/cognusion/go-jar/tree/master/pools.go?s=5371:5415#L190)
+### <a name="Pools.Set">func</a> (\*Pools) [Set](https://github.com/cognusion/go-jar/tree/master/pools.go?s=5332:5376#L189)
 ``` go
 func (p *Pools) Set(name string, pool *Pool)
 ```
@@ -3355,7 +3358,7 @@ Set adds-or-replaces the named pool
 
 
 
-## <a name="ProcessInfo">type</a> [ProcessInfo](https://github.com/cognusion/go-jar/tree/master/healthprocess.go?s=268:440#L18)
+## <a name="ProcessInfo">type</a> [ProcessInfo](https://github.com/cognusion/go-jar/tree/master/healthprocess.go?s=296:468#L19)
 ``` go
 type ProcessInfo struct {
     Ctx context.Context
@@ -3372,7 +3375,7 @@ All member functions are safe to use across goros
 
 
 
-### <a name="NewProcessInfo">func</a> [NewProcessInfo](https://github.com/cognusion/go-jar/tree/master/healthprocess.go?s=2171:2214#L87)
+### <a name="NewProcessInfo">func</a> [NewProcessInfo](https://github.com/cognusion/go-jar/tree/master/healthprocess.go?s=2199:2242#L88)
 ``` go
 func NewProcessInfo(pid int32) *ProcessInfo
 ```
@@ -3383,7 +3386,7 @@ Supply 0 as the pid to autodetect the running process' pid
 
 
 
-### <a name="ProcessInfo.CPU">func</a> (\*ProcessInfo) [CPU](https://github.com/cognusion/go-jar/tree/master/healthprocess.go?s=2862:2897#L116)
+### <a name="ProcessInfo.CPU">func</a> (\*ProcessInfo) [CPU](https://github.com/cognusion/go-jar/tree/master/healthprocess.go?s=2897:2932#L117)
 ``` go
 func (p *ProcessInfo) CPU() float64
 ```
@@ -3392,7 +3395,7 @@ CPU returns the current value of the CPU tracker, as a percent of total
 
 
 
-### <a name="ProcessInfo.Memory">func</a> (\*ProcessInfo) [Memory](https://github.com/cognusion/go-jar/tree/master/healthprocess.go?s=2722:2760#L111)
+### <a name="ProcessInfo.Memory">func</a> (\*ProcessInfo) [Memory](https://github.com/cognusion/go-jar/tree/master/healthprocess.go?s=2757:2795#L112)
 ``` go
 func (p *ProcessInfo) Memory() float64
 ```
@@ -3401,7 +3404,7 @@ Memory returns the current value of the process memory, as a percent of total
 
 
 
-### <a name="ProcessInfo.SetInterval">func</a> (\*ProcessInfo) [SetInterval](https://github.com/cognusion/go-jar/tree/master/healthprocess.go?s=2569:2619#L106)
+### <a name="ProcessInfo.SetInterval">func</a> (\*ProcessInfo) [SetInterval](https://github.com/cognusion/go-jar/tree/master/healthprocess.go?s=2604:2654#L107)
 ``` go
 func (p *ProcessInfo) SetInterval(i time.Duration)
 ```
@@ -3410,7 +3413,7 @@ SetInterval changes(?) the interval at which CPU slices are taken for comparison
 
 
 
-### <a name="ProcessInfo.UpdateCPU">func</a> (\*ProcessInfo) [UpdateCPU](https://github.com/cognusion/go-jar/tree/master/healthprocess.go?s=3082:3115#L122)
+### <a name="ProcessInfo.UpdateCPU">func</a> (\*ProcessInfo) [UpdateCPU](https://github.com/cognusion/go-jar/tree/master/healthprocess.go?s=3117:3150#L123)
 ``` go
 func (p *ProcessInfo) UpdateCPU()
 ```
@@ -3475,7 +3478,7 @@ encapsulated ProxyResponseModifier, discontinuing and returning an error as soon
 
 
 
-## <a name="PruneFunc">type</a> [PruneFunc](https://github.com/cognusion/go-jar/tree/master/pools.go?s=9398:9431#L327)
+## <a name="PruneFunc">type</a> [PruneFunc](https://github.com/cognusion/go-jar/tree/master/pools.go?s=9359:9392#L326)
 ``` go
 type PruneFunc func(string) error
 ```
@@ -3561,7 +3564,7 @@ Finisher is a ... Finisher for the instantiated Redirect
 
 
 
-## <a name="S3Pool">type</a> [S3Pool](https://github.com/cognusion/go-jar/tree/master/pool_aws.go?s=874:934#L36)
+## <a name="S3Pool">type</a> [S3Pool](https://github.com/cognusion/go-jar/tree/master/pool_aws.go?s=860:920#L35)
 ``` go
 type S3Pool struct {
     // contains filtered or unexported fields
@@ -3576,7 +3579,7 @@ S3Pool is an http.Handler that grabs a file from S3 and streams it back to the c
 
 
 
-### <a name="NewS3Pool">func</a> [NewS3Pool](https://github.com/cognusion/go-jar/tree/master/pool_aws.go?s=979:1024#L42)
+### <a name="NewS3Pool">func</a> [NewS3Pool](https://github.com/cognusion/go-jar/tree/master/pool_aws.go?s=965:1010#L41)
 ``` go
 func NewS3Pool(s3url string) (*S3Pool, error)
 ```
@@ -3586,7 +3589,7 @@ NewS3Pool returns an S3Pool or an error
 
 
 
-### <a name="S3Pool.ServeHTTP">func</a> (\*S3Pool) [ServeHTTP](https://github.com/cognusion/go-jar/tree/master/pool_aws.go?s=1375:1443#L62)
+### <a name="S3Pool.ServeHTTP">func</a> (\*S3Pool) [ServeHTTP](https://github.com/cognusion/go-jar/tree/master/pool_aws.go?s=1361:1429#L61)
 ``` go
 func (s3p *S3Pool) ServeHTTP(w http.ResponseWriter, r *http.Request)
 ```
@@ -3619,7 +3622,7 @@ Finisher writes a response of the set HTTP status code and text
 
 
 
-## <a name="SuiteMap">type</a> [SuiteMap](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=4124:4155#L124)
+## <a name="SuiteMap">type</a> [SuiteMap](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=4177:4208#L125)
 ``` go
 type SuiteMap map[string]uint16
 ```
@@ -3647,7 +3650,7 @@ var (
 
 
 
-### <a name="NewSuiteMapFromCipherSuites">func</a> [NewSuiteMapFromCipherSuites](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=4242:4316#L127)
+### <a name="NewSuiteMapFromCipherSuites">func</a> [NewSuiteMapFromCipherSuites](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=4295:4369#L128)
 ``` go
 func NewSuiteMapFromCipherSuites(cipherSuites []*tls.CipherSuite) SuiteMap
 ```
@@ -3657,7 +3660,7 @@ NewSuiteMapFromCipherSuites takes a []*CipherSuite and creates a SuiteMap from i
 
 
 
-### <a name="SuiteMap.AllSuites">func</a> (\*SuiteMap) [AllSuites](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=5105:5144#L157)
+### <a name="SuiteMap.AllSuites">func</a> (\*SuiteMap) [AllSuites](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=5158:5197#L158)
 ``` go
 func (s *SuiteMap) AllSuites() []uint16
 ```
@@ -3666,7 +3669,7 @@ AllSuites returns the hex codes for all of the cipher suites in an untrustable o
 
 
 
-### <a name="SuiteMap.CipherListToSuites">func</a> (\*SuiteMap) [CipherListToSuites](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=5313:5383#L163)
+### <a name="SuiteMap.CipherListToSuites">func</a> (\*SuiteMap) [CipherListToSuites](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=5366:5436#L164)
 ``` go
 func (s *SuiteMap) CipherListToSuites(list []string) ([]uint16, error)
 ```
@@ -3675,7 +3678,7 @@ CipherListToSuites takes an ordered list of cipher suite names, and returns thei
 
 
 
-### <a name="SuiteMap.List">func</a> (\*SuiteMap) [List](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=4885:4919#L146)
+### <a name="SuiteMap.List">func</a> (\*SuiteMap) [List](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=4938:4972#L147)
 ``` go
 func (s *SuiteMap) List() []string
 ```
@@ -3684,7 +3687,7 @@ List returns the names of the cipher suites in an untrustable order
 
 
 
-### <a name="SuiteMap.Suite">func</a> (\*SuiteMap) [Suite](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=5672:5718#L177)
+### <a name="SuiteMap.Suite">func</a> (\*SuiteMap) [Suite](https://github.com/cognusion/go-jar/tree/master/crypto.go?s=5725:5771#L178)
 ``` go
 func (s *SuiteMap) Suite(number uint16) string
 ```
