@@ -60,7 +60,7 @@ require (
 	github.com/google/gops v0.3.28
 	github.com/mailgun/groupcache/v2 v2.6.0
 	github.com/pquerna/cachecontrol v0.2.0
-	github.com/shirou/gopsutil/v4 v4.25.7
+	github.com/shirou/gopsutil/v4 v4.25.8
 	github.com/spf13/pflag v1.0.7
 	github.com/traefik/yaegi v0.16.1
 	github.com/tus/tusd/v2 v2.8.0
@@ -120,7 +120,7 @@ require (
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
-	golang.org/x/sys v0.34.0 // indirect
+	golang.org/x/sys v0.35.0 // indirect
 	golang.org/x/text v0.27.0 // indirect
 	gonum.org/v1/gonum v0.11.0 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect

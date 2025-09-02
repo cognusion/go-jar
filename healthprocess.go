@@ -125,9 +125,10 @@ func (p *ProcessInfo) UpdateCPU() {
 		select {
 		case <-p.Ctx.Done():
 			return
-		default:
+		case <-time.After(p.interval):
 			if e, _ := process.PidExistsWithContext(p.Ctx, p.pid); !e {
 				ErrorOut.Printf("Pid %d no longer exists. UpdateCPU exiting.\n", p.pid)
+				return
 			}
 			cpu, err := p.proc.PercentWithContext(p.Ctx, 0)
 			if err != nil {
@@ -146,7 +147,6 @@ func (p *ProcessInfo) UpdateCPU() {
 			}
 
 			DebugOut.Printf("CPU %4f%% MEM %4f%%\n", cpu, m)
-			time.Sleep(p.interval) //-start.Sub(time.Now())
 		}
 	}
 }
