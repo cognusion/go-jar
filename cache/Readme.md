@@ -69,14 +69,15 @@ BackFillFunc is a function that can retrieve an uncached item to go into the cac
 
 
 
-## <a name="Config">type</a> [Config](https://github.com/cognusion/go-jar/tree/master/cache/misc.go?s=261:771#L16)
+## <a name="Config">type</a> [Config](https://github.com/cognusion/go-jar/tree/master/cache/misc.go?s=261:883#L16)
 ``` go
 type Config struct {
-    Name           string        // For New and Add. Pass as ``cacheName`` to differentiate caches
-    ListenAddress  string        // Only for New to set the listener
-    PeerList       []string      // Only for New to establish the initial PeerList. May be reset with GroupCache.SetPeers()
-    CacheSize      int64         // For New and Add to set the size in bytes of the cache
-    ItemExpiration time.Duration // For New and Add to set the default expiration duration. Leave as empty for infinite.
+    Name              string        // For New and Add. Pass as ``cacheName`` to differentiate caches
+    ListenAddress     string        // Only for New to set the listener
+    ListenReadTimeOut time.Duration // Maximum time to read the request header and the request body
+    PeerList          []string      // Only for New to establish the initial PeerList. May be reset with GroupCache.SetPeers()
+    CacheSize         int64         // For New and Add to set the size in bytes of the cache
+    ItemExpiration    time.Duration // For New and Add to set the default expiration duration. Leave as empty for infinite.
 }
 
 ```
@@ -143,7 +144,7 @@ using .Add().
 
 
 
-### <a name="GroupCache.Add">func</a> (\*GroupCache) [Add](https://github.com/cognusion/go-jar/tree/master/cache/group.go?s=2344:2413#L81)
+### <a name="GroupCache.Add">func</a> (\*GroupCache) [Add](https://github.com/cognusion/go-jar/tree/master/cache/group.go?s=2439:2508#L83)
 ``` go
 func (gc *GroupCache) Add(config Config, fillfunc BackFillFunc) error
 ```
@@ -152,7 +153,7 @@ Add creates new caches in the cluster. Config.ListenAddress and Config.PeerList 
 
 
 
-### <a name="GroupCache.Close">func</a> (\*GroupCache) [Close](https://github.com/cognusion/go-jar/tree/master/cache/group.go?s=3278:3313#L124)
+### <a name="GroupCache.Close">func</a> (\*GroupCache) [Close](https://github.com/cognusion/go-jar/tree/master/cache/group.go?s=3373:3408#L126)
 ``` go
 func (gc *GroupCache) Close() error
 ```
@@ -161,7 +162,7 @@ Close calls the listener close function
 
 
 
-### <a name="GroupCache.Get">func</a> (\*GroupCache) [Get](https://github.com/cognusion/go-jar/tree/master/cache/group.go?s=3450:3527#L130)
+### <a name="GroupCache.Get">func</a> (\*GroupCache) [Get](https://github.com/cognusion/go-jar/tree/master/cache/group.go?s=3545:3622#L132)
 ``` go
 func (gc *GroupCache) Get(cacheName, key string) (value interface{}, ok bool)
 ```
@@ -171,7 +172,7 @@ backfilling as necessary.
 
 
 
-### <a name="GroupCache.GetContext">func</a> (\*GroupCache) [GetContext](https://github.com/cognusion/go-jar/tree/master/cache/group.go?s=3743:3848#L136)
+### <a name="GroupCache.GetContext">func</a> (\*GroupCache) [GetContext](https://github.com/cognusion/go-jar/tree/master/cache/group.go?s=3838:3943#L138)
 ``` go
 func (gc *GroupCache) GetContext(ctx context.Context, cacheName, key string) (value interface{}, ok bool)
 ```
@@ -181,7 +182,7 @@ backfilling as necessary, honoring the provided context.
 
 
 
-### <a name="GroupCache.Names">func</a> (\*GroupCache) [Names](https://github.com/cognusion/go-jar/tree/master/cache/group.go?s=3032:3070#L110)
+### <a name="GroupCache.Names">func</a> (\*GroupCache) [Names](https://github.com/cognusion/go-jar/tree/master/cache/group.go?s=3127:3165#L112)
 ``` go
 func (gc *GroupCache) Names() []string
 ```
@@ -190,7 +191,7 @@ Names returns the names of the current caches
 
 
 
-### <a name="GroupCache.Remove">func</a> (\*GroupCache) [Remove](https://github.com/cognusion/go-jar/tree/master/cache/group.go?s=6157:6214#L187)
+### <a name="GroupCache.Remove">func</a> (\*GroupCache) [Remove](https://github.com/cognusion/go-jar/tree/master/cache/group.go?s=6252:6309#L189)
 ``` go
 func (gc *GroupCache) Remove(cacheName, key string) error
 ```
@@ -199,7 +200,7 @@ Remove makes a best effort to remove an item from the cache
 
 
 
-### <a name="GroupCache.RemoveContext">func</a> (\*GroupCache) [RemoveContext](https://github.com/cognusion/go-jar/tree/master/cache/group.go?s=6385:6470#L192)
+### <a name="GroupCache.RemoveContext">func</a> (\*GroupCache) [RemoveContext](https://github.com/cognusion/go-jar/tree/master/cache/group.go?s=6480:6565#L194)
 ``` go
 func (gc *GroupCache) RemoveContext(ctx context.Context, cacheName, key string) error
 ```
@@ -208,7 +209,7 @@ RemoveContext makes a best effort to remove an item from the cache, honoring the
 
 
 
-### <a name="GroupCache.Set">func</a> (\*GroupCache) [Set](https://github.com/cognusion/go-jar/tree/master/cache/group.go?s=4366:4434#L155)
+### <a name="GroupCache.Set">func</a> (\*GroupCache) [Set](https://github.com/cognusion/go-jar/tree/master/cache/group.go?s=4461:4529#L157)
 ``` go
 func (gc *GroupCache) Set(cacheName, key string, value []byte) error
 ```
@@ -217,7 +218,7 @@ Set forces an item into the cache, following the configured expiration policy
 
 
 
-### <a name="GroupCache.SetContext">func</a> (\*GroupCache) [SetContext](https://github.com/cognusion/go-jar/tree/master/cache/group.go?s=4721:4839#L161)
+### <a name="GroupCache.SetContext">func</a> (\*GroupCache) [SetContext](https://github.com/cognusion/go-jar/tree/master/cache/group.go?s=4816:4934#L163)
 ``` go
 func (gc *GroupCache) SetContext(ctx context.Context, cacheName, key string, value []byte, expiration time.Time) error
 ```
@@ -227,7 +228,7 @@ then falling back to the configured expiration policy) honoring the provided con
 
 
 
-### <a name="GroupCache.SetDebugOut">func</a> (\*GroupCache) [SetDebugOut](https://github.com/cognusion/go-jar/tree/master/cache/group.go?s=6704:6757#L201)
+### <a name="GroupCache.SetDebugOut">func</a> (\*GroupCache) [SetDebugOut](https://github.com/cognusion/go-jar/tree/master/cache/group.go?s=6799:6852#L203)
 ``` go
 func (gc *GroupCache) SetDebugOut(logger *log.Logger)
 ```
@@ -236,7 +237,7 @@ SetDebugOut wires in the debug logger to the specified logger
 
 
 
-### <a name="GroupCache.SetPeers">func</a> (\*GroupCache) [SetPeers](https://github.com/cognusion/go-jar/tree/master/cache/group.go?s=6844:6891#L206)
+### <a name="GroupCache.SetPeers">func</a> (\*GroupCache) [SetPeers](https://github.com/cognusion/go-jar/tree/master/cache/group.go?s=6939:6986#L208)
 ``` go
 func (gc *GroupCache) SetPeers(peers ...string)
 ```
@@ -245,7 +246,7 @@ SetPeers allows the dynamic [re]setting of the peerlist
 
 
 
-### <a name="GroupCache.SetToExpireAt">func</a> (\*GroupCache) [SetToExpireAt](https://github.com/cognusion/go-jar/tree/master/cache/group.go?s=5841:5939#L181)
+### <a name="GroupCache.SetToExpireAt">func</a> (\*GroupCache) [SetToExpireAt](https://github.com/cognusion/go-jar/tree/master/cache/group.go?s=5936:6034#L183)
 ``` go
 func (gc *GroupCache) SetToExpireAt(cacheName, key string, expireAt time.Time, value []byte) error
 ```
@@ -255,7 +256,7 @@ SetContext if you need to set the expiration and a context.
 
 
 
-### <a name="GroupCache.Stats">func</a> (\*GroupCache) [Stats](https://github.com/cognusion/go-jar/tree/master/cache/group.go?s=6993:7062#L211)
+### <a name="GroupCache.Stats">func</a> (\*GroupCache) [Stats](https://github.com/cognusion/go-jar/tree/master/cache/group.go?s=7088:7157#L213)
 ``` go
 func (gc *GroupCache) Stats(w http.ResponseWriter, req *http.Request)
 ```
@@ -269,4 +270,4 @@ Stats is a request finisher that outputs the GroupCache stats as JSON
 
 
 - - -
-Generated by [godoc2md](http://godoc.org/github.com/cognusion/godoc2md)
+Generated by [godoc2md](http://github.com/cognusion/godoc2md)
