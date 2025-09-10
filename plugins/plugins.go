@@ -1,3 +1,5 @@
+//go:build plugins
+
 // Package plugins provides support for Yaegi-style http.Handler "plugins", for use
 // in JAR. Code should be self-contained. The standard library is available for
 // imports, anything else needs GoPaths and whatnot defined, and isnt't greatly
