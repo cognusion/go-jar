@@ -25,11 +25,24 @@ Consumers will want to 'cd cmd/jard; go build; #enjoy'
 * [FAQ](docs/FAQ.md)
 
 ##Code Stability Warning
-Only tagged releases are considered stable. While *master* is always buildable, revisions between tagged releases are considered "development grade" and may not work as intended/described/expected.
+
+Only tagged releases on *master* are considered stable. While *master* is always buildable, revisions between tagged releases are considered "development grade" and may not work as intended/described/expected.
+
+### Long-term Support Branches
+The *lts1* branch is currently the only long-term support branch.
+
+*lts1* was considered feature-complete just before the *v1.2.0* release (circa December 2022) and has only received select fixes and security-related updates since. There are known code-quality issues, optimizations, enhancements, etc. that have been addressed elsewhere.
+
+**Use the *lts1* branch if you need stability.**
+
 ### Pre-1.8.0
-Code released since the *v1.7.x* tagged release is especially ***under-tested***. The deprecation of AWS SDK v1 strongly encouraged an update to AWS SDK v2, which was non-trivial. That upgrade required updates of numerous other subsystems, not the least of which was TUS, which itself was a v1->v2 update. **BOTH AWS and TUS subsystems are *under-tested* until *v1.8.0* is released.** The tests for TUS also quazi-required using a different client for the testing, which is also less-than-known to us. 
+Code released since the *v1.7.x* tagged release is especially ***under-tested***. The deprecation of AWS SDK v1 strongly encouraged an update to AWS SDK v2, which was non-trivial. That upgrade required updates of numerous other subsystems, not the least of which was TUS, which itself was a v1->v2 update. **BOTH AWS and TUS subsystems are *under-tested* until *v1.8.0* is released.** The tests for TUS also quazi-required using a different client for the testing, which is also less-than-known to us.
+
+Yes, this probably should have waited for *go-jar@v2* but that's another matter. All but one of the API changes are only used very internally. Modules that rely on *aws/* will need to be updated. **Use the *lts1* branch if you need stability.**
 
 All tests are **passing**.
+
+**Use the *lts1* branch if you need stability.**
 
 ##Grinder
 The load-generator tool included with JAR has been separated and expanded at [grinder](https://github.com/cognusion/grinder/). For compatibility, the older version is still in *cmd/grinder*.
