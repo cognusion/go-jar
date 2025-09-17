@@ -50,8 +50,8 @@ require (
 	github.com/cheggaaa/pb/v3 v3.1.0
 	github.com/cognusion/go-health v1.1.0
 	github.com/cognusion/go-humanity v1.3.0
-	github.com/cognusion/go-prw v1.3.0
-	github.com/cognusion/go-recyclable v1.1.1
+	github.com/cognusion/go-prw v1.4.0
+	github.com/cognusion/go-recyclable v1.2.0
 	github.com/cognusion/go-sequence v1.1.0
 	github.com/cognusion/go-zulipsend v1.0.1
 	github.com/cognusion/srvdisco v1.0.0

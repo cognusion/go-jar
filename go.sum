@@ -73,10 +73,10 @@ github.com/cognusion/go-humanity v1.3.0 h1:06/WaNW34Osg/CLEddz6HVsPQ7FpCjuve5peT
 github.com/cognusion/go-humanity v1.3.0/go.mod h1:5TovZd/sNx1ZT2BpkqgY0wjpu22ZMZTtKr+8EO+VJ6w=
 github.com/cognusion/go-nagios-checks v1.0.0 h1:fhNrWlbV+rujANziqE2Y/O23TWITfbI7GZWi2+Nu8Sk=
 github.com/cognusion/go-nagios-checks v1.0.0/go.mod h1:fmuND2oW6t+s1JPYCjQ8N8yzfxjMP1f6Nkm1WvLV+eY=
-github.com/cognusion/go-prw v1.3.0 h1:BqXNY3ltmhBx4jn7bteasjUsgEdN1aFuA5QVcSwXGVs=
-github.com/cognusion/go-prw v1.3.0/go.mod h1:U0Z95yewoOIVXT5WsYxtJvzBMOhD2GO8BP5XYRTuHbI=
-github.com/cognusion/go-recyclable v1.1.1 h1:KiFcf4RrZShMvHvIHXccho5QkmWRa5FwAK2o3JXyqn4=
-github.com/cognusion/go-recyclable v1.1.1/go.mod h1:UPIqjekn6iTRbI8dj3SGpictG8mL1zoH0r+91OulOnw=
+github.com/cognusion/go-prw v1.4.0 h1:Z1NWH7g51aY+oRLGkvU5FXZTqwhyaunEHkdPWzq+jYA=
+github.com/cognusion/go-prw v1.4.0/go.mod h1:DLE7AFtbJ1oGlqbmPdB69mO8BCLNpbIFhtr6gSOtbtw=
+github.com/cognusion/go-recyclable v1.2.0 h1:Vqge4egZKOgWLZQUeIiWOjEwXzCaoarPNFv/EFidrBM=
+github.com/cognusion/go-recyclable v1.2.0/go.mod h1:UPIqjekn6iTRbI8dj3SGpictG8mL1zoH0r+91OulOnw=
 github.com/cognusion/go-sequence v1.1.0 h1:MkYt6/iM4WaQh1WiuE1dnknwQEFdU0KBUbDf8ch6XPo=
 github.com/cognusion/go-sequence v1.1.0/go.mod h1:m1eTjD2rGredOjvHMTklg8Unb7mz5OMlFPyOG9dgLws=
 github.com/cognusion/go-timings v1.2.0 h1:lljWBg+KxW00R3B41c5dpaLEk63I9hFOYIHarZpgHg8=
