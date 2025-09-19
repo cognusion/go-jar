@@ -7,12 +7,16 @@ import (
 )
 
 // SyncDict is a string map Dictionary to do simple key-value replacements. It is goro-safe for updates, and optimized for read-mostly implementations.
+//
+// Deprecated: Use https://github.com/cognusion/go-dictionary/
 type SyncDict struct {
 	dict sync.Map
 	lock sync.Mutex
 }
 
 // AddValues adds the key/value pairs listed to the the SyncDict
+//
+// Deprecated: Use https://github.com/cognusion/go-dictionary/
 func (m *SyncDict) AddValues(values map[string]string) {
 	m.lock.Lock()
 	defer m.lock.Unlock()
@@ -23,6 +27,8 @@ func (m *SyncDict) AddValues(values map[string]string) {
 }
 
 // Resolve walks the dictionary and updates any values that contain macros with static strings.
+//
+// Deprecated: Use https://github.com/cognusion/go-dictionary/
 func (m *SyncDict) Resolve() {
 	m.lock.Lock()
 	defer m.lock.Unlock()
@@ -37,6 +43,8 @@ func (m *SyncDict) Resolve() {
 }
 
 // Replacer takes a string, and expands any %%-prefixed strings registered as macros, with their corresponding values
+//
+// Deprecated: Use https://github.com/cognusion/go-dictionary/
 func (m *SyncDict) Replacer(in string) string {
 	var (
 		out      = in
@@ -57,6 +65,8 @@ func (m *SyncDict) Replacer(in string) string {
 }
 
 // replacer takes a string, and expands any %%-prefixed strings registered as macros, with their corresponding values, returning false when there was nothing to replace
+//
+// Deprecated: Use https://github.com/cognusion/go-dictionary/
 func (m *SyncDict) replacer(in string) (string, bool) {
 	if !strings.Contains(in, "%%") {
 		// Don't waste energy

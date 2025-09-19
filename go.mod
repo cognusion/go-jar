@@ -48,6 +48,7 @@ require (
 	github.com/buraksezer/consistent v0.10.0
 	github.com/cespare/xxhash v1.1.0
 	github.com/cheggaaa/pb/v3 v3.1.0
+	github.com/cognusion/go-dictionary v1.0.1
 	github.com/cognusion/go-health v1.1.0
 	github.com/cognusion/go-humanity v1.3.0
 	github.com/cognusion/go-prw v1.4.0

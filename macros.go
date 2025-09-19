@@ -1,7 +1,7 @@
 package jar
 
 import (
-	"github.com/cognusion/go-jar/dictionary"
+	"github.com/cognusion/go-dictionary"
 
 	"fmt"
 	"runtime"

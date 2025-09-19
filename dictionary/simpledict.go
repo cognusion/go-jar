@@ -6,9 +6,13 @@ import (
 )
 
 // SimpleDict is a string map Dictionary to do simple key-value replacements
+//
+// Deprecated: Use https://github.com/cognusion/go-dictionary/
 type SimpleDict map[string]string
 
 // Resolve walks the dictionary and updates any values that contain macros with static strings.
+//
+// Deprecated: Use https://github.com/cognusion/go-dictionary/
 func (m *SimpleDict) Resolve() {
 
 	newm := make(map[string]string)
@@ -26,6 +30,8 @@ func (m *SimpleDict) Resolve() {
 // Replacer takes a string, and expands any %%-prefixed strings registered as macros, with their corresponding values.
 // Note that shortest-prefixes *may* match first, so for dictionaries of %%VERSION1="one" and %%VERSION12="twelve" you may find
 // cases where %%VERSION12 is expanded to "twelve" or "one2". WONTFIX
+//
+// Deprecated: Use https://github.com/cognusion/go-dictionary/
 func (m *SimpleDict) Replacer(in string) string {
 
 	var (
@@ -47,6 +53,8 @@ func (m *SimpleDict) Replacer(in string) string {
 }
 
 // replacer takes a string, and expands any %%-prefixed strings registered as macros, with their corresponding values, returning false when there was nothing to replace
+//
+// Deprecated: Use https://github.com/cognusion/go-dictionary/
 func (m *SimpleDict) replacer(in string) (string, bool) {
 	if !strings.Contains(in, "%%") {
 		// Don't waste energy
