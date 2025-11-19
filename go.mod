@@ -51,8 +51,8 @@ require (
 	github.com/cognusion/go-dictionary v1.0.1
 	github.com/cognusion/go-health v1.1.0
 	github.com/cognusion/go-humanity v1.3.0
-	github.com/cognusion/go-prw v1.4.0
-	github.com/cognusion/go-recyclable v1.3.0
+	github.com/cognusion/go-prw v1.5.0
+	github.com/cognusion/go-recyclable/v2 v2.0.0
 	github.com/cognusion/go-sequence v1.1.0
 	github.com/cognusion/go-zulipsend v1.0.1
 	github.com/cognusion/srvdisco v1.0.0

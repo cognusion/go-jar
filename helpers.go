@@ -3,7 +3,7 @@ package jar
 import (
 	"github.com/davecgh/go-spew/spew"
 
-	"github.com/cognusion/go-recyclable"
+	"github.com/cognusion/go-recyclable/v2"
 
 	"context"
 	"fmt"

@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/cheggaaa/pb/v3"
 	"github.com/cognusion/go-humanity"
-	"github.com/cognusion/go-recyclable"
+	"github.com/cognusion/go-recyclable/v2"
 	"github.com/fatih/color"
 	"github.com/rcrowley/go-metrics"
 	"github.com/viki-org/dnscache"

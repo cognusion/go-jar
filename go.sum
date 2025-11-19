@@ -72,10 +72,10 @@ github.com/cognusion/go-humanity v1.3.0 h1:06/WaNW34Osg/CLEddz6HVsPQ7FpCjuve5peT
 github.com/cognusion/go-humanity v1.3.0/go.mod h1:5TovZd/sNx1ZT2BpkqgY0wjpu22ZMZTtKr+8EO+VJ6w=
 github.com/cognusion/go-nagios-checks v1.0.0 h1:fhNrWlbV+rujANziqE2Y/O23TWITfbI7GZWi2+Nu8Sk=
 github.com/cognusion/go-nagios-checks v1.0.0/go.mod h1:fmuND2oW6t+s1JPYCjQ8N8yzfxjMP1f6Nkm1WvLV+eY=
-github.com/cognusion/go-prw v1.4.0 h1:Z1NWH7g51aY+oRLGkvU5FXZTqwhyaunEHkdPWzq+jYA=
-github.com/cognusion/go-prw v1.4.0/go.mod h1:DLE7AFtbJ1oGlqbmPdB69mO8BCLNpbIFhtr6gSOtbtw=
-github.com/cognusion/go-recyclable v1.3.0 h1:9jusb7O06Df3dNEwbmWTmbNXM0tuvFo4qa4AvPqbxEo=
-github.com/cognusion/go-recyclable v1.3.0/go.mod h1:UPIqjekn6iTRbI8dj3SGpictG8mL1zoH0r+91OulOnw=
+github.com/cognusion/go-prw v1.5.0 h1:YUh5uYYw9vF2G2wwUUU34uzspQsxO/2kKtYl62o4AIw=
+github.com/cognusion/go-prw v1.5.0/go.mod h1:oyIiy+jj92e+wPIg7QkMzyR2mGBmjNi2VVB+mhiboYs=
+github.com/cognusion/go-recyclable/v2 v2.0.0 h1:K4yB89o7pFnvnqFLIm+phBZa1WRq2iAzdfYaIF0i+6A=
+github.com/cognusion/go-recyclable/v2 v2.0.0/go.mod h1:VgtbK2uRMx6W2lF1qmtQD9Fl5+ZaISiLNsqe8d14AYQ=
 github.com/cognusion/go-sequence v1.1.0 h1:MkYt6/iM4WaQh1WiuE1dnknwQEFdU0KBUbDf8ch6XPo=
 github.com/cognusion/go-sequence v1.1.0/go.mod h1:m1eTjD2rGredOjvHMTklg8Unb7mz5OMlFPyOG9dgLws=
 github.com/cognusion/go-timings v1.2.0 h1:lljWBg+KxW00R3B41c5dpaLEk63I9hFOYIHarZpgHg8=
@@ -113,6 +113,8 @@ github.com/facebookgo/subset v0.0.0-20200203212716-c811ad88dec4/go.mod h1:5tD+ne
 github.com/fatih/color v1.10.0/go.mod h1:ELkj/draVOlAH/xkhN6mQ50Qd0MPOk5AAr3maGEBuJM=
 github.com/fatih/color v1.13.0 h1:8LOYc1KYPPmyKMuN8QV2DNRWNbLo6LZ0iLs8+mlH53w=
 github.com/fatih/color v1.13.0/go.mod h1:kLAiJbzzSOZDVNGyDpeOxJ47H46qBXwg5ILebYFFOfk=
+github.com/fortytw2/leaktest v1.3.0 h1:u8491cBMTQ8ft8aeV+adlcytMZylmA5nnwwkRZjI8vw=
+github.com/fortytw2/leaktest v1.3.0/go.mod h1:jDsjWgpAGjm2CA7WthBh/CdZYEPF31XHquHwclZch5g=
 github.com/frankban/quicktest v1.14.3/go.mod h1:mgiwOwqx65TmIk1wJ6Q7wvnVMocbUorkibMOrVTHZps=
 github.com/frankban/quicktest v1.14.6 h1:7Xjx+VpznH+oBnejlPUj8oUpdxnVs4f8XU8WnHkI4W8=
 github.com/frankban/quicktest v1.14.6/go.mod h1:4ptaffx2x8+WTWXmUCuVU6aPUX1/Mz7zb5vbUoiM6w0=

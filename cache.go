@@ -3,7 +3,7 @@ package jar
 import (
 	"github.com/cognusion/go-jar/cache"
 	"github.com/cognusion/go-prw"
-	"github.com/cognusion/go-recyclable"
+	"github.com/cognusion/go-recyclable/v2"
 	"github.com/cognusion/go-timings"
 	"github.com/pquerna/cachecontrol/cacheobject"
 
