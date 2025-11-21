@@ -8,8 +8,7 @@ and Apache HTTPD (virtualize everything) while leveraging over 20 years
 of systems engineering experience to provide robust features with exceptional
 stability.
 
-JAR has been in production use since 2018 and handles millions of connections a day
-across heterogeneous application stacks.
+JAR has been in production use since 2018 and handles millions of connections a day across heterogeneous application stacks.
 
 Consumers will want to 'cd cmd/jard; go build; #enjoy'
 
@@ -24,7 +23,7 @@ Consumers will want to 'cd cmd/jard; go build; #enjoy'
 * [GoDoc for embedding](docs/godoc.md)
 * [FAQ](docs/FAQ.md)
 
-##Code Stability Warning
+## Code Stability Warning
 
 Only tagged releases on *master* are considered stable. While *master* is always buildable, revisions between tagged releases are considered "development grade" and may not work as intended/described/expected.
 
@@ -35,14 +34,21 @@ The *lts1* branch is currently the only long-term support branch.
 
 **Use the *lts1* branch if you need stability.**
 
-### Pre-1.8.0
-Code released since the *v1.7.x* tagged release is especially ***under-tested***. The deprecation of AWS SDK v1 strongly encouraged an update to AWS SDK v2, which was non-trivial. That upgrade required updates of numerous other subsystems, not the least of which was TUS, which itself was a v1->v2 update. **BOTH AWS and TUS subsystems are *under-tested* until *v1.8.0* is released.** The tests for TUS also quazi-required using a different client for the testing, which is also less-than-known to us.
+### Pre-2.0.0
 
-Yes, this probably should have waited for *go-jar@v2* but that's another matter. All but one of the API changes are only used very internally. Modules that rely on *aws/* will need to be updated. **Use the *lts1* branch if you need stability.**
+**Use the *lts1* branch if you need stability.**
+
+Code released since the *v1.7.x* tagged release is especially ***under-tested***. The deprecation of AWS SDK v1 strongly encouraged an update to AWS SDK v2, which was non-trivial. That upgrade required updates of numerous other subsystems, not the least of which was TUS, which itself was a v1->v2 update. **BOTH AWS and TUS subsystems are *under-tested* until *v2.0.0* is released.** The tests for TUS also quazi-required using a different client for the testing, which is also less-than-known to us.
 
 All tests are **passing**.
 
 **Use the *lts1* branch if you need stability.**
 
-##Grinder
-The load-generator tool included with JAR has been separated and expanded at [grinder](https://github.com/cognusion/grinder/). For compatibility, the older version is still in *cmd/grinder*.
+#### What about v1.8.0?
+
+There will be more *v1* releases for fixes, but the massive changes required to migrate to AWS SDK v2, TUS v2, etc. have made it untenable to safely release that into the v1 ecosystem. Commits since *v1.7* will trend towards *v2*.
+
+**Use the *lts1* branch if you need stability.**
+
+## Grinder
+The load-generator tool included with JAR has been separated and expanded at [grinder](https://github.com/cognusion/grinder/).
