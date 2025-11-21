@@ -3,13 +3,12 @@
 package watcher
 
 import (
-	"github.com/fsnotify/fsnotify"
-
 	"io"
 	"log"
 	"strings"
 	"sync"
 
+	"github.com/fsnotify/fsnotify"
 	"golang.org/x/sync/singleflight"
 )
 

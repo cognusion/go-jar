@@ -1,11 +1,10 @@
 package workers
 
 import (
+	"testing"
 	"time"
 
 	. "github.com/smartystreets/goconvey/convey"
-
-	"testing"
 )
 
 func init() {

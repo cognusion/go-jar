@@ -54,9 +54,9 @@ func (o *MapMap) Get(name, key string) string {
 }
 
 // GetURLRoute takes a routeName (first block of a hostname) and may return a reconstituted URLRoute.
-// The Name is populated by the ``routeName`` requested.
-// The ID field is pulled from the value of the ``ids`` map with the ``routeName`` as key.
-// The Endpoint field is pulled from the value of the ``endpoints`` map with the ``routeName`` as key.
+// The Name is populated by the “routeName“ requested.
+// The ID field is pulled from the value of the “ids“ map with the “routeName“ as key.
+// The Endpoint field is pulled from the value of the “endpoints“ map with the “routeName“ as key.
 // Partial results are returns as applicable.
 func (o *MapMap) GetURLRoute(routeName string) *URLRoute {
 	oo := URLRoute{Name: routeName}

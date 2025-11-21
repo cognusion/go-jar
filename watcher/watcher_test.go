@@ -1,16 +1,15 @@
 package watcher
 
 import (
-	"github.com/fsnotify/fsnotify"
-	. "github.com/smartystreets/goconvey/convey"
-
 	"fmt"
-	//"log"
 	"os"
 	"strings"
 	"sync/atomic"
 	"testing"
 	"time"
+
+	"github.com/fsnotify/fsnotify"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 func init() {
