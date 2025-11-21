@@ -31,7 +31,7 @@ require (
 	github.com/spf13/viper v1.21.0
 	github.com/xeipuuv/gojsonschema v1.2.0 // indirect
 	golang.org/x/crypto v0.45.0
-	golang.org/x/net v0.47.0
+	golang.org/x/net v0.47.0 // indirect
 	golang.org/x/sync v0.18.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
@@ -47,17 +47,14 @@ require (
 	github.com/bdragon300/tusgo v0.1.2
 	github.com/buraksezer/consistent v0.10.0
 	github.com/cespare/xxhash v1.1.0
-	github.com/cheggaaa/pb/v3 v3.1.0
 	github.com/cognusion/go-dictionary v1.0.1
 	github.com/cognusion/go-health v1.1.0
-	github.com/cognusion/go-humanity v1.3.0
 	github.com/cognusion/go-prw v1.5.0
 	github.com/cognusion/go-recyclable/v2 v2.0.0
 	github.com/cognusion/go-sequence v1.1.0
 	github.com/cognusion/go-zulipsend v1.0.1
 	github.com/cognusion/srvdisco v1.0.0
 	github.com/didip/tollbooth/v7 v7.0.2
-	github.com/fatih/color v1.13.0
 	github.com/google/gops v0.3.28
 	github.com/mailgun/groupcache/v2 v2.6.0
 	github.com/pquerna/cachecontrol v0.2.0
@@ -65,7 +62,6 @@ require (
 	github.com/spf13/pflag v1.0.10
 	github.com/traefik/yaegi v0.16.1
 	github.com/tus/tusd/v2 v2.8.0
-	github.com/viki-org/dnscache v0.0.0-20130720023526-c70c1f23c5d8
 	github.com/vulcand/oxy/v2 v2.0.3
 	go.uber.org/atomic v1.11.0
 	golang.org/x/exp v0.0.0-20251113190631-e25ba8c21ef6
@@ -73,7 +69,6 @@ require (
 
 require (
 	github.com/HdrHistogram/hdrhistogram-go v1.2.0 // indirect
-	github.com/VividCortex/ewma v1.1.1 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.3 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.13 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.13 // indirect
@@ -98,9 +93,6 @@ require (
 	github.com/jtolds/gls v4.20.0+incompatible // indirect
 	github.com/lufia/plan9stats v0.0.0-20251013123823-9fd1530e3ec3 // indirect
 	github.com/mailgun/multibuf v0.2.0 // indirect
-	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.20 // indirect
-	github.com/mattn/go-runewidth v0.0.12 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
 	github.com/power-devops/perfstat v0.0.0-20240221224432-82ca36839d55 // indirect
@@ -108,7 +100,6 @@ require (
 	github.com/prometheus/client_model v0.6.2 // indirect
 	github.com/prometheus/common v0.67.3 // indirect
 	github.com/prometheus/procfs v0.19.2 // indirect
-	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/sagikazarmark/locafero v0.12.0 // indirect
 	github.com/segmentio/fasthash v1.0.3 // indirect
 	github.com/smarty/assertions v1.16.0 // indirect
