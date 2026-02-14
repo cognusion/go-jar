@@ -308,7 +308,7 @@ func trimPKCS5(plaintext []byte) []byte {
 // addPKCS5 adds padding based on PKCS5 rules
 func addPKCS5(plaintext []byte, blocksize int) []byte {
 	padding := blocksize - len(plaintext)%blocksize
-	padtext := bytes.Repeat([]byte{byte(padding)}, padding)
+	padtext := bytes.Repeat([]byte{IntToByte(padding)}, padding)
 	return append(plaintext, padtext...)
 }
 

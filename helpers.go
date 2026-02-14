@@ -226,3 +226,11 @@ func StringToCleanList(in, sep string) []string {
 	}
 	return list
 }
+
+// IntToByte is used to safely convert from an int to a byte, returning 0 if i does not fit.
+func IntToByte(i int) byte {
+	if i < 0 || i > 255 {
+		return 0
+	}
+	return byte(i)
+}
