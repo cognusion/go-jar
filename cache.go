@@ -1,6 +1,8 @@
 package jar
 
 import (
+	"slices"
+
 	"github.com/cognusion/go-jar/cache"
 	"github.com/cognusion/go-prw"
 	"github.com/cognusion/go-recyclable/v2"
@@ -77,10 +79,8 @@ func (cc *CacheCluster) NewPageCache(name string, cacheSize, maxItemSize int64, 
 	// defend against multiple calls to the same cache
 	cc.addLock.Lock()
 	defer cc.addLock.Unlock()
-	for _, cacheName := range cc.GroupCache.Names() {
-		if name == cacheName {
-			return nil, CacheAlreadyDefinedError
-		}
+	if slices.Contains(cc.GroupCache.Names(), name) {
+		return nil, CacheAlreadyDefinedError
 	}
 
 	nc := cc.config

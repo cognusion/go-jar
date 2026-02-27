@@ -74,7 +74,7 @@ func InitConfig() *viper.Viper {
 	return v
 }
 
-type configDefaultSetter map[string]interface{}
+type configDefaultSetter map[string]any
 
 func (c *configDefaultSetter) Set(v *viper.Viper) {
 	for k, val := range *c {
@@ -124,10 +124,10 @@ func loadDefaults(v *viper.Viper) error {
 	v.SetDefault(ConfigLogSize, 100)                            // Maximum size, in MB, that the currently log can be before rolling
 	v.SetDefault(ConfigLogBackups, 3)                           // Maximum number of rolled logs to keep
 	v.SetDefault(ConfigLogAge, 28)                              // Maximum age, in days, to keep rolled logs
-	v.SetDefault(ConfigPaths, make([]interface{}, 0))           // paths are blocks to define URI prefixes, and the handlers they should use
-	v.SetDefault(ConfigPools, make([]interface{}, 0))           // pools are blocks to define loadbalancer pools, their configuration, and their members
+	v.SetDefault(ConfigPaths, make([]any, 0))                   // paths are blocks to define URI prefixes, and the handlers they should use
+	v.SetDefault(ConfigPools, make([]any, 0))                   // pools are blocks to define loadbalancer pools, their configuration, and their members
 	v.SetDefault(ConfigKeys, make(map[string]string))           // keys[keyname] = base64-encodedkey
-	v.SetDefault(ConfigAuthPool, make(map[string]interface{}))  // authpool[poolname] = map[opt]value
+	v.SetDefault(ConfigAuthPool, make(map[string]any))          // authpool[poolname] = map[opt]value
 	v.SetDefault(ConfigHandlers, make([]string, 0))             // handlers is a list of global handlers
 	v.SetDefault(ConfigHotConfig, false)                        // hotconfig controls whether we watch for config changes, and reload on change, or not
 	v.SetDefault(ConfigTempFolder, "/tmp")                      // tempfolder is where temporary files go

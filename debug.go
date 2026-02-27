@@ -74,12 +74,12 @@ func TestFinisher(w http.ResponseWriter, r *http.Request) {
 	hr := forward.HeaderRewriter{TrustForwardHeader: true, Hostname: me}
 	hr.Rewrite(r)
 
-	w.Write([]byte(fmt.Sprintf("\nProtocol: %s\n  Major: %d\n  Minor: %d\n", r.Proto, r.ProtoMajor, r.ProtoMinor)))
+	w.Write(fmt.Appendf(nil, "\nProtocol: %s\n  Major: %d\n  Minor: %d\n", r.Proto, r.ProtoMajor, r.ProtoMinor))
 
 	if r.TLS != nil {
 		w.Write([]byte("\nTLS:\n"))
-		w.Write([]byte(fmt.Sprintf("  Version: %s\n", SslVersions.Suite(r.TLS.Version))))
-		w.Write([]byte(fmt.Sprintf("  CipherSuite: %s\n", Ciphers.Suite(r.TLS.CipherSuite))))
+		w.Write(fmt.Appendf(nil, "  Version: %s\n", SslVersions.Suite(r.TLS.Version)))
+		w.Write(fmt.Appendf(nil, "  CipherSuite: %s\n", Ciphers.Suite(r.TLS.CipherSuite)))
 	}
 
 	w.Write([]byte("\nHeaders:\n"))
@@ -93,18 +93,18 @@ func TestFinisher(w http.ResponseWriter, r *http.Request) {
 		v := r.Header.Values(k)
 
 		if !Conf.GetBool(ConfigDebug) && (k == "Cookie") {
-			w.Write([]byte(fmt.Sprintf("  %s: <..redacted..>\n", k)))
+			w.Write(fmt.Appendf(nil, "  %s: <..redacted..>\n", k))
 			continue
 		}
 		for _, av := range v {
-			w.Write([]byte(fmt.Sprintf("  %s: %s\n", k, av)))
+			w.Write(fmt.Appendf(nil, "  %s: %s\n", k, av))
 		}
 	}
 
 	w.Write([]byte("\nCookies:\n"))
 	for _, v := range r.Cookies() {
 		val := v.Value
-		w.Write([]byte(fmt.Sprintf("  %s: %s\n", v.Name, val)))
+		w.Write(fmt.Appendf(nil, "  %s: %s\n", v.Name, val))
 	}
 
 }
@@ -121,7 +121,7 @@ func DumpHandler(h http.Handler) http.Handler {
 
 // DumpFinisher is a special finisher that reflects a ton of request output
 func DumpFinisher(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte(fmt.Sprintf("Request: %+v\nHeaders: %+v\nCookies: %+v\nContext: %+v\n", r, r.Header, r.Cookies(), r.Context())))
+	w.Write(fmt.Appendf(nil, "Request: %+v\nHeaders: %+v\nCookies: %+v\nContext: %+v\n", r, r.Header, r.Cookies(), r.Context()))
 }
 
 // MinuteDelayer is a special finisher that waits for 60s before returning
@@ -149,8 +149,8 @@ func RequestIDFinisher(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set(Conf.GetString(ConfigRequestIDHeaderName), requestID)
 	rnd, _ := rand.Int(rand.Reader, randMax)
 	rv := rnd.Int64()/2 + 1
-	out := []byte(fmt.Sprintf("%s %d\n", requestID, rv))
-	for i := int64(0); i < rv; i++ {
+	out := fmt.Appendf(nil, "%s %d\n", requestID, rv)
+	for range rv {
 		w.Write(out)
 	}
 }
@@ -166,7 +166,7 @@ func MinuteStreamer(w http.ResponseWriter, r *http.Request) {
 		case <-ctx.Done():
 			return // returning not to leak the goroutine
 		case <-time.After(time.Second):
-			w.Write([]byte(fmt.Sprintf("%d\n", i)))
+			w.Write(fmt.Appendf(nil, "%d\n", i))
 			if f, ok := w.(http.Flusher); ok {
 				f.Flush()
 			}

@@ -34,7 +34,7 @@ func newZulipClient(url, username, token string, retries int, interval time.Dura
 	}
 }
 
-//ZulipWork is a generic Work that can send Zulip notifications
+// ZulipWork is a generic Work that can send Zulip notifications
 type ZulipWork struct {
 	Client  *zulip.Zulip
 	Stream  string
@@ -43,7 +43,7 @@ type ZulipWork struct {
 }
 
 // Work is called to do work
-func (z *ZulipWork) Work() interface{} {
+func (z *ZulipWork) Work() any {
 	if z.Client == nil {
 		return ErrNoZulipClient
 	}
@@ -51,7 +51,7 @@ func (z *ZulipWork) Work() interface{} {
 }
 
 // Return dumps the response. We don't care. :)
-func (z *ZulipWork) Return(rthing interface{}) {
+func (z *ZulipWork) Return(rthing any) {
 	// Dump it
 	if rthing != nil {
 		ErrorOut.Printf("ZulipWork to %s/%s \"%s\" returned error: %v\n", z.Stream, z.Topic, z.Message, rthing)

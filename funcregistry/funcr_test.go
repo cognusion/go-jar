@@ -19,7 +19,7 @@ func TestFuncr(t *testing.T) {
 	}
 
 	Convey("When a new FuncRegistry is created, and 1000 functions are added to it", t, func() {
-		for i := 0; i < 1000; i++ {
+		for range 1000 {
 			fr.Add(f)
 		}
 		fr.Add(func() {
@@ -54,7 +54,7 @@ func TestFuncrCallOnce(t *testing.T) {
 	}
 
 	Convey("When a new FuncRegistry is created with \"call once\" set, and 1000 functions are added to it", t, func() {
-		for i := 0; i < 1000; i++ {
+		for range 1000 {
 			fr.Add(f)
 		}
 		fr.Add(func() {
@@ -103,10 +103,10 @@ func TestFuncrAddOnceCall(t *testing.T) {
 
 	Convey("When a new FuncRegistry is created, and 900 functions are AddOnce()d, and 100 functions are Add()d", t, func() {
 
-		for i := 0; i < 900; i++ {
+		for range 900 {
 			fr.AddOnce(f)
 		}
-		for i := 0; i < 100; i++ {
+		for range 100 {
 			fr.Add(f)
 		}
 
@@ -168,7 +168,7 @@ func TestFuncrCallTwice(t *testing.T) {
 	}
 
 	Convey("When a new FuncRegistry is created with set, and 1000 functions are added to it", t, func() {
-		for i := 0; i < 1000; i++ {
+		for range 1000 {
 			fr.Add(f)
 		}
 		fr.Add(func() {

@@ -93,10 +93,10 @@ type Path struct {
 }
 
 // PathOptions is an MSI with a case-agnostic getter
-type PathOptions map[string]interface{}
+type PathOptions map[string]any
 
 // Get returns an interface{} if *key* matches, otherwise nil
-func (p *PathOptions) Get(key string) interface{} {
+func (p *PathOptions) Get(key string) any {
 	if p == nil {
 		return nil
 	}
@@ -187,7 +187,7 @@ func (p *PathOptions) GetStringSlice(key string) []string {
 // BuildPaths unmarshalls the paths config, creates handler chains, and updates the mux
 func BuildPaths(router *mux.Router) error {
 	if ipaths := Conf.Get(ConfigPaths); ipaths != nil {
-		paths := make([]Path, len(ipaths.([]interface{})))
+		paths := make([]Path, len(ipaths.([]any)))
 		Conf.UnmarshalKey(ConfigPaths, &paths)
 
 		// Range over the paths

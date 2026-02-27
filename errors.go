@@ -247,7 +247,7 @@ func HandleRemoteWrapper(code int, r *http.Request, rw *prw.PluggableResponseWri
 	url := fmt.Sprintf("%s?ERROR_CODE=%d&ERROR_MESSAGE=%s", Conf.GetString(ConfigErrorHandlerURI), code, url.QueryEscape(string(body)))
 	DebugOut.Printf("ErrorHandler GETting '%s'\n", url)
 	req, _ := http.NewRequest("GET", url, nil)
-	rChan := make(chan interface{}, 1)
+	rChan := make(chan any, 1)
 	AddWork(&HTTPWork{
 		Client:       DefaultClient,
 		Request:      req,

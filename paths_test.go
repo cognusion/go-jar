@@ -270,15 +270,15 @@ func TestPathHostPortSetNope(t *testing.T) {
 
 func TestPathOptions(t *testing.T) {
 
-	rawpath := make(map[string]interface{})
+	rawpath := make(map[string]any)
 	rawpath["Name"] = "TestPath"
 	rawpath["Path"] = "/"
 	rawpath["Finisher"] = "ok"
-	rawpath["Options"] = map[string]interface{}{
+	rawpath["Options"] = map[string]any{
 		"BlindMirrorRequest.Mirrors": []string{"a", "b", "c"},
 	}
 
-	Conf.Set(ConfigPaths, []interface{}{rawpath})
+	Conf.Set(ConfigPaths, []any{rawpath})
 
 	Convey("When a path is set with options, it unmarshals without error", t, func() {
 		var err error
@@ -301,17 +301,17 @@ func TestPathOptions(t *testing.T) {
 
 func TestPathOptionsGetters(t *testing.T) {
 
-	rawpath := make(map[string]interface{})
+	rawpath := make(map[string]any)
 	rawpath["Name"] = "TestPath"
 	rawpath["Path"] = "/"
 	rawpath["Finisher"] = "ok"
-	rawpath["Options"] = map[string]interface{}{
+	rawpath["Options"] = map[string]any{
 		"BlindMirrorRequest.Mirrors": []string{"a", "b", "c"},
 		"HotString":                  "yes!",
 		"ABool":                      true,
 	}
 
-	Conf.Set(ConfigPaths, []interface{}{rawpath})
+	Conf.Set(ConfigPaths, []any{rawpath})
 
 	Convey("When a path is set with options, it unmarshals without error", t, func() {
 		var err error

@@ -173,7 +173,7 @@ func Test_GroupCache(t *testing.T) {
 		Convey("... Checking stats works as-expected", func() {
 			stb, err := c.stats()
 			So(err, ShouldBeNil)
-			x := make([]interface{}, 0)
+			x := make([]any, 0)
 			jerr := json.Unmarshal(stb, &x)
 			So(jerr, ShouldBeNil)
 			So(x, ShouldNotBeEmpty)

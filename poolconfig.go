@@ -62,10 +62,10 @@ type PoolConfig struct {
 }
 
 // PoolOptions is an MSI with a case-agnostic getter
-type PoolOptions map[string]interface{}
+type PoolOptions map[string]any
 
 // Get returns an interface{} if *key* matches, otherwise nil
-func (p *PoolOptions) Get(key string) interface{} {
+func (p *PoolOptions) Get(key string) any {
 	if p == nil {
 		return nil
 	}

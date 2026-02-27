@@ -48,7 +48,7 @@ var (
 func init() {
 	// init the Pool using JSONAccessLog. May be overridden later
 	LogPool = sync.Pool{
-		New: func() interface{} {
+		New: func() any {
 			return &JSONAccessLog{}
 		},
 	}

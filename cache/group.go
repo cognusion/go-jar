@@ -129,18 +129,18 @@ func (gc *GroupCache) Close() error {
 
 // Get will return the value of the cacheName'd key, asking other cache members or
 // backfilling as necessary.
-func (gc *GroupCache) Get(cacheName, key string) (value interface{}, ok bool) {
+func (gc *GroupCache) Get(cacheName, key string) (value any, ok bool) {
 	return gc.GetContext(context.Background(), cacheName, key)
 }
 
 // GetContext will return the value of the cacheName'd key, asking other cache members or
 // backfilling as necessary, honoring the provided context.
-func (gc *GroupCache) GetContext(ctx context.Context, cacheName, key string) (value interface{}, ok bool) {
+func (gc *GroupCache) GetContext(ctx context.Context, cacheName, key string) (value any, ok bool) {
 	gc.debugOut.Printf("Getting %s %s\n", cacheName, key)
 	return gc.get(ctx, cacheName, key)
 }
 
-func (gc *GroupCache) get(ctx context.Context, cacheName, key string) (value interface{}, ok bool) {
+func (gc *GroupCache) get(ctx context.Context, cacheName, key string) (value any, ok bool) {
 	if cache, ok := gc.caches[cacheName]; ok {
 		var b []byte
 		err := cache.Get(ctx, key, groupcache.AllocatingByteSliceSink(&b))

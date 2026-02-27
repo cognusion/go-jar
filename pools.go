@@ -1,6 +1,8 @@
 package jar
 
 import (
+	"maps"
+
 	"github.com/cognusion/go-jar/workers"
 
 	"fmt"
@@ -101,7 +103,7 @@ func (p *Pools) healthTicker() {
 	}
 
 	var (
-		rChan    = make(chan interface{})
+		rChan    = make(chan any)
 		hcErrors = make(map[string]*HealthCheckError)
 	)
 
@@ -198,9 +200,7 @@ func (p *Pools) Merge(pools map[string]*Pool) {
 	p.Lock()
 	defer p.Unlock()
 
-	for name, pool := range pools {
-		p.pools[name] = pool
-	}
+	maps.Copy(p.pools, pools)
 }
 
 // Replace does exactly that on the entire map of Pool
@@ -212,7 +212,7 @@ func (p *Pools) Replace(pools map[string]*Pool) {
 }
 
 // tickFunc runs every tick of the healthcheck
-func (p *Pools) tickFunc(rChan chan interface{}) {
+func (p *Pools) tickFunc(rChan chan any) {
 	DebugOut.Printf("Pools.healthTicker firing...\n")
 	var (
 		stagger  time.Duration
@@ -223,7 +223,7 @@ func (p *Pools) tickFunc(rChan chan interface{}) {
 	p.RLock()
 	for _, pool := range p.pools {
 
-		f := func(u, m interface{}) bool {
+		f := func(u, m any) bool {
 			murl := u.(url.URL)
 			//member := m.(*Member)
 
@@ -362,11 +362,11 @@ type HealthCheckWork struct {
 	Add         PruneFunc
 	Remove      PruneFunc
 	// Return is an error, or the StatusCode int
-	ReturnChan chan interface{}
+	ReturnChan chan any
 }
 
 // Work executes the HealthCheck and returns HealthCheckResult or HealthCheckError
-func (h *HealthCheckWork) Work() interface{} {
+func (h *HealthCheckWork) Work() any {
 	var workClient = &http.Client{
 		Timeout: time.Second * 2,
 	}
@@ -421,6 +421,6 @@ func (h *HealthCheckWork) Work() interface{} {
 }
 
 // Return consumes a Work result and slides it downthe return channel
-func (h *HealthCheckWork) Return(rthing interface{}) {
+func (h *HealthCheckWork) Return(rthing any) {
 	h.ReturnChan <- rthing
 }

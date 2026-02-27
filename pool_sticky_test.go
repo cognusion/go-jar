@@ -62,7 +62,7 @@ func TestPoolRoundRobinSticky(t *testing.T) {
 		buff, err := buffer.New(lb, buffer.Retry(fmt.Sprintf("IsNetworkError() && Attempts() < %d", 2)), buffer.Logger(&oxyLogger))
 		So(err, ShouldBeNil)
 
-		for i := 0; i < 10; i++ {
+		for range 10 {
 			buff.ServeHTTP(rr, req)
 			So(rr.Code, ShouldEqual, http.StatusOK)
 		}
@@ -119,7 +119,7 @@ func TestPoolRoundRobinStickyFailReissue(t *testing.T) {
 		buff, err := buffer.New(lb, buffer.Retry(fmt.Sprintf("IsNetworkError() && Attempts() < %d", 2)), buffer.Logger(&oxyLogger))
 		So(err, ShouldBeNil)
 
-		for i := 0; i < 10; i++ {
+		for range 10 {
 			buff.ServeHTTP(rr, req)
 			So(rr.Code, ShouldEqual, http.StatusOK)
 			cookies := rr.Result().Cookies()
@@ -188,7 +188,7 @@ func TestPoolRoundRobinStickyCookie(t *testing.T) {
 		buff, err := buffer.New(lb, buffer.Retry(fmt.Sprintf("IsNetworkError() && Attempts() < %d", 2)), buffer.Logger(&oxyLogger))
 		So(err, ShouldBeNil)
 
-		for i := 0; i < 10; i++ {
+		for range 10 {
 			buff.ServeHTTP(rr, req)
 			So(rr.Code, ShouldEqual, http.StatusOK)
 		}
@@ -247,7 +247,7 @@ func TestPoolRoundRobinStickyCookieOptions(t *testing.T) {
 			oneUp bool
 			twoUp bool
 		)
-		for i := 0; i < 10; i++ {
+		for range 10 {
 			buff.ServeHTTP(rr, req)
 			So(rr.Code, ShouldEqual, http.StatusOK)
 			So(rr.Result().Cookies(), ShouldNotBeEmpty)
@@ -326,7 +326,7 @@ func TestPoolRoundRobinStickyCookieOptionsDefault(t *testing.T) {
 			oneUp bool
 			twoUp bool
 		)
-		for i := 0; i < 10; i++ {
+		for range 10 {
 			buff.ServeHTTP(rr, req)
 			So(rr.Code, ShouldEqual, http.StatusOK)
 			So(rr.Result().Cookies(), ShouldNotBeEmpty)
@@ -412,7 +412,7 @@ func TestPoolRoundRobinStickyCookieFailReissue(t *testing.T) {
 		buff, err := buffer.New(lb, buffer.Retry(fmt.Sprintf("IsNetworkError() && Attempts() < %d", 2)), buffer.Logger(&oxyLogger))
 		So(err, ShouldBeNil)
 
-		for i := 0; i < 10; i++ {
+		for range 10 {
 			buff.ServeHTTP(rr, req)
 			So(rr.Code, ShouldEqual, http.StatusOK)
 			cookies := rr.Result().Cookies()

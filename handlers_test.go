@@ -299,7 +299,7 @@ func TestRateLimiterBroke(t *testing.T) {
 			twohundreds     = 0
 		)
 
-		for i := 0; i < 100; i++ {
+		for range 100 {
 			rr := httptest.NewRecorder()
 			handler.ServeHTTP(rr, req)
 
@@ -340,7 +340,7 @@ func TestRateLimiterFractionClear(t *testing.T) {
 		)
 
 		//Println()
-		for i := 0; i < 10; i++ {
+		for range 10 {
 			rr := httptest.NewRecorder()
 
 			handler := rl.Handler(testHandler)
@@ -744,7 +744,7 @@ func TestBodyByteLimit(t *testing.T) {
 func randString(length int) string {
 	charSet := "abcdedfghijklmnopqrstABCDEFGHIJKLMNOP"
 	outString := make([]byte, length)
-	for i := 0; i < length; i++ {
+	for i := range length {
 		random := rand.Intn(len(charSet))
 		randomChar := charSet[random]
 		outString[i] = randomChar

@@ -292,7 +292,7 @@ func TestPoolRoundRobinFair(t *testing.T) {
 		lb.UpsertServer(oneURL)
 		lb.UpsertServer(twoURL)
 
-		for i := 0; i < 10; i++ {
+		for range 10 {
 			lb.ServeHTTP(rr, req) // one
 		}
 
@@ -340,7 +340,7 @@ func TestPoolRoundRobinWeight(t *testing.T) {
 
 		lb.UpsertServer(twoURL, roundrobin.Weight(2))
 
-		for i := 0; i < 12; i++ {
+		for range 12 {
 			lb.ServeHTTP(rr, req) // one
 		}
 
@@ -387,7 +387,7 @@ func TestPoolRoundRobinWeightZero(t *testing.T) {
 
 		lb.UpsertServer(twoURL, roundrobin.Weight(math.MaxInt64))
 
-		for i := 0; i < 1000; i++ {
+		for range 1000 {
 			lb.ServeHTTP(rr, req) // one
 		}
 
@@ -435,7 +435,7 @@ func TestPoolRoundRobinFailWell(t *testing.T) {
 		buff, err := buffer.New(lb, buffer.Retry(fmt.Sprintf("IsNetworkError() && Attempts() < %d", 2)), buffer.Logger(&oxyLogger))
 		So(err, ShouldBeNil)
 
-		for i := 0; i < 10; i++ {
+		for range 10 {
 			buff.ServeHTTP(rr, req)
 			So(rr.Code, ShouldEqual, http.StatusOK)
 		}

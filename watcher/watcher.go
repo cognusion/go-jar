@@ -125,7 +125,7 @@ func (w *Watcher) run(done chan struct{}) {
 				switch event.Op {
 				case fsnotify.Write:
 
-					go requestGroup.Do(event.Name, func() (interface{}, error) {
+					go requestGroup.Do(event.Name, func() (any, error) {
 						wfunc(event)
 						return nil, nil
 					})

@@ -98,9 +98,9 @@ func NewVerifiedBasicAuth(source, realm string, users []string) (*BasicAuth, err
 
 // VerifySource checks that the requested authentication source is valid, and accessible
 func (b *BasicAuth) VerifySource() error {
-	if strings.HasPrefix(b.source, "file://") {
+	if after, ok := strings.CutPrefix(b.source, "file://"); ok {
 		// file
-		file := strings.TrimPrefix(b.source, "file://")
+		file := after
 		if _, err := os.Stat(file); os.IsNotExist(err) {
 			return ErrSourceVerificationFailed
 		}

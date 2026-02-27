@@ -28,7 +28,7 @@ func NewAccessFromStrings(allow, deny string) (*Access, error) {
 	var a Access
 
 	if allow != "" {
-		for _, addr := range strings.Split(allow, ",") {
+		for addr := range strings.SplitSeq(allow, ",") {
 			err := a.AddAddress(strings.TrimSpace(addr), true)
 			if err != nil {
 				return nil, ErrConfigurationError{fmt.Sprintf("Allow rule parsing problem: '%s': %s", allow, err)}
@@ -37,7 +37,7 @@ func NewAccessFromStrings(allow, deny string) (*Access, error) {
 	}
 
 	if deny != "" {
-		for _, addr := range strings.Split(deny, ",") {
+		for addr := range strings.SplitSeq(deny, ",") {
 			err := a.AddAddress(strings.TrimSpace(addr), false)
 			if err != nil {
 				return nil, ErrConfigurationError{fmt.Sprintf("Deny rule parsing problem: '%s': %s", deny, err)}

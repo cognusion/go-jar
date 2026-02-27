@@ -197,7 +197,7 @@ func TestWatcherLoopwrites(t *testing.T) {
 			// Wait a spell
 			<-time.After(10 * time.Millisecond)
 
-			for i := 0; i < 10; i++ {
+			for i := range 10 {
 				terr := touchFile(tfile, fmt.Sprintf("goodbye: %d", i))
 				So(terr, ShouldBeNil)
 				<-time.After(10 * time.Millisecond)

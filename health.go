@@ -315,7 +315,7 @@ func AddStatuses(s *health.StatusRegistry, hc *health.Check) *health.Check {
 }
 
 // AddMetrics ranges over the supplied map, adding each as a Metric to the supplied Check
-func AddMetrics(m map[string]map[string]interface{}, hc *health.Check) *health.Check {
+func AddMetrics(m map[string]map[string]any, hc *health.Check) *health.Check {
 	for name, vmap := range m {
 		// map[count:1 1m.rate:0 5m.rate:0 15m.rate:0 mean.rate:0.35600778189293464]
 		for metric, v := range vmap {

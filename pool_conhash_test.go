@@ -106,22 +106,22 @@ func TestPoolConsistentHash(t *testing.T) {
 			threeCount = 0
 		}
 
-		for i := 0; i < 10; i++ {
+		for range 10 {
 			lb.ServeHTTP(rr, req) // one
 			So(rr.Code, ShouldEqual, http.StatusOK)
 		}
 
-		for i := 0; i < 10; i++ {
+		for range 10 {
 			lb.ServeHTTP(rr, req2) // one
 			So(rr.Code, ShouldEqual, http.StatusOK)
 		}
 
-		for i := 0; i < 10; i++ {
+		for range 10 {
 			lb.ServeHTTP(rr, req) // one
 			So(rr.Code, ShouldEqual, http.StatusOK)
 		}
 
-		for i := 0; i < 10; i++ {
+		for range 10 {
 			lb.ServeHTTP(rr, req2) // one
 			So(rr.Code, ShouldEqual, http.StatusOK)
 		}
@@ -141,13 +141,13 @@ func TestPoolConsistentHash(t *testing.T) {
 
 			rr1 := httptest.NewRecorder()
 			oneCount = 0
-			for i := 0; i < 10; i++ {
+			for range 10 {
 				lb.ServeHTTP(rr1, req) // one
 				c.So(rr1.Code, ShouldEqual, http.StatusOK)
 			}
 
 			rr2 := httptest.NewRecorder()
-			for i := 0; i < 10; i++ {
+			for range 10 {
 				lb.ServeHTTP(rr2, req2) // one
 				c.So(rr2.Code, ShouldEqual, http.StatusOK)
 			}
@@ -268,22 +268,22 @@ func TestPoolConsistentHashNoHash(t *testing.T) {
 			threeCount = 0
 		}
 
-		for i := 0; i < 10; i++ {
+		for range 10 {
 			lb.ServeHTTP(rr, req) // one
 			So(rr.Code, ShouldEqual, http.StatusOK)
 		}
 
-		for i := 0; i < 10; i++ {
+		for range 10 {
 			lb.ServeHTTP(rr, req2) // one
 			So(rr.Code, ShouldEqual, http.StatusOK)
 		}
 
-		for i := 0; i < 10; i++ {
+		for range 10 {
 			lb.ServeHTTP(rr, req) // one
 			So(rr.Code, ShouldEqual, http.StatusOK)
 		}
 
-		for i := 0; i < 10; i++ {
+		for range 10 {
 			lb.ServeHTTP(rr, req2) // one
 			So(rr.Code, ShouldEqual, http.StatusOK)
 		}

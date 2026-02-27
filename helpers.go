@@ -68,7 +68,7 @@ func checkAuthoritative(r *http.Request) bool {
 
 // StringIfCtx will return a non-empty string if the suppled Request
 // has a Context.WithValue() of the specified name
-func StringIfCtx(r *http.Request, name interface{}) string {
+func StringIfCtx(r *http.Request, name any) string {
 	if s := r.Context().Value(name); s != nil {
 		return s.(string)
 	}
@@ -151,7 +151,7 @@ func ReplaceURI(r *http.Request, urlPath, requestURI string) {
 }
 
 // PrettyPrint returns the a JSONified version of the string, or %+v if that's not possible
-func PrettyPrint(v interface{}) string {
+func PrettyPrint(v any) string {
 	return spew.Sdump(v)
 }
 

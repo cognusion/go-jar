@@ -98,7 +98,7 @@ func Test_HMAC(t *testing.T) {
 	emptysalt := make([]byte, 0)
 
 	Convey("Trivial random messages with trival random keys and no salt are signed and verified", t, func() {
-		for i := 0; i < 100; i++ {
+		for range 100 {
 			key := randBytes(64)
 
 			msg := randBytes(256)
@@ -109,7 +109,7 @@ func Test_HMAC(t *testing.T) {
 		}
 	})
 	Convey("Trivial random messages with trival random keys are signed and verified", t, func() {
-		for i := 0; i < 100; i++ {
+		for range 100 {
 			key := randBytes(64)
 			salt := randBytes(64)
 			msg := randBytes(256)
@@ -121,7 +121,7 @@ func Test_HMAC(t *testing.T) {
 	})
 
 	Convey("Trivial random messages with trivial random keys are signed, but after trivial random changes to the messages the verifications fail", t, func() {
-		for i := 0; i < 100; i++ {
+		for range 100 {
 			key := randBytes(64)
 			salt := randBytes(64)
 			msg := randBytes(256)

@@ -59,8 +59,8 @@ func HandleFinisher(handler string, path *Path) (http.HandlerFunc, error) {
 	)
 
 	// Handle dynamic "httpstatusNNN" finishers
-	if strings.HasPrefix(lcHandler, "httpstatus") {
-		strNum := strings.TrimPrefix(lcHandler, "httpstatus")
+	if after, ok0 := strings.CutPrefix(lcHandler, "httpstatus"); ok0 {
+		strNum := after
 		n, err := strconv.Atoi(strNum)
 		if err != nil {
 			// Ahhhh

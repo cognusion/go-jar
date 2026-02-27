@@ -12,7 +12,7 @@ import (
 type HTTPWork struct {
 	Client       *http.Client
 	Request      *http.Request
-	ResponseChan chan interface{}
+	ResponseChan chan any
 	// RetryCount is the number of times to retry Request if there is an error
 	RetryCount int
 	//RetryInterval is the duration between retries
@@ -22,7 +22,7 @@ type HTTPWork struct {
 }
 
 // Work is called to do work
-func (h *HTTPWork) Work() interface{} {
+func (h *HTTPWork) Work() any {
 
 	var ret *http.Response
 	try := func() error {
@@ -47,6 +47,6 @@ func (h *HTTPWork) Work() interface{} {
 }
 
 // Return is called response with results
-func (h *HTTPWork) Return(rthing interface{}) {
+func (h *HTTPWork) Return(rthing any) {
 	h.ResponseChan <- rthing
 }

@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/cognusion/srvdisco"
@@ -119,11 +120,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	for _, c := range commands {
-		if c == commandFields[0] {
-			commandOk = true
-			break
-		}
+	if slices.Contains(commands, commandFields[0]) {
+		commandOk = true
 	}
 	if !commandOk {
 		// Wasn't in list

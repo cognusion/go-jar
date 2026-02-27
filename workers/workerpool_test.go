@@ -32,7 +32,7 @@ func TestSimpleWorkerpool(t *testing.T) {
 }
 
 func TestWorkerPanic(t *testing.T) {
-	rChan := make(chan interface{})
+	rChan := make(chan any)
 
 	Convey("When a Worker intializes and gets work", t, func() {
 		go workIt(&PanicWork{rChan})
@@ -48,7 +48,7 @@ func TestWorkerPanic(t *testing.T) {
 }
 
 func TestWorkerDo(t *testing.T) {
-	rChan := make(chan interface{}, 1)
+	rChan := make(chan any, 1)
 
 	Convey("When a Worker intializes and gets work", t, func() {
 		go workIt(&DemoWork{rChan})
@@ -63,39 +63,39 @@ func TestWorkerDo(t *testing.T) {
 }
 
 type SlowDemoWork struct {
-	ResponseChan chan interface{}
+	ResponseChan chan any
 }
 
-func (w *SlowDemoWork) Work() interface{} {
+func (w *SlowDemoWork) Work() any {
 	time.Sleep(10 * time.Second)
 	return "Worrrrrrrrk"
 }
 
-func (w *SlowDemoWork) Return(work interface{}) {
+func (w *SlowDemoWork) Return(work any) {
 	w.ResponseChan <- work
 }
 
 type DemoWork struct {
-	ResponseChan chan interface{}
+	ResponseChan chan any
 }
 
-func (w *DemoWork) Work() interface{} {
+func (w *DemoWork) Work() any {
 	return "Worrrrrrrrk"
 }
 
-func (w *DemoWork) Return(work interface{}) {
+func (w *DemoWork) Return(work any) {
 	w.ResponseChan <- work
 }
 
 type PanicWork struct {
-	ResponseChan chan interface{}
+	ResponseChan chan any
 }
 
-func (w *PanicWork) Work() interface{} {
+func (w *PanicWork) Work() any {
 	panic("OH NO!!!!!!")
 }
 
-func (w *PanicWork) Return(work interface{}) {
+func (w *PanicWork) Return(work any) {
 	w.ResponseChan <- work
 }
 
