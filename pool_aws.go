@@ -101,6 +101,7 @@ func ec2HTTPMember(conf *PoolConfig, u *url.URL, m *Member) *Member {
 		// If the Hostname isn't just digits and dots, it's a name and not a number, make it a number
 		if ok, err := regexp.MatchString(`[^\d\.]`, u.Hostname()); err == nil && ok {
 			// hostname is probably not an address
+			//#nosec G704 -- In this case, the input is from a config file. If that is compromised, there are larger problems.
 			addrs, err := net.LookupHost(u.Hostname())
 			if err != nil {
 				DebugOut.Printf("Error resolving hostname '%s': %s\n", u.Hostname(), err)

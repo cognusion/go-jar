@@ -91,6 +91,7 @@ func init() {
 		if ThisProcess == nil {
 			// Since InitFuncs may be called multiple times, we don't want to orphan these
 			ThisProcess = NewProcessInfo(0)
+			//#nosec G118 -- Cancelfunc is registered with a StopFunc, and will eventually be called when the server is stopped.
 			ctx, cf := context.WithCancel(context.Background())
 			ThisProcess.Ctx = ctx
 			StopFuncs.Add(func() { // Add the context canceller
