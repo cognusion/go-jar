@@ -46,3 +46,20 @@ func Test_NewMapMap(t *testing.T) {
 		})
 	})
 }
+
+func Test_BrokeMapMap(t *testing.T) {
+
+	routefiles := map[string]string{
+		//"endpoints": "tests/brokeperms.map",
+		"ids": "tests/notafile.map",
+	}
+
+	mapMap := NewMapMap()
+
+	Convey("When given a list of map files to load, but one is unreadable, an error is returned", t, func() {
+		for n, f := range routefiles {
+			err := mapMap.Load(n, f)
+			So(err, ShouldNotBeNil)
+		}
+	})
+}
