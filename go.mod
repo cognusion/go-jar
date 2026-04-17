@@ -7,7 +7,7 @@ toolchain go1.24.2
 require (
 	github.com/NYTimes/gziphandler v1.1.1
 	github.com/abbot/go-http-auth v0.4.0
-	github.com/aws/aws-sdk-go v1.44.94
+	github.com/aws/aws-sdk-go v1.55.8
 	github.com/cognusion/go-cronzilla v1.0.0
 	github.com/cognusion/go-nagios-checks v0.0.0-20190904125444-02e4e9610d38 // indirect
 	github.com/cognusion/go-timings v1.0.0
