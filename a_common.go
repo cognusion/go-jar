@@ -465,6 +465,7 @@ func bootstrap() (done bool, servers []*http.Server) {
 				hparts := strings.Split(listen, ":")
 				newU.Host = fmt.Sprintf("%s:%s", hp[0], hparts[1])
 				DebugOut.Printf("Redirecting HTTP traffic from '%s' to '%s'\n", Conf.GetString(ConfigListen), newU.String())
+				//#nosec G710 - Taint analysis incorrect. Redirect is safe.
 				http.Redirect(w, r, newU.String(), http.StatusMovedPermanently)
 			}),
 		}

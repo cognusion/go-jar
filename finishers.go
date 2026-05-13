@@ -140,7 +140,8 @@ func (rd *Redirect) Finisher(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-	u = strings.Replace(u, "%1", r.URL.RequestURI(), -1)
+	u = strings.ReplaceAll(u, "%1", r.URL.RequestURI())
+	//#nosec G710 -- In context, config file is the "source" of the "taint".
 	http.Redirect(w, r, u, rd.Code)
 }
 
