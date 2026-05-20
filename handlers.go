@@ -157,10 +157,13 @@ func RouteIDInspectionHandler(next http.Handler) http.Handler {
 		// Check to see if ROUTEID is specified on the request line, and if so, push it into the request cookie
 		if strings.Contains(r.URL.RawQuery, "ROUTEID") {
 			if rkey := r.URL.Query().Get("ROUTEID"); rkey != "" {
+				//#nosec G124 -- Cookies parameters are configurable.
 				r.AddCookie(&http.Cookie{
-					Name:  "ROUTEID",
-					Value: rkey,
-					Path:  "/",
+					Name:     "ROUTEID",
+					Value:    rkey,
+					Path:     "/",
+					Secure:   Conf.GetBool(ConfigStickyCookieSecure),
+					HttpOnly: Conf.GetBool(ConfigStickyCookieHTTPOnly),
 				})
 			}
 		}
