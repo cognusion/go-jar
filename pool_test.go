@@ -398,8 +398,9 @@ func TestPoolRoundRobinWeightZero(t *testing.T) {
 
 func TestPoolRoundRobinFailWell(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
+	iterations := 10 // Number of iterations to run and assume
 
-	Convey("When a two-member roundrobin is created with a buffer, and one \"crashes\", the failover is proper", t, func(c C) {
+	Convey("When a two-member roundrobin is created with a buffer, and one \"crashes\", the failover is proper", t, FailureContinues, func(c C) {
 
 		rr := httptest.NewRecorder()
 
@@ -435,12 +436,15 @@ func TestPoolRoundRobinFailWell(t *testing.T) {
 		buff, err := buffer.New(lb, buffer.Retry(fmt.Sprintf("IsNetworkError() && Attempts() < %d", 2)), buffer.Logger(&oxyLogger))
 		So(err, ShouldBeNil)
 
-		for range 10 {
+		itCount := 0 // Count the completed iterations, in case of oddity.
+		for range iterations {
 			buff.ServeHTTP(rr, req)
 			So(rr.Code, ShouldEqual, http.StatusOK)
+			itCount++
 		}
 
-		So(oneCount, ShouldEqual, 10)
+		So(itCount, ShouldEqual, iterations)
+		So(oneCount, ShouldEqual, iterations)
 		So(twoCount, ShouldEqual, 0)
 	})
 }
