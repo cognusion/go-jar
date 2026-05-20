@@ -199,6 +199,7 @@ func S3StreamProxyFinisher(w http.ResponseWriter, r *http.Request) {
 
 	if pathOptions.GetString(ConfigS3StreamProxyRedirectURL) != "" {
 		// After we're done, redirect them elsewhere
+		//#nosec G710 -- The redirect is based on a user-inaccessible configuration variable.
 		http.Redirect(w, r, pathOptions.GetString(ConfigS3StreamProxyRedirectURL), http.StatusMovedPermanently)
 		return
 	}

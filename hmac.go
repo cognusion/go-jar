@@ -80,6 +80,8 @@ func (h *HMAC) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	signedURI := craftURI(fmt.Sprintf("%s/%s", req.URL.Path, hash), req.URL.Query())
 
 	DebugOut.Printf("HMAC Signed %s as %s\n", uri, signedURI)
+	//#nosec G710 -- The concern of corruption is valid, however this is an internal Finisher generally restricted
+	// in who can access it.
 	http.Redirect(w, req, signedURI, http.StatusTemporaryRedirect) // Maybe we should print as text instead of Redirect?
 }
 
