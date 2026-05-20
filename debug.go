@@ -74,6 +74,7 @@ func TestFinisher(w http.ResponseWriter, r *http.Request) {
 	hr := forward.HeaderRewriter{TrustForwardHeader: true, Hostname: me}
 	hr.Rewrite(r)
 
+	//#nosec G705 -- Debugging output may be legit dirty.
 	w.Write(fmt.Appendf(nil, "\nProtocol: %s\n  Major: %d\n  Minor: %d\n", r.Proto, r.ProtoMajor, r.ProtoMinor))
 
 	if r.TLS != nil {
@@ -97,6 +98,7 @@ func TestFinisher(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 		for _, av := range v {
+			//#nosec G705 -- Debugging output may be legit dirty.
 			w.Write(fmt.Appendf(nil, "  %s: %s\n", k, av))
 		}
 	}
@@ -104,6 +106,7 @@ func TestFinisher(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("\nCookies:\n"))
 	for _, v := range r.Cookies() {
 		val := v.Value
+		//#nosec G705 -- Debugging output may be legit dirty.
 		w.Write(fmt.Appendf(nil, "  %s: %s\n", v.Name, val))
 	}
 
@@ -121,6 +124,7 @@ func DumpHandler(h http.Handler) http.Handler {
 
 // DumpFinisher is a special finisher that reflects a ton of request output
 func DumpFinisher(w http.ResponseWriter, r *http.Request) {
+	//#nosec G705 -- Debugging output may be legit dirty.
 	w.Write(fmt.Appendf(nil, "Request: %+v\nHeaders: %+v\nCookies: %+v\nContext: %+v\n", r, r.Header, r.Cookies(), r.Context()))
 }
 
@@ -151,6 +155,7 @@ func RequestIDFinisher(w http.ResponseWriter, r *http.Request) {
 	rv := rnd.Int64()/2 + 1
 	out := fmt.Appendf(nil, "%s %d\n", requestID, rv)
 	for range rv {
+		//#nosec G705 -- Debugging output may be legit dirty.
 		w.Write(out)
 	}
 }
