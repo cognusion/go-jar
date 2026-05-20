@@ -20,6 +20,7 @@ func ParamInspectionFormValueHandler(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
 		if rkey := r.FormValue("ROUTEID"); rkey != "" {
+			//#nosec G124 -- Test.
 			r.AddCookie(&http.Cookie{
 				Name:  "ROUTEID",
 				Value: rkey,
@@ -38,6 +39,7 @@ func ParamInspectionURLQueryHandler(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
 		if rkey := r.URL.Query().Get("ROUTEID"); rkey != "" {
+			//#nosec G124 -- Test.
 			r.AddCookie(&http.Cookie{
 				Name:  "ROUTEID",
 				Value: rkey,
@@ -58,6 +60,7 @@ func ParamInspectionURLQueryContainsHandler(next http.Handler) http.Handler {
 
 		if strings.Contains(r.URL.RawQuery, "ROUTEID") {
 			if rkey := r.URL.Query().Get("ROUTEID"); rkey != "" {
+				//#nosec G124 -- Test.
 				r.AddCookie(&http.Cookie{
 					Name:  "ROUTEID",
 					Value: rkey,
