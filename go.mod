@@ -1,8 +1,6 @@
 module github.com/cognusion/go-jar
 
-go 1.24.0
-
-toolchain go1.24.2
+go 1.25.0
 
 require (
 	github.com/NYTimes/gziphandler v1.1.1
@@ -11,18 +9,13 @@ require (
 	github.com/cognusion/go-cronzilla v1.0.0
 	github.com/cognusion/go-nagios-checks v0.0.0-20190904125444-02e4e9610d38 // indirect
 	github.com/cognusion/go-timings v1.0.0
-	github.com/cognusion/grace v0.0.0-20190209210431-75fe9244da10
+	github.com/cognusion/grace v0.1.2
 	github.com/davecgh/go-spew v1.1.1
 	github.com/didip/tollbooth/v6 v6.1.2
 	github.com/eapache/go-resiliency v1.3.0
 	github.com/facebookgo/clock v0.0.0-20150410010913-600d898af40a // indirect
-	github.com/facebookgo/ensure v0.0.0-20200202191622-63f1cf65ac4c // indirect
-	github.com/facebookgo/freeport v0.0.0-20150612182905-d4adf43b75b9 // indirect
-	github.com/facebookgo/grace v0.0.0-20180706040059-75cf19382434 // indirect
 	github.com/facebookgo/httpdown v0.0.0-20180706035922-5979d39b15c2
-	github.com/facebookgo/stack v0.0.0-20160209184415-751773369052 // indirect
 	github.com/facebookgo/stats v0.0.0-20151006221625-1b76add642e4 // indirect
-	github.com/facebookgo/subset v0.0.0-20200203212716-c811ad88dec4 // indirect
 	github.com/fsnotify/fsnotify v1.8.0
 	github.com/glenn-brown/golang-pkg-pcre v0.0.0-20120522223659-48bb82a8b8ce
 	github.com/go-errors/errors v1.4.2
@@ -40,9 +33,9 @@ require (
 	github.com/spf13/viper v1.20.1
 	github.com/vulcand/oxy v1.4.1
 	github.com/xeipuuv/gojsonschema v1.2.0 // indirect
-	golang.org/x/crypto v0.48.0 // indirect
-	golang.org/x/net v0.49.0 // indirect
-	golang.org/x/sync v0.19.0
+	golang.org/x/crypto v0.53.0 // indirect
+	golang.org/x/net v0.56.0 // indirect
+	golang.org/x/sync v0.21.0
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
 
@@ -88,9 +81,9 @@ require (
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
 	golang.org/x/exp v0.0.0-20230224173230-c95f2b4c22f2 // indirect
-	golang.org/x/sys v0.41.0 // indirect
-	golang.org/x/term v0.40.0 // indirect
-	golang.org/x/text v0.34.0 // indirect
+	golang.org/x/sys v0.46.0 // indirect
+	golang.org/x/term v0.44.0 // indirect
+	golang.org/x/text v0.38.0 // indirect
 	golang.org/x/time v0.8.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
