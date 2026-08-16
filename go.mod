@@ -43,7 +43,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.304.2
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.102.2
 	github.com/bdragon300/tusgo v0.1.2
-	github.com/buraksezer/consistent v0.10.0
+	github.com/buraksezer/consistent v1.0.0
 	github.com/cespare/xxhash v1.1.0
 	github.com/cognusion/go-dictionary v1.0.1
 	github.com/cognusion/go-health v1.1.0
