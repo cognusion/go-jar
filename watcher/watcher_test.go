@@ -35,9 +35,9 @@ func TestWatcher(t *testing.T) {
 			}
 			defer w.Close()
 
-			var called int64
+			var called atomic.Int64
 			w.Add(tfile, func(e fsnotify.Event) {
-				atomic.AddInt64(&called, 1)
+				called.Add(1)
 				time.Sleep(10 * time.Millisecond)
 			})
 
@@ -46,7 +46,7 @@ func TestWatcher(t *testing.T) {
 				terr := touchFile(tfile, "goodbye")
 				So(terr, ShouldBeNil)
 				<-time.After(15 * time.Millisecond)
-				So(atomic.LoadInt64(&called), ShouldEqual, 1)
+				So(called.Load(), ShouldEqual, 1)
 			})
 		})
 
@@ -72,9 +72,9 @@ func TestWatcherPrefixed(t *testing.T) {
 			}
 			defer w.Close()
 
-			var called int64
+			var called atomic.Int64
 			w.Add(tfile, func(e fsnotify.Event) {
-				atomic.AddInt64(&called, 1)
+				called.Add(1)
 				time.Sleep(10 * time.Millisecond)
 			})
 
@@ -83,7 +83,7 @@ func TestWatcherPrefixed(t *testing.T) {
 				terr := touchFile(tfile, "goodbye")
 				So(terr, ShouldBeNil)
 				<-time.After(5 * time.Millisecond)
-				So(atomic.LoadInt64(&called), ShouldEqual, 1)
+				So(called.Load(), ShouldEqual, 1)
 			})
 		})
 
@@ -109,9 +109,9 @@ func TestWatcherDelete(t *testing.T) {
 			}
 			defer w.Close()
 
-			var called int64
+			var called atomic.Int64
 			w.Add(tfile, func(e fsnotify.Event) {
-				atomic.AddInt64(&called, 1)
+				called.Add(1)
 				time.Sleep(10 * time.Millisecond)
 			})
 
@@ -122,7 +122,7 @@ func TestWatcherDelete(t *testing.T) {
 				terr := touchFile(tfile, "goodbye")
 				So(terr, ShouldBeNil)
 				<-time.After(5 * time.Millisecond)
-				So(atomic.LoadInt64(&called), ShouldEqual, 0)
+				So(called.Load(), ShouldEqual, 0)
 			})
 		})
 
@@ -148,9 +148,9 @@ func TestWatcherDeletePrefix(t *testing.T) {
 			}
 			defer w.Close()
 
-			var called int64
+			var called atomic.Int64
 			w.Add(tfile, func(e fsnotify.Event) {
-				atomic.AddInt64(&called, 1)
+				called.Add(1)
 				time.Sleep(10 * time.Millisecond)
 			})
 
@@ -161,7 +161,7 @@ func TestWatcherDeletePrefix(t *testing.T) {
 				terr := touchFile(tfile, "goodbye")
 				So(terr, ShouldBeNil)
 				<-time.After(5 * time.Millisecond)
-				So(atomic.LoadInt64(&called), ShouldEqual, 0)
+				So(called.Load(), ShouldEqual, 0)
 			})
 		})
 
@@ -188,9 +188,9 @@ func TestWatcherLoopwrites(t *testing.T) {
 
 		Convey("we see our function called when the file is touched many times", func() {
 
-			var called int64
+			var called atomic.Int64
 			w.Add(tfile, func(e fsnotify.Event) {
-				atomic.AddInt64(&called, 1)
+				called.Add(1)
 				time.Sleep(1 * time.Millisecond)
 			})
 
@@ -204,7 +204,7 @@ func TestWatcherLoopwrites(t *testing.T) {
 			}
 
 			<-time.After(15 * time.Millisecond)
-			So(atomic.LoadInt64(&called), ShouldEqual, 10)
+			So(called.Load(), ShouldEqual, 10)
 		})
 
 	})
