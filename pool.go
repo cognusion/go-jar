@@ -93,9 +93,9 @@ func init() {
 		// Defaults for any subrequests
 		DefaultTransport := &http.Transport{
 			DialContext: (&net.Dialer{
-				Timeout:   Conf.GetDuration(ConfigTimeout),
-				KeepAlive: Conf.GetDuration(ConfigKeepaliveTimeout),
-				DualStack: false,
+				Timeout:       Conf.GetDuration(ConfigTimeout),
+				KeepAlive:     Conf.GetDuration(ConfigKeepaliveTimeout),
+				FallbackDelay: -1, // TODO: This should be abstracted to a configuration directive
 			}).DialContext,
 			MaxIdleConns:          100,
 			IdleConnTimeout:       3 * Conf.GetDuration(ConfigTimeout),
